@@ -1,0 +1,3 @@
+{$I GLOBALS.PAS}
+{$I GRAPH.P}
+{$I CODE.PAS}

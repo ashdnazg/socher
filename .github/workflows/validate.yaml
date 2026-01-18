@@ -1,0 +1,35 @@
+name: Validate
+
+on:
+  workflow_dispatch:
+  pull_request_target:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up dosemu2
+        run: |
+          sudo add-apt-repository ppa:dosemu2/ppa
+          sudo apt update
+          sudo apt install -y dosemu2
+
+      - name: Add an ACL
+        run: |
+          echo 'SUBSYSTEM=="misc", KERNEL=="kvm", RUN+="/usr/bin/setfacl -m u:'${USER}':rw- /dev/kvm"' | sudo tee /etc/udev/rules.d/99-kvm4dosemu2.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Encode sources to CP862
+        run: ./build/reencode.py
+
+      - name: Build Socher Hayam
+        run: timeout 10 dosemu -t -K build -E 'compile'
+
+      - name: Validate result
+        run: ./build/validate.py
