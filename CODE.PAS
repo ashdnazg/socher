@@ -29,111 +29,84 @@ begin
     PutPic(global_var_296, 10, 138);
   end;
 end;
-procedure Func4(Func4_arg_0: str_30);
+procedure ShowScrFile(Path: str_30);
 var
-  Func4_var_4: file;
-  Func4_var_0: ptr_arr_byte_16128;
+  ScrFile: file;
+  Contents: PScrBuffer;
 begin
-  Assign(Func4_var_4, Func4_arg_0);
-  {$I-} Reset(Func4_var_4); {$I+}
-  if (IOResult <> 0) then
-  begin
-    Writeln('םיק וניא ', Func4_arg_0, ' ץבק');
-  end
+  Assign(ScrFile, Path);
+  {$I-} Reset(ScrFile); {$I+}
+  if IOResult <> 0 then
+    Writeln('םיק וניא ', Path, ' ץבק')
   else
   begin
-    New(Func4_var_0);
-    BlockRead(Func4_var_4, Func4_var_0^, 126);
-    Close(Func4_var_4);
-    PutPic(Func4_var_0^, 0, 199);
-    Dispose(Func4_var_0);
+    New(Contents);
+    BlockRead(ScrFile, Contents^, 126);
+    Close(ScrFile);
+    PutPic(Contents^, 0, 199);
+    Dispose(Contents);
   end;
 end;
-function Func5(Func5_arg_0: str_30): ptr_arr_byte_8832;
+function LoadWinFile(FileName: str_30): PWinBuffer;
 var
-  Func5_var_6: file;
-  Func5_var_2: ptr_arr_byte_8832;
-  Func5_var_0: integer;
+  WinFile: file;
+  Contents: PWinBuffer;
+  NumBlocks: integer;
 begin
-  Assign(Func5_var_6, (Func5_arg_0 + '.win'));
-  {$I-} Reset(Func5_var_6); {$I+}
-  if (IOResult <> 0) then
-  begin
-    Writeln('םיק וניא ', Func5_arg_0, '.win ץבק');
-  end
+  Assign(WinFile, (FileName + '.win'));
+  {$I-} Reset(WinFile); {$I+}
+  if IOResult <> 0 then
+    Writeln('םיק וניא ', FileName, '.win ץבק')
   else
   begin
-    New(Func5_var_2);
-    Func5_var_0 := (8832 div 128);
-    BlockRead(Func5_var_6, Func5_var_2^, Func5_var_0);
-    Close(Func5_var_6);
+    New(Contents);
+    NumBlocks := 8832 div 128;
+    BlockRead(WinFile, Contents^, NumBlocks);
+    Close(WinFile);
   end;
   GotoXY(1, 24);
-  Func5 := Func5_var_2;
+  LoadWinFile := Contents;
 end;
-function Func6(Func6_arg_0: str_30): ptr_arr_byte_2176;
+function LoadSgnFile(FileName: str_30): PSgnBuffer;
 var
-  Func6_var_6: file;
-  Func6_var_2: ptr_arr_byte_2176;
-  Func6_var_0: integer;
+  SgnFile: file;
+  Contents: PSgnBuffer;
+  NumBlocks: integer;
 begin
-  if (Func6_arg_0 <> 'day7') then
-  begin
-    Assign(
-      Func6_var_6,
-      ((global_var_0 + Func6_arg_0) + '.sgn')
-    );
-  end
+  if FileName <> 'day7' then
+    Assign(SgnFile, BasePath + FileName + '.sgn')
+  else
+    Assign(SgnFile, 'day7.sgn');
+
+  {$I-} Reset(SgnFile); {$I+}
+  if IOResult <> 0 then
+    Writeln('םיק וניא ', BasePath, FileName, '.sgn ץבק')
   else
   begin
-    Assign(Func6_var_6, 'day7.sgn');
+    New(Contents);
+    NumBlocks := FileSize(SgnFile);
+    BlockRead(SgnFile, Contents^, NumBlocks);
+    Close(SgnFile);
   end;
-  {$I-} Reset(Func6_var_6); {$I+}
-  if (IOResult <> 0) then
-  begin
-    Writeln(
-      'םיק וניא ',
-      global_var_0,
-      Func6_arg_0,
-      '.sgn ץבק'
-    );
-  end
-  else
-  begin
-    New(Func6_var_2);
-    Func6_var_0 := FileSize(Func6_var_6);
-    BlockRead(Func6_var_6, Func6_var_2^, Func6_var_0);
-    Close(Func6_var_6);
-  end;
-  Func6 := Func6_var_2;
+  LoadSgnFile := Contents;
 end;
-function Func7(Func7_arg_0: str_30): ptr_arr_byte_16128;
+function LoadScrFile(Func7_arg_0: str_30): PScrBuffer;
 var
-  Func7_var_4: file;
-  Func7_var_0: ptr_arr_byte_16128;
+  ScrFile: file;
+  Contents: PScrBuffer;
 begin
-  Assign(
-    Func7_var_4,
-    ((global_var_0 + Func7_arg_0) + '.scr')
-  );
-  {$I-} Reset(Func7_var_4); {$I+}
-  if (IOResult <> 0) then
-  begin
-    Writeln(
-      'םיק וניא ',
-      global_var_0,
-      Func7_arg_0,
-      '.scr ץבק'
-    );
-  end
+  Assign(ScrFile, BasePath + Func7_arg_0 + '.scr');
+  {$I-} Reset(ScrFile); {$I+}
+  if IOResult <> 0 then
+    Writeln('םיק וניא ', BasePath, Func7_arg_0, '.scr ץבק')
   else
   begin
-    New(Func7_var_0);
-    BlockRead(Func7_var_4, Func7_var_0^, 126);
-    Close(Func7_var_4);
+    New(Contents);
+    BlockRead(ScrFile, Contents^, 126);
+    Close(ScrFile);
   end;
   GotoXY(1, 24);
-  Func7 := Func7_var_0;
+  LoadScrFile := Contents;
 end;
 function Func8: real;
 var
@@ -210,19 +183,19 @@ procedure Func13;
 begin
   if (global_var_66 = ' ') then
   begin
-    Func4((global_var_0 + 'goodwthr.scr'));
+    ShowScrFile((BasePath + 'goodwthr.scr'));
   end
   else
   begin
     GotoXY(28, 20);
-    Func4((global_var_0 + 'badwthr.scr'));
+    ShowScrFile((BasePath + 'badwthr.scr'));
     Write(global_var_66:6);
   end;
   Func2;
 end;
 procedure Func14;
 var
-  Func14_var_13: ptr_arr_byte_16128;
+  Func14_var_13: PScrBuffer;
   Func14_var_11: integer;
   Func14_var_9: integer;
   Func14_var_0: str_8;
@@ -1456,7 +1429,7 @@ begin
           Func31_var_167 := (10 * Trunc(((Func8 + global_var_89) / (Random(80) + 150))));
           if (Func31_var_167 > 0) then
           begin
-            Func4((global_var_0 + 'fishing.scr'));
+            ShowScrFile((BasePath + 'fishing.scr'));
             global_var_83 := (global_var_83 + Func31_var_167);
             GotoXY(20, 3);
             Write(Func31_var_167:4);
@@ -1474,12 +1447,12 @@ begin
 end;
 procedure Func33;
 var
-  Func33_var_8: ptr_arr_byte_2176;
+  Func33_var_8: PSgnBuffer;
   Func33_var_0: str_7;
 begin
   Str(global_var_79, Func33_var_0);
-  Func33_var_8 := Func6(('day' + Func33_var_0));
-  Func4((global_var_0 + 'newday.scr'));
+  Func33_var_8 := LoadSgnFile(('day' + Func33_var_0));
+  ShowScrFile((BasePath + 'newday.scr'));
   PutPic(Func33_var_8^, 165, 89);
   Dispose(Func33_var_8);
   Func2;
@@ -1860,7 +1833,7 @@ begin
 end;
 procedure Func39(Func39_arg_0: str_10);
 var
-  Func39_var_0: ptr_arr_byte_8832;
+  Func39_var_0: PWinBuffer;
 begin
   case Func15(Func39_arg_0) of
     1:   begin
@@ -3123,15 +3096,15 @@ begin
   GetDir(0, Func54_var_0);
   if (Func54_var_0 = 'A:\') then
   begin
-    global_var_0 := 'B:\';
+    BasePath := 'B:\';
   end
   else
   begin
-    global_var_0 := '\kika\socher_b\';
+    BasePath := '\kika\socher_b\';
   end;
-  Func4((global_var_0 + 'mifne.scr'));
+  ShowScrFile((BasePath + 'mifne.scr'));
   Func2;
-  Func4((global_var_0 + 'credits.scr'));
+  ShowScrFile((BasePath + 'credits.scr'));
   global_var_116[1] := 3000;
   global_var_116[2] := 500;
   global_var_116[3] := 50;
@@ -3145,50 +3118,50 @@ begin
   global_var_158[5] := 'ישימח';
   global_var_158[6] := ' ישיש';
   global_var_158[7] := 'יעיבש';
-  global_var_2216 := Func7('mainscrn');
-  global_var_2168 := Func7('newday');
-  global_var_2220 := Func7('help');
-  global_var_2184 := Func7('crew');
-  global_var_2172 := Func7('socher');
-  global_var_2176 := Func7('expand');
-  global_var_2180 := Func7('thieves');
-  global_var_2188 := Func7('wheatup');
-  global_var_2192 := Func7('wheatdn');
-  global_var_2196 := Func7('olivesup');
-  global_var_2200 := Func7('olivesdn');
-  global_var_2204 := Func7('copperup');
-  global_var_2208 := Func7('copperdn');
+  global_var_2216 := LoadScrFile('mainscrn');
+  global_var_2168 := LoadScrFile('newday');
+  global_var_2220 := LoadScrFile('help');
+  global_var_2184 := LoadScrFile('crew');
+  global_var_2172 := LoadScrFile('socher');
+  global_var_2176 := LoadScrFile('expand');
+  global_var_2180 := LoadScrFile('thieves');
+  global_var_2188 := LoadScrFile('wheatup');
+  global_var_2192 := LoadScrFile('wheatdn');
+  global_var_2196 := LoadScrFile('olivesup');
+  global_var_2200 := LoadScrFile('olivesdn');
+  global_var_2204 := LoadScrFile('copperup');
+  global_var_2208 := LoadScrFile('copperdn');
   New(global_var_2060);
-  global_var_2068 := Func5('stay');
-  global_var_2144 := Func5('repair');
-  global_var_2160 := Func5('deserted');
-  global_var_2140 := Func5('damaged');
-  global_var_2148 := Func5('night');
-  global_var_2152 := Func5('overwght');
-  global_var_2156 := Func5('guards');
-  global_var_2116 := Func5('pirates');
-  global_var_2120 := Func5('confront');
-  global_var_2124 := Func5('runaway');
-  global_var_2128 := Func5('offer');
-  global_var_2076 := Func5('change');
-  global_var_2132 := Func5('sinking');
-  global_var_2136 := Func5('storm');
-  global_var_2072 := Func5('sirton');
-  global_var_2080 := Func5('strike');
-  global_var_2084 := Func5('arafel');
-  global_var_2088 := Func5('bank');
-  global_var_2096 := Func5('buyturk');
-  global_var_2092 := Func5('buyisr');
-  global_var_2100 := Func5('buyegpt');
-  global_var_2108 := Func5('sellturk');
-  global_var_2104 := Func5('sellisr');
-  global_var_2112 := Func5('sellegpt');
-  global_var_2228 := Func6('buy');
-  global_var_2232 := Func6('sell');
-  global_var_2236 := Func6('withrow');
-  global_var_2240 := Func6('deposit');
-  global_var_2252 := Func6('message');
-  global_var_2244 := Func6('pirates');
+  global_var_2068 := LoadWinFile('stay');
+  global_var_2144 := LoadWinFile('repair');
+  global_var_2160 := LoadWinFile('deserted');
+  global_var_2140 := LoadWinFile('damaged');
+  global_var_2148 := LoadWinFile('night');
+  global_var_2152 := LoadWinFile('overwght');
+  global_var_2156 := LoadWinFile('guards');
+  global_var_2116 := LoadWinFile('pirates');
+  global_var_2120 := LoadWinFile('confront');
+  global_var_2124 := LoadWinFile('runaway');
+  global_var_2128 := LoadWinFile('offer');
+  global_var_2076 := LoadWinFile('change');
+  global_var_2132 := LoadWinFile('sinking');
+  global_var_2136 := LoadWinFile('storm');
+  global_var_2072 := LoadWinFile('sirton');
+  global_var_2080 := LoadWinFile('strike');
+  global_var_2084 := LoadWinFile('arafel');
+  global_var_2088 := LoadWinFile('bank');
+  global_var_2096 := LoadWinFile('buyturk');
+  global_var_2092 := LoadWinFile('buyisr');
+  global_var_2100 := LoadWinFile('buyegpt');
+  global_var_2108 := LoadWinFile('sellturk');
+  global_var_2104 := LoadWinFile('sellisr');
+  global_var_2112 := LoadWinFile('sellegpt');
+  global_var_2228 := LoadSgnFile('buy');
+  global_var_2232 := LoadSgnFile('sell');
+  global_var_2236 := LoadSgnFile('withrow');
+  global_var_2240 := LoadSgnFile('deposit');
+  global_var_2252 := LoadSgnFile('message');
+  global_var_2244 := LoadSgnFile('pirates');
   New(global_var_2224);
   Assign(Func54_var_16, 'line_6.lin');
   Reset(Func54_var_16);
@@ -3230,8 +3203,8 @@ begin
 end;
 procedure Func55;
 begin
-  Func4((global_var_0 + 'intro.scr'));
-  global_var_2064 := Func5('map');
+  ShowScrFile((BasePath + 'intro.scr'));
+  global_var_2064 := LoadWinFile('map');
   global_var_108 := 1;
   global_var_95 := 0;
   global_var_77 := 100;
@@ -3349,7 +3322,7 @@ begin
   end;
   if (Func56_var_11 <> 0) then
   begin
-    Func4((global_var_0 + 'in_10.scr'));
+    ShowScrFile((BasePath + 'in_10.scr'));
     GotoXY(28, 20);
     Func57(Func56_var_15[Func56_var_11].field_0, 16);
     Rewrite(Func56_var_312);
@@ -3359,7 +3332,7 @@ begin
     end;
     Close(Func56_var_312);
   end;
-  Func4((global_var_0 + 'first_10.scr'));
+  ShowScrFile((BasePath + 'first_10.scr'));
   for Func56_var_9 := 1 to (Func56_var_13 - 1) do
   begin
     GotoXY(11, (3 + (2 * Func56_var_9)));
@@ -3369,7 +3342,7 @@ begin
   end;
   if (Func56_var_11 = 0) then
   begin
-    global_var_2248 := Func6('score');
+    global_var_2248 := LoadSgnFile('score');
     PutPic(global_var_2248^, 7, 130);
     GotoXY(3, 10);
     if (Func56_arg_0 > 999) then
