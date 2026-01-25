@@ -16,7 +16,7 @@ procedure Func3(
 );
 begin
   GetPic(global_var_296, 10, (138 - 29), (10 + 221), 138);
-  PutPic(global_var_2252^, 10, 138);
+  PutPic(MessageSign^, 10, 138);
   GotoXY((29 - Length(Func3_arg_72)), 15);
   Write(Func3_arg_72);
   GotoXY((29 - Length(Func3_arg_36)), 16);
@@ -205,7 +205,7 @@ begin
   New(Func14_var_13);
   GetPic(Func14_var_13^, 0, 0, 319, 199);
   ColorTable(0, 1, 2, 3);
-  PutPic(global_var_2220^, 0, 199);
+  PutPic(HelpScreen^, 0, 199);
   GotoXY(9, 7);
   if (global_var_66 = ' ') then
   begin
@@ -999,37 +999,37 @@ begin
     end;
     case Func31_var_183 of
       1..2:   begin
-          PutPic(global_var_2204^, 0, 199);
+          PutPic(CopperUpScreen^, 0, 199);
           Func31_var_181 := (Random(3) + 1);
           Func31_var_179 := ((global_var_116[1] + 1100) + (100 * Random(5)));
           Func32(1, Func31_var_181, Func31_var_179, 1);
         end;
       3..4:   begin
-          PutPic(global_var_2196^, 0, 199);
+          PutPic(OlivesUpScreen^, 0, 199);
           Func31_var_181 := (Random(3) + 1);
           Func31_var_179 := ((global_var_116[2] + 200) + (50 * Random(4)));
           Func32(1, Func31_var_181, Func31_var_179, 2);
         end;
       5..6:   begin
-          PutPic(global_var_2188^, 0, 199);
+          PutPic(WheatUpScreen^, 0, 199);
           Func31_var_181 := (Random(3) + 1);
           Func31_var_179 := ((global_var_116[3] + 20) + (Random(5) * 5));
           Func32(1, Func31_var_181, Func31_var_179, 3);
         end;
       7..8:   begin
-          PutPic(global_var_2208^, 0, 199);
+          PutPic(CopperDownScreen^, 0, 199);
           Func31_var_181 := (Random(3) + 1);
           Func31_var_179 := ((global_var_116[1] - 1100) - (100 * Random(5)));
           Func32(2, Func31_var_181, Func31_var_179, 1);
         end;
       9..10:   begin
-          PutPic(global_var_2200^, 0, 199);
+          PutPic(OlivesDownScreen^, 0, 199);
           Func31_var_181 := (Random(3) + 1);
           Func31_var_179 := ((global_var_116[2] - 150) - (Random(3) * 50));
           Func32(2, Func31_var_181, Func31_var_179, 2);
         end;
       11..12:   begin
-          PutPic(global_var_2192^, 0, 199);
+          PutPic(WheatDownScreen^, 0, 199);
           Func31_var_181 := (Random(3) + 1);
           Func31_var_179 := ((global_var_116[3] - 15) - (Random(3) * 5));
           Func32(2, Func31_var_181, Func31_var_179, 3);
@@ -1046,7 +1046,7 @@ begin
           Func31_var_175 := (10 * (Random(Func31_var_173) + (2 * Func31_var_173)));
           if (Func31_var_175 <= ((global_var_89 + global_var_95) + Func8)) then
           begin
-            PutPic(global_var_2176^, 0, 199);
+            PutPic(ExpandScreen^, 0, 199);
             GotoXY(29, 14);
             Write(Func31_var_173:3);
             if (global_var_89 > Func31_var_175) then
@@ -1130,7 +1130,7 @@ begin
               begin
                 global_var_152[global_var_21] := (global_var_152[global_var_21] - Func31_var_4[global_var_21]);
               end;
-              PutPic(global_var_2252^, 90, 194);
+              PutPic(MessageSign^, 90, 194);
               GotoXY(18, 23);
               Write('.העצוב  הבחרהה');
               Func2;
@@ -1166,7 +1166,7 @@ begin
       19..20:   begin
           if (global_var_79 < 6) then
           begin
-            PutPic(global_var_2184^, 0, 199);
+            PutPic(CrewScreen^, 0, 199);
             GotoXY(7, 3);
             Write(global_var_152[1]:5);
             GotoXY(7, 4);
@@ -1230,7 +1230,7 @@ begin
           GotoXY(14, 24);
           if (Func31_var_155 > '0') then
           begin
-            PutPic(global_var_2180^, 0, 199);
+            PutPic(ThievesScreen^, 0, 199);
             Write(('.לקש ' + Func31_var_155):15);
           end
           else
@@ -1238,7 +1238,7 @@ begin
             Func28(142, Func31_var_169, Func31_var_155);
             if (Func31_var_155 > '0') then
             begin
-              PutPic(global_var_2180^, 0, 199);
+              PutPic(ThievesScreen^, 0, 199);
               Write(
                 (((#46 + global_var_122[Func31_var_169]) + ' ןוט ') + Func31_var_155):15
               );
@@ -1256,7 +1256,7 @@ begin
       23..26:   begin
           if (global_var_152[1] > 1) then
           begin
-            PutPic(global_var_2172^, 0, 199);
+            PutPic(SocherScreen^, 0, 199);
             Func31_var_177 := ((Func21_var_109 + (50 * Random(30))) - 600);
             Str(Func31_var_177, Func31_var_147);
             Str(global_var_152[1], Func31_var_139);
@@ -1293,7 +1293,7 @@ begin
           begin
             if (global_var_152[2] > 1) then
             begin
-              PutPic(global_var_2172^, 0, 199);
+              PutPic(SocherScreen^, 0, 199);
               Func31_var_177 := ((Func21_var_103 + (10 * Random(70))) - 300);
               Str(Func31_var_177, Func31_var_147);
               Str(global_var_152[2], Func31_var_139);
@@ -1330,7 +1330,7 @@ begin
             begin
               if (global_var_152[3] > 1) then
               begin
-                PutPic(global_var_2172^, 0, 199);
+                PutPic(SocherScreen^, 0, 199);
                 Func31_var_177 := ((Func21_var_97 + (5 * Random(14))) - 40);
                 Str(Func31_var_177, Func31_var_147);
                 Str(global_var_152[3], Func31_var_139);
@@ -1379,7 +1379,7 @@ begin
           ));
           if ((((1.0 * Func31_var_177) * Func31_var_171) <= global_var_89) and (global_var_89 > 0)) then
           begin
-            PutPic(global_var_2172^, 0, 199);
+            PutPic(SocherScreen^, 0, 199);
             Str(Func31_var_177, Func31_var_147);
             Str(Func31_var_171, Func31_var_139);
             if (Func31_var_139 = '1') then
@@ -1484,7 +1484,7 @@ begin
   begin
     case Func15(global_var_33) of
       1:   begin
-          PutPic(global_var_2096^, 1, 142);
+          PutPic(BuyTurkeyWindow^, 1, 142);
           Func34_var_0[1].field_0 := 177;
           Func34_var_0[1].field_2 := 2;
           Func34_var_0[1].field_4 := 236;
@@ -1499,7 +1499,7 @@ begin
           Func34_var_0[3].field_6 := 80;
         end;
       2:   begin
-          PutPic(global_var_2092^, 1, 142);
+          PutPic(BuyIsraelWindow^, 1, 142);
           Func34_var_0[1].field_0 := 177;
           Func34_var_0[1].field_2 := 2;
           Func34_var_0[1].field_4 := 236;
@@ -1514,7 +1514,7 @@ begin
           Func34_var_0[3].field_6 := 101;
         end;
       3:   begin
-          PutPic(global_var_2100^, 1, 142);
+          PutPic(BuyEgyptWindow^, 1, 142);
           Func34_var_0[1].field_0 := 177;
           Func34_var_0[1].field_2 := 2;
           Func34_var_0[1].field_4 := 236;
@@ -1556,7 +1556,7 @@ begin
       begin
         repeat
         begin
-          PutPic(global_var_2228^, 22, 138);
+          PutPic(BuySign^, 22, 138);
           GotoXY(6, 15);
           Write(Trunc((global_var_89 / Func34_var_94)));
           GotoXY(6, 17);
@@ -1615,13 +1615,13 @@ begin
   begin
     case Func15(global_var_33) of
       1:   begin
-          PutPic(global_var_2108^, 0, 142);
+          PutPic(SellTurkeyWindow^, 0, 142);
         end;
       2:   begin
-          PutPic(global_var_2104^, 0, 142);
+          PutPic(SellIsraelWindow^, 0, 142);
         end;
       3:   begin
-          PutPic(global_var_2112^, 0, 142);
+          PutPic(SellEgyptWindow^, 0, 142);
         end;
     end;
     Func35_var_0[1].field_0 := 19;
@@ -1655,7 +1655,7 @@ begin
       begin
         repeat
         begin
-          PutPic(global_var_2232^, 120, 60);
+          PutPic(SellSign^, 120, 60);
           GotoXY(21, 7);
           Func35_var_80 := Func18(0, 0, 8);
         end
@@ -1699,7 +1699,7 @@ var
   Func37_var_0: real;
 begin
   Func37_var_86 := 0;
-  PutPic(global_var_2088^, 0, 142);
+  PutPic(BankWindow^, 0, 142);
   Func37_var_6[1].field_0 := 97;
   Func37_var_6[1].field_2 := 7;
   Func37_var_6[1].field_4 := 149;
@@ -1724,7 +1724,7 @@ begin
         begin
           repeat
           begin
-            PutPic(global_var_2240^, 11, 139);
+            PutPic(DepositSign^, 11, 139);
             GotoXY(5, 17);
             Func37_var_0 := Func18(0, 0, 8);
             if (Func37_var_0 <= 0) then
@@ -1764,7 +1764,7 @@ begin
         begin
           repeat
           begin
-            PutPic(global_var_2236^, 11, 139);
+            PutPic(WithdrawSign^, 11, 139);
             GotoXY(5, 17);
             Func37_var_0 := Func18(0, 0, 8);
             if (Func37_var_0 < 0) then
@@ -1815,7 +1815,7 @@ var
 begin
   if (Func38_arg_0 > global_var_77) then
   begin
-    PutPic(global_var_2152^, 0, 142);
+    PutPic(OverweightWindow^, 0, 142);
     GotoXY(53, 16);
     if Func20 then
     begin
@@ -2014,7 +2014,7 @@ var
   Func45_var_1: real;
   Func45_unused_0: arr_byte_1;
 begin
-  PutPic(global_var_2120^, 0, 142);
+  PutPic(ConfrontWindow^, 0, 142);
   Func45_var_7 := Random(4);
   if ((Func45_var_7 < (Func43_arg_2 - Func43_var_98)) or (((Func43_arg_2 - Func43_var_98) <= 0) and (Random(6) = 1))) then
   begin
@@ -2163,9 +2163,9 @@ begin
   Func22;
 end;
 begin
-  PutPic(global_var_2116^, 0, 142);
+  PutPic(PiratesWindow^, 0, 142);
   Func2;
-  PutPic(global_var_2244^, 4, 139);
+  PutPic(PiratesSign^, 4, 139);
   GotoXY(18, 17);
   Write(Func40_var_1:2);
   Func43_var_12[1].field_0 := 108;
@@ -2189,7 +2189,7 @@ begin
     2:   begin
         Func43_var_100 := 0;
         Func43_var_98 := 1;
-        PutPic(global_var_2124^, 0, 142);
+        PutPic(RunAwayWindow^, 0, 142);
         if (Func43_arg_0 > (0.81 * global_var_77)) then
         begin
           Func43_var_102 := 0;
@@ -2252,7 +2252,7 @@ begin
       end;
     3:   begin
         Func43_var_98 := 1;
-        PutPic(global_var_2128^, 0, 142);
+        PutPic(OfferWindow^, 0, 142);
         if Func25(
           global_var_152[1],
           global_var_152[2],
@@ -2335,7 +2335,7 @@ begin
 end;
 procedure Func48;
 begin
-  PutPic(global_var_2076^, 0, 142);
+  PutPic(ChangeWindow^, 0, 142);
   Func42_var_13 := global_var_55;
   if (global_var_55 = 'לארשי') then
   begin
@@ -2375,7 +2375,7 @@ begin
       Func3(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
       if ((global_var_66 = global_var_33) or (global_var_66 = global_var_55)) then
       begin
-        PutPic(global_var_2136^, 0, 142);
+        PutPic(StormWindow^, 0, 142);
         Func2;
         if (Func8 > 10000) then
         begin
@@ -2404,7 +2404,7 @@ begin
         Func28(144, Func42_var_36, Func42_var_24);
         if (global_var_81 > 16) then
         begin
-          PutPic(global_var_2072^, 0, 142);
+          PutPic(ShoalWindow^, 0, 142);
           Func3(
             87,
             'םיעורגה תוארה יאנת בקע',
@@ -2420,7 +2420,7 @@ begin
         end
         else
         begin
-          PutPic(global_var_2140^, 0, 142);
+          PutPic(DamagedWindow^, 0, 142);
           if Func42_var_0 then
           begin
             Func3(
@@ -2453,7 +2453,7 @@ begin
     if Func46(Func42_arg_4) then
     begin
       Func3(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
-      PutPic(global_var_2132^, 0, 142);
+      PutPic(SinkingWindow^, 0, 142);
       Func2;
       Func28(153, Func42_var_36, Func42_var_24);
       Func3(
@@ -2491,7 +2491,7 @@ begin
       end
       else
       begin
-        PutPic(global_var_2080^, 0, 142);
+        PutPic(StrikeWindow^, 0, 142);
         Func2;
         Func3(
           87,
@@ -2540,7 +2540,7 @@ begin
         end;
       9, 10:   begin
           Func3(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
-          PutPic(global_var_2160^, 0, 142);
+          PutPic(DesertedWindow^, 0, 142);
           Func42_var_36 := 0;
           repeat
           begin
@@ -2594,7 +2594,7 @@ var
   Func50_var_8: str_35;
   Func50_var_0: str_7;
 begin
-  PutPic(global_var_2156^, 0, 142);
+  PutPic(GuardsWindow^, 0, 142);
   Func50_var_116 := (5 * Trunc(((Func8 + global_var_89) / (200 + Random(100)))));
   if (Func50_var_116 < 75) then
   begin
@@ -2784,7 +2784,7 @@ begin
     begin
       if ((global_var_81 + Func40_var_170) > 16) then
       begin
-        PutPic(global_var_2148^, 0, 142);
+        PutPic(NightWindow^, 0, 142);
         GotoXY(4, 17);
         if (not Func20) then
         begin
@@ -2853,7 +2853,7 @@ end;
 begin
   repeat
   begin
-    PutPic(global_var_2144^, 0, 142);
+    PutPic(RepairWindow^, 0, 142);
     GotoXY(21, 17);
     Write(Func51_arg_0:4:0);
     GotoXY(5, 17);
@@ -2923,7 +2923,7 @@ begin
   end;
   if (not ((global_var_79 > 7) or Func21_var_88)) then
   begin
-    PutPic(global_var_2216^, 0, 199);
+    PutPic(MainScreen^, 0, 199);
     GetPic(global_var_2060^, 0, 0, 240, 142);
     Func39(global_var_33);
     repeat
@@ -3038,7 +3038,7 @@ begin
             end;
           end;
         5:   begin
-            PutPic(global_var_2068^, 0, 142);
+            PutPic(StayWindow^, 0, 142);
             if (global_var_79 = 7) then
             begin
               Func3(
@@ -3118,50 +3118,50 @@ begin
   global_var_158[5] := 'ישימח';
   global_var_158[6] := ' ישיש';
   global_var_158[7] := 'יעיבש';
-  global_var_2216 := LoadScrFile('mainscrn');
-  global_var_2168 := LoadScrFile('newday');
-  global_var_2220 := LoadScrFile('help');
-  global_var_2184 := LoadScrFile('crew');
-  global_var_2172 := LoadScrFile('socher');
-  global_var_2176 := LoadScrFile('expand');
-  global_var_2180 := LoadScrFile('thieves');
-  global_var_2188 := LoadScrFile('wheatup');
-  global_var_2192 := LoadScrFile('wheatdn');
-  global_var_2196 := LoadScrFile('olivesup');
-  global_var_2200 := LoadScrFile('olivesdn');
-  global_var_2204 := LoadScrFile('copperup');
-  global_var_2208 := LoadScrFile('copperdn');
+  MainScreen := LoadScrFile('mainscrn');
+  NewDayScreen := LoadScrFile('newday');
+  HelpScreen := LoadScrFile('help');
+  CrewScreen := LoadScrFile('crew');
+  SocherScreen := LoadScrFile('socher');
+  ExpandScreen := LoadScrFile('expand');
+  ThievesScreen := LoadScrFile('thieves');
+  WheatUpScreen := LoadScrFile('wheatup');
+  WheatDownScreen := LoadScrFile('wheatdn');
+  OlivesUpScreen := LoadScrFile('olivesup');
+  OlivesDownScreen := LoadScrFile('olivesdn');
+  CopperUpScreen := LoadScrFile('copperup');
+  CopperDownScreen := LoadScrFile('copperdn');
   New(global_var_2060);
-  global_var_2068 := LoadWinFile('stay');
-  global_var_2144 := LoadWinFile('repair');
-  global_var_2160 := LoadWinFile('deserted');
-  global_var_2140 := LoadWinFile('damaged');
-  global_var_2148 := LoadWinFile('night');
-  global_var_2152 := LoadWinFile('overwght');
-  global_var_2156 := LoadWinFile('guards');
-  global_var_2116 := LoadWinFile('pirates');
-  global_var_2120 := LoadWinFile('confront');
-  global_var_2124 := LoadWinFile('runaway');
-  global_var_2128 := LoadWinFile('offer');
-  global_var_2076 := LoadWinFile('change');
-  global_var_2132 := LoadWinFile('sinking');
-  global_var_2136 := LoadWinFile('storm');
-  global_var_2072 := LoadWinFile('sirton');
-  global_var_2080 := LoadWinFile('strike');
-  global_var_2084 := LoadWinFile('arafel');
-  global_var_2088 := LoadWinFile('bank');
-  global_var_2096 := LoadWinFile('buyturk');
-  global_var_2092 := LoadWinFile('buyisr');
-  global_var_2100 := LoadWinFile('buyegpt');
-  global_var_2108 := LoadWinFile('sellturk');
-  global_var_2104 := LoadWinFile('sellisr');
-  global_var_2112 := LoadWinFile('sellegpt');
-  global_var_2228 := LoadSgnFile('buy');
-  global_var_2232 := LoadSgnFile('sell');
-  global_var_2236 := LoadSgnFile('withrow');
-  global_var_2240 := LoadSgnFile('deposit');
-  global_var_2252 := LoadSgnFile('message');
-  global_var_2244 := LoadSgnFile('pirates');
+  StayWindow := LoadWinFile('stay');
+  RepairWindow := LoadWinFile('repair');
+  DesertedWindow := LoadWinFile('deserted');
+  DamagedWindow := LoadWinFile('damaged');
+  NightWindow := LoadWinFile('night');
+  OverweightWindow := LoadWinFile('overwght');
+  GuardsWindow := LoadWinFile('guards');
+  PiratesWindow := LoadWinFile('pirates');
+  ConfrontWindow := LoadWinFile('confront');
+  RunAwayWindow := LoadWinFile('runaway');
+  OfferWindow := LoadWinFile('offer');
+  ChangeWindow := LoadWinFile('change');
+  SinkingWindow := LoadWinFile('sinking');
+  StormWindow := LoadWinFile('storm');
+  ShoalWindow := LoadWinFile('sirton');
+  StrikeWindow := LoadWinFile('strike');
+  FogWindow := LoadWinFile('arafel');
+  BankWindow := LoadWinFile('bank');
+  BuyTurkeyWindow := LoadWinFile('buyturk');
+  BuyIsraelWindow := LoadWinFile('buyisr');
+  BuyEgyptWindow := LoadWinFile('buyegpt');
+  SellTurkeyWindow := LoadWinFile('sellturk');
+  SellIsraelWindow := LoadWinFile('sellisr');
+  SellEgyptWindow := LoadWinFile('sellegpt');
+  BuySign := LoadSgnFile('buy');
+  SellSign := LoadSgnFile('sell');
+  WithdrawSign := LoadSgnFile('withrow');
+  DepositSign := LoadSgnFile('deposit');
+  MessageSign := LoadSgnFile('message');
+  PiratesSign := LoadSgnFile('pirates');
   New(global_var_2224);
   Assign(Func54_var_16, 'line_6.lin');
   Reset(Func54_var_16);
