@@ -1,4 +1,8 @@
 program Prog;
+const
+  Copper = 1;
+  Olives = 2;
+  Wheat = 3;
 type
   str_20 = string[20];
   str_10 = string[10];
@@ -15,7 +19,7 @@ type
   ptr_arr_byte_384 = ^arr_byte_384;
   TSgnBuffer = array[1..2176] of byte;
   PSgnBuffer = ^TSgnBuffer;
-  str_35 = string[35];
+  MessageLine = string[35];
   str_30 = string[30];
   str_15 = string[15];
   arr_byte_800 = array[1..800] of byte;
@@ -55,19 +59,19 @@ var
   BankBalance: real;
   ClosedBankDay: integer;
   global_var_103: integer;
-  global_var_105: integer;
+  LastNightEvent: integer;
   LastPressedKey: char;
   Unused1: byte;
   global_var_109: boolean;
   ClosedRepairDay: integer;
   global_unused_112: array[1..4] of byte;
-  BaseWarePrice: array[1..3] of integer;
-  WareName: array[1..3] of string[9];
-  Cargo: array[1..3] of integer;
+  BaseWarePrice: array[Copper..Wheat] of integer;
+  WareName: array[Copper..Wheat] of string[9];
+  Cargo: array[Copper..Wheat] of integer;
   DayName: array[1..7] of string[5];
   global_var_200: array[1..8, 1..8] of byte;
   global_var_264: arr_record_14871253875950162834_8;
-  global_var_296: array[1..1764] of byte;
+  PreMessageBackground: array[1..1764] of byte;
   global_var_2060: PWinBuffer;
   MapWindow: PWinBuffer;
   StayWindow: PWinBuffer;

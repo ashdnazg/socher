@@ -8,25 +8,25 @@ begin
   PressedKey := GetPressedKey;
   until ((PressedKey = #13) or (PressedKey = #27)) and not KeyPressed;
 end;
-procedure Func3(
+procedure ShowMessage(
   Func3_arg_108: byte;
-  Func3_arg_72: str_35;
-  Func3_arg_36: str_35;
-  Func3_arg_0: str_35
+  Line1: MessageLine;
+  Line2: MessageLine;
+  Line3: MessageLine
 );
 begin
-  GetPic(global_var_296, 10, (138 - 29), (10 + 221), 138);
+  GetPic(PreMessageBackground, 10, 138 - 29, 10 + 221, 138);
   PutPic(MessageSign^, 10, 138);
-  GotoXY((29 - Length(Func3_arg_72)), 15);
-  Write(Func3_arg_72);
-  GotoXY((29 - Length(Func3_arg_36)), 16);
-  Write(Func3_arg_36);
-  GotoXY((29 - Length(Func3_arg_0)), 17);
-  Write(Func3_arg_0);
-  if ((Func3_arg_108 = 87) or (Func3_arg_108 = 82)) then
+  GotoXY(29 - Length(Line1), 15);
+  Write(Line1);
+  GotoXY(29 - Length(Line2), 16);
+  Write(Line2);
+  GotoXY(29 - Length(Line3), 17);
+  Write(Line3);
+  if (Func3_arg_108 = 87) or (Func3_arg_108 = 82) then
   begin
     WaitForKey;
-    PutPic(global_var_296, 10, 138);
+    PutPic(PreMessageBackground, 10, 138);
   end;
 end;
 procedure ShowScrFile(Path: str_30);
@@ -414,7 +414,7 @@ begin
       GotoXY(2, 10);
       Str(Func18_arg_4, Func18_var_0);
       Str(Func18_arg_2, Func18_var_6);
-      Func3(
+      ShowMessage(
         87,
         '',
         (((Func18_var_6 + ' -ל ') + Func18_var_0) + ' ןיב רפסמ סנכה אנ'),
@@ -572,7 +572,7 @@ function Func24(Func24_arg_0: real): boolean;
 begin
   if (Func24_arg_0 > Money) then
   begin
-    Func3(
+    ShowMessage(
       87,
       '',
       '!ףסכ קיפסמ ךתושרב ןיא',
@@ -611,7 +611,7 @@ begin
   end
   else
   begin
-    Func3(87, '', '!הז םוכס ךתושרב ןיא', #7);
+    ShowMessage(87, '', '!הז םוכס ךתושרב ןיא', #7);
     Func26 := False;
   end;
 end;
@@ -627,7 +627,7 @@ begin
   end
   else
   begin
-    Func3(87, '', '!הז םוכס ךתושרב ןיא', #7);
+    ShowMessage(87, '', '!הז םוכס ךתושרב ןיא', #7);
     Func27 := False;
   end;
 end;
@@ -640,7 +640,7 @@ begin
   begin
     repeat
     begin
-      Func3(
+      ShowMessage(
         78,
         (('?תתל ןכומ התא' + WareName[1]) + 'ןוט המכ'),
         '',
@@ -657,7 +657,7 @@ begin
   begin
     repeat
     begin
-      Func3(
+      ShowMessage(
         78,
         (('?תתל ןכומ התא' + WareName[2]) + 'ןוט המכ'),
         '',
@@ -674,7 +674,7 @@ begin
   begin
     repeat
     begin
-      Func3(
+      ShowMessage(
         78,
         (('?תתל ןכומ התא' + WareName[3]) + 'ןוט המכ'),
         '',
@@ -691,7 +691,7 @@ begin
   begin
     repeat
     begin
-      Func3(
+      ShowMessage(
         78,
         '?תתל ןכומ התא ףסכ המכ',
         '',
@@ -859,7 +859,7 @@ var
   Func31_var_155: str_7;
   Func31_var_147: str_7;
   Func31_var_139: str_7;
-  Func31_var_103: str_35;
+  Func31_var_103: MessageLine;
   Func31_var_23: arr_record_1479674575002027080_10;
   Func31_var_22: boolean;
   Func31_var_16: real;
@@ -953,14 +953,14 @@ begin
     Func31_var_22 := True;
     repeat
     Func31_var_183 := (Random(30) + 1);
-    until (((((((((((((Func31_var_183 <> global_var_105) and (not ((Func31_var_183 in [1..2]) and (global_var_105 in [1..2]))))
- and (not ((Func31_var_183 in [3..4]) and (global_var_105 in [3..4])))) and (not ((Func31_var_183 in [5..6]) and
- (global_var_105 in [5..6])))) and (not ((Func31_var_183 in [7..8]) and (global_var_105 in [7..8])))) and (not ((Func31_var_183
- in [9..10]) and (global_var_105 in [9..10])))) and (not ((Func31_var_183 in [11..12]) and (global_var_105 in [11..12])))) and
- (not ((Func31_var_183 in [13..18]) and (global_var_105 in [13..18])))) and (not ((Func31_var_183 in [19..20]) and
- (global_var_105 in [19..20])))) and (not ((Func31_var_183 in [21..22]) and (global_var_105 in [21..22])))) and (not
- ((Func31_var_183 in [23..26]) and (global_var_105 in [23..26])))) and (not ((Func31_var_183 in [27..28]) and (global_var_105
- in [27..28])))) and (not ((Func31_var_183 in [29..30]) and (global_var_105 in [29..30]))));
+    until (((((((((((((Func31_var_183 <> LastNightEvent) and (not ((Func31_var_183 in [1..2]) and (LastNightEvent in [1..2]))))
+ and (not ((Func31_var_183 in [3..4]) and (LastNightEvent in [3..4])))) and (not ((Func31_var_183 in [5..6]) and
+ (LastNightEvent in [5..6])))) and (not ((Func31_var_183 in [7..8]) and (LastNightEvent in [7..8])))) and (not ((Func31_var_183
+ in [9..10]) and (LastNightEvent in [9..10])))) and (not ((Func31_var_183 in [11..12]) and (LastNightEvent in [11..12])))) and
+ (not ((Func31_var_183 in [13..18]) and (LastNightEvent in [13..18])))) and (not ((Func31_var_183 in [19..20]) and
+ (LastNightEvent in [19..20])))) and (not ((Func31_var_183 in [21..22]) and (LastNightEvent in [21..22])))) and (not
+ ((Func31_var_183 in [23..26]) and (LastNightEvent in [23..26])))) and (not ((Func31_var_183 in [27..28]) and (LastNightEvent
+ in [27..28])))) and (not ((Func31_var_183 in [29..30]) and (LastNightEvent in [29..30]))));
     if ((Money > 20000.0) and (Random(6) = 1)) then
     begin
       Func31_var_183 := 15;
@@ -1111,7 +1111,7 @@ begin
               begin
                 if (Func31_var_2 > 0) then
                 begin
-                  Func3(
+                  ShowMessage(
                     87,
                     ('ךנובשחמ וחקלנ לקש ' + Func31_var_139),
                     '.קנבב',
@@ -1120,7 +1120,7 @@ begin
                 end
                 else
                 begin
-                  Func3(
+                  ShowMessage(
                     87,
                     '.קנבב ךנובשחמ חקלנ ףסכה',
                     '',
@@ -1161,7 +1161,7 @@ begin
             if (Func31_var_165 = 1) then
             begin
               Func21_var_88 := True;
-              Func3(
+              ShowMessage(
                 87,
                 '...תרחמל',
                 '.שדח תווצ םע דבוע התא',
@@ -1177,11 +1177,11 @@ begin
                 Money
               ) then
               begin
-                Func3(87, '.ךתעצה תא לביק תווצה', '', '');
+                ShowMessage(87, '.ךתעצה תא לביק תווצה', '', '');
               end
               else
               begin
-                Func3(
+                ShowMessage(
                   87,
                   '.העצהל ברס תווצה',
                   'אצומ התאו םיימוי ורבע',
@@ -1415,7 +1415,7 @@ begin
     end;
   end
   until Func31_var_22;
-  global_var_105 := Func31_var_183;
+  LastNightEvent := Func31_var_183;
 end;
 procedure Func33;
 var
@@ -1445,7 +1445,7 @@ begin
   Func34_var_80 := 0;
   if (Money < Func34_arg_0) then
   begin
-    Func3(
+    ShowMessage(
       87,
       'ךל רשפאמ וניא ךפסכ',
       'תורוחס תינק',
@@ -1517,7 +1517,7 @@ begin
       end;
       if (Money < Func34_var_94) then
       begin
-        Func3(
+        ShowMessage(
           87,
           'ךל רשפאמ וניא ךפסכ',
           (WareName[Func34_var_92] + 'תונקל'),
@@ -1560,7 +1560,7 @@ function Func36(Func36_arg_2: real; Func36_arg_0: integer): boolean;
 begin
   if (Func36_arg_2 > Cargo[Func36_arg_0]) then
   begin
-    Func3(
+    ShowMessage(
       87,
       'הברה ךכ-לכ ךל ןיא',
       ('רוכמל' + WareName[Func36_arg_0]),
@@ -1576,7 +1576,7 @@ end;
 begin
   if (((Cargo[1] = 0) and (Cargo[2] = 0)) and (Cargo[3] = 0)) then
   begin
-    Func3(
+    ShowMessage(
       87,
       ' ',
       'רוכמל  הרוחס  ךל  ןיא',
@@ -1635,7 +1635,7 @@ begin
       end
       else
       begin
-        Func3(
+        ShowMessage(
           87,
           (('רוכמל' + WareName[Func35_var_92]) + 'ךל ןיא'),
           #7,
@@ -1685,7 +1685,7 @@ begin
     1:   begin
         if (Money <= 0) then
         begin
-          Func3(
+          ShowMessage(
             87,
             ' ',
             ('! דיקפהל ףסכ ךל ןיא' + ''),
@@ -1709,7 +1709,7 @@ begin
               begin
                 BankBalance := (BankBalance + Func37_var_0);
                 Money := (Money - Func37_var_0);
-                Func3(
+                ShowMessage(
                   87,
                   ' ',
                   'ףסכה תא לביק קנבה דיקפ',
@@ -1719,7 +1719,7 @@ begin
               end
               else
               begin
-                Func3(
+                ShowMessage(
                   87,
                   ' ',
                   ('! ףסכ הברה ךכ לכ ךל ןיא' + ''),
@@ -1752,13 +1752,13 @@ begin
                 Money := (Money + Func37_var_0);
                 if (not (Func37_var_0 = 0)) then
                 begin
-                  Func3(87, ' ', 'ףסכה תא תלביק', ' ');
+                  ShowMessage(87, ' ', 'ףסכה תא תלביק', ' ');
                 end;
                 Func37_var_86 := 1;
               end
               else
               begin
-                Func3(
+                ShowMessage(
                   87,
                   ' ',
                   ('! קנבב הזכ ףסכ םוכס ךל ןיא' + ''),
@@ -1771,7 +1771,7 @@ begin
         end
         else
         begin
-          Func3(
+          ShowMessage(
             87,
             ' ',
             ('! קנבב ףסכ ךל ןיא' + ''),
@@ -1962,7 +1962,7 @@ begin
     ShipDamage := (ShipDamage + Func43_var_0);
     if (Func44_arg_0 = 2) then
     begin
-      Func3(
+      ShowMessage(
         87,
         'םרגנ ,ףסונב',
         'יוושב קזנ הניפסל',
@@ -1971,7 +1971,7 @@ begin
     end
     else
     begin
-      Func3(
+      ShowMessage(
         87,
         'ךתניפס ,ךלזמ עורל',
         '.ברקה ידכ ךות העגפנ',
@@ -1990,7 +1990,7 @@ begin
   Func45_var_7 := Random(4);
   if ((Func45_var_7 < (Func43_arg_2 - Func43_var_98)) or (((Func43_arg_2 - Func43_var_98) <= 0) and (Random(6) = 1))) then
   begin
-    Func3(
+    ShowMessage(
       87,
       '- ךשוממ ברק רחאל',
       '! םיטריפה תא תסבה',
@@ -1999,7 +1999,7 @@ begin
     if (Random(3) = 1) then
     begin
       ShipCapacity := (ShipCapacity + 50);
-      Func3(
+      ShowMessage(
         87,
         'תניפס תא יבשב תחקל',
         'הניפסה תלוביקו ,םיה ידדוש',
@@ -2017,7 +2017,7 @@ begin
       end;
       Func43_var_6 := (5 * Int((Func43_var_6 / 5)));
       Str(Func43_var_6:1:0, Func43_var_92);
-      Func3(
+      ShowMessage(
         87,
         ' לש ןומטמ תאצמ',
         ('םתניפס לע לקש ' + Func43_var_92),
@@ -2032,7 +2032,7 @@ begin
     Str(Func43_arg_2, Func43_var_92);
     if (Func43_arg_2 = 0) then
     begin
-      Func3(
+      ShowMessage(
         87,
         ',רמשמ תוניפס תנגה אלל',
         'םיטריפה ידי לע תסבוה התא',
@@ -2043,7 +2043,7 @@ begin
     begin
       if (Func43_arg_2 = 1) then
       begin
-        Func3(
+        ShowMessage(
           87,
           'תניפס לע ורבגתה םיטריפה',
           'ךלש רמשמה',
@@ -2054,7 +2054,7 @@ begin
       begin
         if (Func43_arg_2 > 1) then
         begin
-          Func3(
+          ShowMessage(
             87,
             'תא וחצינ םיטריפה',
             ('ךלש רמשמה תוניפס ' + Func43_var_92),
@@ -2082,7 +2082,7 @@ begin
       end;
       Cargo[Func42_var_36] := (Cargo[Func42_var_36] - Trunc(Func43_var_0));
       Str(Trunc(Func43_var_0):1, Func42_var_24);
-      Func3(
+      ShowMessage(
         87,
         '     השק ברק ירחא',
         ' םיה ידדוש ךממ ובנג',
@@ -2104,7 +2104,7 @@ begin
         Func43_var_0 := Trunc(Func43_var_0);
         Money := (Money - Func43_var_0);
         Str(Func43_var_0:1:0, Func42_var_24);
-        Func3(
+        ShowMessage(
           87,
           (('םילקש ' + Func42_var_24) + ' ךממ ובנג םה'),
           '',
@@ -2123,7 +2123,7 @@ begin
         end;
         Str(Func43_var_0:1:0, Func43_var_92);
         ShipDamage := (ShipDamage + Func43_var_0);
-        Func3(
+        ShowMessage(
           87,
           'ךתניפס ,ךלזמ עורל',
           '.ברקה ידכ ךות העגפנ',
@@ -2187,7 +2187,7 @@ begin
         begin
           if (Func43_arg_0 > (0.5 * ShipCapacity)) then
           begin
-            Func3(
+            ShowMessage(
               87,
               'אלו ,ידמ הדבכ ךתניפס',
               'חורבל החילצה',
@@ -2198,7 +2198,7 @@ begin
           begin
             if (ShipDamage > 0) then
             begin
-              Func3(
+              ShowMessage(
                 87,
                 'בקע חורבל תחלצה אל',
                 'ךתניפסבש קזנה',
@@ -2207,7 +2207,7 @@ begin
             end
             else
             begin
-              Func3(
+              ShowMessage(
                 87,
                 'החילצה הריהמה םיטריפה תניפס',
                 'ךתניפס תא גישהל',
@@ -2219,7 +2219,7 @@ begin
         end
         else
         begin
-          Func3(87, '', '! !  םהמ  טלמהל  תחלצה', '');
+          ShowMessage(87, '', '! !  םהמ  טלמהל  תחלצה', '');
         end;
       end;
     3:   begin
@@ -2232,7 +2232,7 @@ begin
           Money
         ) then
         begin
-          Func3(
+          ShowMessage(
             87,
             'לבקל וטילחה םיה ידדוש',
             'ךתעצה תא',
@@ -2242,7 +2242,7 @@ begin
         end
         else
         begin
-          Func3(
+          ShowMessage(
             87,
             'תא םיחוד םיה ידדוש',
             '! ךתוא םיפקותו ךתעצה',
@@ -2318,7 +2318,7 @@ begin
     global_var_55 := 'לארשי';
   end;
   Delay(1500);
-  Func3(
+  ShowMessage(
     87,
     'תוקזח תוחורמ האצותכ',
     'תעגה ,טוונב תועטו',
@@ -2344,7 +2344,7 @@ begin
     end;
     if (Func42_var_0 or Func42_var_1) then
     begin
-      Func3(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
+      ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
       if ((StormCountryName = CurrentCountryName) or (StormCountryName = global_var_55)) then
       begin
         PutPic(StormWindow^, 0, 142);
@@ -2352,7 +2352,7 @@ begin
         if (Func8 > 10000) then
         begin
           Func28(142, Func42_var_36, Func42_var_24);
-          Func3(
+          ShowMessage(
             87,
             'ךתניפסמ ופטש םיהובגה םילגה',
             (((#46 + WareName[Func42_var_36]) + ' ןוט ') + Func42_var_24),
@@ -2363,7 +2363,7 @@ begin
         else
         begin
           Func28(144, Func42_var_36, Func42_var_24);
-          Func3(
+          ShowMessage(
             87,
             'ךתניפסל םרגנ הרעסה בקע',
             (('.ח"ש ' + Func42_var_24) + ' יוושב קזנ'),
@@ -2377,13 +2377,13 @@ begin
         if (global_var_81 > 16) then
         begin
           PutPic(ShoalWindow^, 0, 142);
-          Func3(
+          ShowMessage(
             87,
             'םיעורגה תוארה יאנת בקע',
             '.ןוטרש לע תילע - הלילב',
             ''
           );
-          Func3(
+          ShowMessage(
             87,
             'קזנ ךתניפסל םרגנ',
             (('.ח"ש ' + Func42_var_24) + ' יוושב'),
@@ -2395,7 +2395,7 @@ begin
           PutPic(DamagedWindow^, 0, 142);
           if Func42_var_0 then
           begin
-            Func3(
+            ShowMessage(
               87,
               'הקוזינה ךתניפסב העיסנה',
               (Func42_var_24 + '-ב קזנה תא הרימחה'),
@@ -2404,7 +2404,7 @@ begin
           end
           else
           begin
-            Func3(
+            ShowMessage(
               87,
               'קזנ ךתניפסל םרגנ',
               (('.ח"ש ' + Func42_var_24) + ' יוושב'),
@@ -2424,11 +2424,11 @@ begin
   begin
     if Func46(Func42_arg_4) then
     begin
-      Func3(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
+      ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
       PutPic(SinkingWindow^, 0, 142);
       WaitForKey;
       Func28(153, Func42_var_36, Func42_var_24);
-      Func3(
+      ShowMessage(
         87,
         'םיל ךילשהל תצלאנ',
         ((WareName[Func42_var_36] + 'ןוט ') + Func42_var_24),
@@ -2454,7 +2454,7 @@ begin
       );
       if (Random(2) = 1) then
       begin
-        Func3(
+        ShowMessage(
           87,
           (('תינמז רוגס ' + global_var_55) + ' למנ'),
           'דבכ לפרע בקע',
@@ -2465,14 +2465,14 @@ begin
       begin
         PutPic(StrikeWindow^, 0, 142);
         WaitForKey;
-        Func3(
+        ShowMessage(
           87,
           'םישובישו התיבש לשב',
           (global_var_55 + ' למנ ,הדובעב'),
           'רוגס '
         );
       end;
-      Func3(
+      ShowMessage(
         87,
         '',
         (global_var_44 + 'ל רוזחל ךילע'),
@@ -2503,7 +2503,7 @@ begin
   begin
     case Func42_var_34 of
       1..6:   begin
-          Func3(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
+          ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
           global_var_109 := True;
           Func43(Func40_var_1, Func42_arg_4);
         end;
@@ -2511,7 +2511,7 @@ begin
           Func48;
         end;
       9, 10:   begin
-          Func3(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
+          ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
           PutPic(DesertedWindow^, 0, 142);
           Func42_var_36 := 0;
           repeat
@@ -2561,9 +2561,9 @@ var
 procedure Func50(var Func50_arg_0: integer);
 var
   Func50_var_116: real;
-  Func50_var_80: str_35;
-  Func50_var_44: str_35;
-  Func50_var_8: str_35;
+  Line1: MessageLine;
+  Line2: MessageLine;
+  Line3: MessageLine;
   Func50_var_0: str_7;
 begin
   PutPic(GuardsWindow^, 0, 142);
@@ -2579,27 +2579,27 @@ begin
   Func50_var_116 := (5 * Int((Func50_var_116 / 5)));
   Str(Func50_var_116:1:0, Func50_var_0);
   GotoXY(1, 15);
-  Func50_var_8 := '? הצור התא תוניפס המכ';
+  Line3 := '? הצור התא תוניפס המכ';
   if (Func50_var_116 <= Money) then
   begin
-    Func50_var_44 := ('ח"ש ' + Func50_var_0);
+    Line2 := ('ח"ש ' + Func50_var_0);
     if (Func50_arg_0 = 0) then
     begin
-      Func50_var_80 := 'רמשמ תניפס לכ ריחמ';
+      Line1 := 'רמשמ תניפס לכ ריחמ';
     end
     else
     begin
-      Func50_var_80 := 'םישרוד רמשמה תוניפס ילעב';
+      Line1 := 'םישרוד רמשמה תוניפס ילעב';
       if ((StormCountryName = CurrentCountryName) or (StormCountryName = global_var_55)) then
       begin
-        Func50_var_44 := ('.רעוסה םיה לשב ,' + Func50_var_44);
+        Line2 := ('.רעוסה םיה לשב ,' + Line2);
       end
       else
       begin
-        Func50_var_44 := ('רבגומה ןוכיסה לשב ' + Func50_var_44);
+        Line2 := ('רבגומה ןוכיסה לשב ' + Line2);
       end;
     end;
-    Func3(78, Func50_var_80, Func50_var_44, Func50_var_8);
+    ShowMessage(78, Line1, Line2, Line3);
     repeat
     begin
       GotoXY(4, 17);
@@ -2611,7 +2611,7 @@ begin
   end
   else
   begin
-    Func3(
+    ShowMessage(
       78,
       'םלשל ףסכ ךל ןיא',
       'רמשמ תוניפסל',
@@ -2688,7 +2688,7 @@ begin
     );
     if Func40_var_172 then
     begin
-      Func3(78, '', '! !  ם ו ל ש ב   ת ע ג ה', '');
+      ShowMessage(78, '', '! !  ם ו ל ש ב   ת ע ג ה', '');
     end;
   end;
 end;
@@ -2743,7 +2743,7 @@ begin
     end;
     if ((not Func40_var_173) and ((global_var_81 + Func40_var_170) > 20)) then
     begin
-      Func3(
+      ShowMessage(
         87,
         'תרחואמ העשה',
         'עיגהל לכות אלו',
@@ -2808,7 +2808,7 @@ begin
   begin
     if (Func52_arg_0 > Money) then
     begin
-      Func3(
+      ShowMessage(
         87,
         '',
         'ףסכ הברה ךכ-לכ ךל ןיא',
@@ -2843,7 +2843,7 @@ begin
     Str(Func51_arg_0:1:0, Func51_var_0);
     if (Func51_arg_0 = 0) then
     begin
-      Func3(
+      ShowMessage(
         87,
         '',
         'ןיטולחל הניקת תעכ הניפסה',
@@ -2852,7 +2852,7 @@ begin
     end
     else
     begin
-      Func3(
+      ShowMessage(
         87,
         '',
         (('ח"ש ' + Func51_var_0) + ' ךסב קזנ ראשנ'),
@@ -2873,13 +2873,13 @@ begin
   Func33;
   if (Day = 7) then
   begin
-    Func3(
+    ShowMessage(
       87,
       '.ןורחאה רחסמה םוי והז',
       'םויה ףוסב רוכמל רוכז',
       ',ךתרוחס לכ תא'
     );
-    Func3(
+    ShowMessage(
       87,
       'רובצתש תודוקנהש ןויכמ',
       'םוכס יפ לע הנעבקת',
@@ -2972,7 +2972,7 @@ begin
         3:   begin
             if (global_var_81 > 16) then
             begin
-              Func3(
+              ShowMessage(
                 87,
                 'עוסנל ןתינ אל',
                 'תרחואמ הכ העשב',
@@ -2983,7 +2983,7 @@ begin
             begin
               if (ShipDamage > 1000) then
               begin
-                Func3(
+                ShowMessage(
                   87,
                   'וניא ךתניפסל םרגנש קזנה',
                   '.גילפהל ךל רשפאמ',
@@ -3002,7 +3002,7 @@ begin
         4:   begin
             if (ClosedBankDay = Day) then
             begin
-              Func3(87, '', 'םויה  רוגס  קנבה ', '');
+              ShowMessage(87, '', 'םויה  רוגס  קנבה ', '');
             end
             else
             begin
@@ -3013,7 +3013,7 @@ begin
             PutPic(StayWindow^, 0, 142);
             if (Day = 7) then
             begin
-              Func3(
+              ShowMessage(
                 78,
                 ',םיתסה רחסמה עובש',
                 'קחשמה םויסל  ───┘  שקה',
@@ -3031,7 +3031,7 @@ begin
             end
             else
             begin
-              Func3(
+              ShowMessage(
                 87,
                 'רוגס למנב םינוקיתה ףיצר',
                 'ןיתמהל ץלאת - םויה',
@@ -3045,7 +3045,7 @@ begin
     if ((Day < 7) and Func53) then
     begin
       Day := 7;
-      Func3(
+      ShowMessage(
         87,
         'תא ןקתל ךתורשפאב ןיא',
         '-ךתניפסל םרגנש קזנה',
@@ -3077,12 +3077,12 @@ begin
   ShowScrFile((BasePath + 'mifne.scr'));
   WaitForKey;
   ShowScrFile((BasePath + 'credits.scr'));
-  BaseWarePrice[1] := 3000;
-  BaseWarePrice[2] := 500;
-  BaseWarePrice[3] := 50;
-  WareName[1] := ' תשוחנ ';
-  WareName[2] := ' םיתיז ';
-  WareName[3] := ' הטיח ';
+  BaseWarePrice[Copper] := 3000;
+  BaseWarePrice[Olives] := 500;
+  BaseWarePrice[Wheat] := 50;
+  WareName[Copper] := ' תשוחנ ';
+  WareName[Olives] := ' םיתיז ';
+  WareName[Wheat] := ' הטיח ';
   DayName[1] := 'ןושאר';
   DayName[2] := '  ינש';
   DayName[3] := 'ישילש';
@@ -3185,12 +3185,12 @@ begin
   ShipDamage := 0;
   ClosedRepairDay := (Random(7) + 1);
   ClosedBankDay := (Random(7) + 1);
-  Cargo[1] := 0;
-  Cargo[2] := 0;
-  Cargo[3] := 0;
+  Cargo[Copper] := 0;
+  Cargo[Olives] := 0;
+  Cargo[Wheat] := 0;
   ClosedBankDay := 0;
   Money := 5000;
-  global_var_105 := 0;
+  LastNightEvent := 0;
   WaitForKey;
 end;
 procedure Func56(Func56_arg_0: real);
@@ -3344,7 +3344,7 @@ begin
     Func56((Money + BankBalance));
     GraphColorMode;
     GraphBackground(1);
-    Func3(
+    ShowMessage(
       78,
       'ןינועמ התא םאה',
       '(ל/כ) ? ףסונ קחשמב',
