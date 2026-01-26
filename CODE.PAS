@@ -1,5 +1,5 @@
-
 function GetPressedKey: char; forward;
+
 procedure WaitForKey;
 var
   PressedKey: char;
@@ -8,11 +8,12 @@ begin
   PressedKey := GetPressedKey;
   until ((PressedKey = #13) or (PressedKey = #27)) and not KeyPressed;
 end;
+
 procedure ShowMessage(
   Func3_arg_108: byte;
-  Line1: MessageLine;
-  Line2: MessageLine;
-  Line3: MessageLine
+  Line1: TMessageLine;
+  Line2: TMessageLine;
+  Line3: TMessageLine
 );
 begin
   GetPic(PreMessageBackground, 10, 138 - 29, 10 + 221, 138);
@@ -29,6 +30,7 @@ begin
     PutPic(PreMessageBackground, 10, 138);
   end;
 end;
+
 procedure ShowScrFile(Path: str_30);
 var
   ScrFile: file;
@@ -47,6 +49,7 @@ begin
     Dispose(Contents);
   end;
 end;
+
 function LoadWinFile(FileName: str_30): PWinBuffer;
 var
   WinFile: file;
@@ -67,6 +70,7 @@ begin
   GotoXY(1, 24);
   LoadWinFile := Contents;
 end;
+
 function LoadSgnFile(FileName: str_30): PSgnBuffer;
 var
   SgnFile: file;
@@ -90,6 +94,7 @@ begin
   end;
   LoadSgnFile := Contents;
 end;
+
 function LoadScrFile(Func7_arg_0: str_30): PScrBuffer;
 var
   ScrFile: file;
@@ -108,6 +113,7 @@ begin
   GotoXY(1, 24);
   LoadScrFile := Contents;
 end;
+
 function Func8: real;
 var
   Func8_var_6: integer;
@@ -132,33 +138,37 @@ begin
   end;
   Func9 := Func9_var_0;
 end;
-function Func10(Func10_arg_0: real): str_15;
+
+function ToStrWithCommas(Func10_arg_0: real): str_15;
 var
   Func10_var_2: str_15;
   Func10_var_0: integer;
-function Func11(Func11_arg_0: real): str_15;
-begin
-  Str(Func11_arg_0:1:0, Func10_var_2);
-  for Func10_var_0 := 1 to 2 do
+
+  function ZeroPad3(Func11_arg_0: real): str_15;
   begin
-    if (Length(Func10_var_2) < 3) then
+    Str(Func11_arg_0:1:0, Func10_var_2);
+    for Func10_var_0 := 1 to 2 do
     begin
-      Func10_var_2 := (#48 + Func10_var_2);
+      if Length(Func10_var_2) < 3 then
+      begin
+        Func10_var_2 := '0' + Func10_var_2;
+      end;
     end;
+    ZeroPad3 := Func10_var_2;
   end;
-  Func11 := Func10_var_2;
-end;
+
 begin
-  if (Func10_arg_0 <= 999) then
+  if Func10_arg_0 <= 999 then
   begin
     Str(Func10_arg_0:1:0, Func10_var_2);
-    Func10 := Func10_var_2;
+    ToStrWithCommas := Func10_var_2;
   end
   else
   begin
-    Func10 := ((Func10(Int((Func10_arg_0 / 1000))) + ',') + Func11((1000 * Frac((Func10_arg_0 / 1000)))));
+    ToStrWithCommas := ToStrWithCommas(Int(Func10_arg_0 / 1000)) + ',' + ZeroPad3(1000 * Frac(Func10_arg_0 / 1000));
   end;
 end;
+
 procedure Func12(
   Func12_arg_8: integer;
   var Func12_arg_4: integer;
@@ -179,6 +189,7 @@ begin
     end;
   end;
 end;
+
 procedure Func13;
 begin
   if (StormCountryName = ' ') then
@@ -193,6 +204,7 @@ begin
   end;
   WaitForKey;
 end;
+
 procedure ShowHelpScreen;
 var
   CurrentScreenContents: PScrBuffer;
@@ -230,6 +242,7 @@ begin
   GotoXY(CurrentX, CurrentY);
   Dispose(CurrentScreenContents);
 end;
+
 function GetPressedKey;
 var
   PressedKey: char;
@@ -244,23 +257,26 @@ begin
   end;
   GetPressedKey := PressedKey;
 end;
-function CountryNameToIndex(CountryName: str_10): integer;
+
+function CountryNameToIndex(CountryName: TCountryName): integer;
 begin
   if CountryName = 'היכרות' then
-    CountryNameToIndex := 1
+    CountryNameToIndex := Turkey
   else if CountryName = 'לארשי' then
-    CountryNameToIndex := 2
+    CountryNameToIndex := Israel
   else if CountryName = 'םירצמ' then
-    CountryNameToIndex := 3;
+    CountryNameToIndex := Egypt;
 end;
-function CountryIndexToName(CountryIndex: integer): str_10;
+
+function CountryIndexToName(CountryIndex: integer): TCountryName;
 begin
   case CountryIndex of
-    1: CountryIndexToName := 'היכרות';
-    2: CountryIndexToName := 'לארשי';
-    3: CountryIndexToName := 'םירצמ';
+    Turkey: CountryIndexToName := 'היכרות';
+    Israel: CountryIndexToName := 'לארשי';
+    Egypt: CountryIndexToName := 'םירצמ';
   end;
 end;
+
 function Func17(
   Func17_arg_2: arr_record_1479674575002027080_10;
   Func17_arg_0: integer
@@ -321,6 +337,7 @@ begin
   until ((Func17_var_1 = #13) or (Func17_var_1 = #27));
   Func17 := Func17_var_802;
 end;
+
 function Func18(
   Func18_arg_4: integer;
   Func18_arg_2: integer;
@@ -427,6 +444,7 @@ begin
   until Func18_var_24;
   Func18 := Func18_var_25;
 end;
+
 function Func19(
   Func19_arg_4: integer;
   Func19_arg_2: integer;
@@ -435,6 +453,7 @@ function Func19(
 begin
   Func19 := Trunc(Func18(Func19_arg_4, Func19_arg_2, Func19_arg_0));
 end;
+
 function InputYesNo: boolean;
 var
   Func20_var_9: boolean;
@@ -491,17 +510,18 @@ begin
   until ((Func20_var_8 = #13) and (Func20_var_4 > 0));
   InputYesNo := Func20_var_9;
 end;
-procedure Func21;
+
+procedure PlayDay;
 var
-  Func21_var_109: integer;
-  Func21_var_107: integer;
-  Func21_var_105: integer;
-  Func21_var_103: integer;
-  Func21_var_101: integer;
-  Func21_var_99: integer;
-  Func21_var_97: integer;
-  Func21_var_95: integer;
-  Func21_var_93: integer;
+  PriceCopperIsrael: integer;
+  PriceCopperTurkey: integer;
+  PriceCopperEgypt: integer;
+  PriceOlivesIsrael: integer;
+  PriceOlivesTurkey: integer;
+  PriceOlivesEgypt: integer;
+  PriceWheatIsrael: integer;
+  PriceWheatTurkey: integer;
+  PriceWheatEgypt: integer;
   Func21_var_91: integer;
   Func21_var_89: integer;
   Func21_var_88: boolean;
@@ -509,766 +529,667 @@ var
   Func21_var_6: integer;
   Func21_var_4: integer;
   Func21_unused_0: array[1..4] of byte;
-procedure Func22;
-begin
-  GotoXY(73, 1);
-  Write(CurrentCountryName:6);
-  GotoXY(32, 3);
-  Write(DayName[Day]);
-  GotoXY(32, 5);
-  Write(global_var_81:2);
-  Write(':00');
-  GotoXY(32, 17);
-  Write(' ':8);
-  GotoXY(34, 17);
-  if (Money >= 10000.0) then
+
+  procedure ShowHUD;
   begin
-    GotoXY(33, 17);
-  end;
-  if (Money >= 100000.0) then
-  begin
+    GotoXY(73, 1);
+    Write(CurrentCountryName:6);
+    GotoXY(32, 3);
+    Write(DayName[Day]);
+    GotoXY(32, 5);
+    Write(global_var_81:2);
+    Write(':00');
     GotoXY(32, 17);
+    Write(' ':8);
+    GotoXY(34, 17);
+    if (Money >= 10000.0) then
+      GotoXY(33, 17);
+    if (Money >= 100000.0) then
+      GotoXY(32, 17);
+    Write(ToStrWithCommas(Money):5);
+    GotoXY(32, 9);
+    Write(Cargo[Copper]:3);
+    GotoXY(32, 11);
+    Write(Cargo[Olives]:3);
+    GotoXY(32, 13);
+    Write(' ':5);
+    GotoXY(32, 13);
+    Write(Cargo[Wheat]:3);
+    GotoXY(30, 21);
+    Write(PriceCopperTurkey:4);
+    GotoXY(30, 23);
+    Write(PriceOlivesTurkey:4);
+    GotoXY(30, 25);
+    Write(PriceWheatTurkey:4);
+    GotoXY(16, 21);
+    Write(PriceCopperIsrael:4);
+    GotoXY(16, 23);
+    Write(PriceOlivesIsrael:4);
+    GotoXY(16, 25);
+    Write(PriceWheatIsrael:4);
+    GotoXY(2, 21);
+    Write(PriceCopperEgypt:4);
+    GotoXY(2, 23);
+    Write(PriceOlivesEgypt:4);
+    GotoXY(2, 25);
+    Write(PriceWheatEgypt:4);
   end;
-  Write(Func10(Money):5);
-  GotoXY(32, 9);
-  Write(Cargo[1]:3);
-  GotoXY(32, 11);
-  Write(Cargo[2]:3);
-  GotoXY(32, 13);
-  Write(' ':5);
-  GotoXY(32, 13);
-  Write(Cargo[3]:3);
-  GotoXY(30, 21);
-  Write(Func21_var_107:4);
-  GotoXY(30, 23);
-  Write(Func21_var_101:4);
-  GotoXY(30, 25);
-  Write(Func21_var_95:4);
-  GotoXY(16, 21);
-  Write(Func21_var_109:4);
-  GotoXY(16, 23);
-  Write(Func21_var_103:4);
-  GotoXY(16, 25);
-  Write(Func21_var_97:4);
-  GotoXY(2, 21);
-  Write(Func21_var_105:4);
-  GotoXY(2, 23);
-  Write(Func21_var_99:4);
-  GotoXY(2, 25);
-  Write(Func21_var_93:4);
-end;
-function Func23(Func23_arg_0: byte): boolean;
-begin
-  if (Func23_arg_0 = 26) then
+
+  function Func23(Func23_arg_0: byte): boolean;
   begin
-    Func23 := True;
-  end
-  else
-  begin
-    Func23 := False;
+    if Func23_arg_0 = 26 then
+      Func23 := True
+    else
+      Func23 := False;
   end;
-end;
-function Func24(Func24_arg_0: real): boolean;
-begin
-  if (Func24_arg_0 > Money) then
+
+  function Func24(Func24_arg_0: real): boolean;
   begin
-    ShowMessage(
-      87,
-      '',
-      '!ףסכ קיפסמ ךתושרב ןיא',
-      #7
-    );
-    Func24 := True;
-  end
-  else
-  begin
-    Func24 := False;
-  end;
-end;
-function Func25(
-  var Func25_arg_12: integer;
-  var Func25_arg_8: integer;
-  var Func25_arg_4: integer;
-  var Func25_arg_0: real
-): boolean;
-var
-  Func25_var_28: integer;
-  Func25_var_26: integer;
-  Func25_var_24: integer;
-  Func25_var_18: real;
-  Func25_var_12: real;
-  Func25_var_6: real;
-  Func25_unused_0: array[1..6] of byte;
-function Func26(Func26_arg_6: real; Func26_arg_0: real): boolean;
-begin
-  if (Func26_arg_6 < 0) then
-  begin
-    Func26_arg_6 := 0;
-  end;
-  if (Func26_arg_6 <= Func26_arg_0) then
-  begin
-    Func26 := True;
-  end
-  else
-  begin
-    ShowMessage(87, '', '!הז םוכס ךתושרב ןיא', #7);
-    Func26 := False;
-  end;
-end;
-function Func27(var Func27_arg_6: integer; Func27_arg_0: real): boolean;
-begin
-  if (Func27_arg_6 < 0) then
-  begin
-    Func27_arg_6 := 0;
-  end;
-  if (Func27_arg_6 <= Func27_arg_0) then
-  begin
-    Func27 := True;
-  end
-  else
-  begin
-    ShowMessage(87, '', '!הז םוכס ךתושרב ןיא', #7);
-    Func27 := False;
-  end;
-end;
-begin
-  Func25_var_28 := 0;
-  Func25_var_26 := 0;
-  Func25_var_24 := 0;
-  Func25_var_18 := 0;
-  if (Func25_arg_12 > 0) then
-  begin
-    repeat
+    if Func24_arg_0 > Money then
     begin
-      ShowMessage(
-        78,
-        (('?תתל ןכומ התא' + WareName[1]) + 'ןוט המכ'),
-        '',
-        ''
-      );
-      GotoXY(20, 16);
-      repeat
-      Func25_var_28 := Trunc(Func18(0, 0, 8));
-      until (Func25_var_28 >= 0);
+      ShowMessage(87, '', '!ףסכ קיפסמ ךתושרב ןיא', #7);
+      Func24 := True;
     end
-    until ((Func25_var_28 >= 0) and Func27(Func25_var_28, Func25_arg_12));
+    else
+      Func24 := False;
   end;
-  if (Func25_arg_8 > 0) then
-  begin
-    repeat
+
+  function Func25(
+    var Func25_arg_12: integer;
+    var Func25_arg_8: integer;
+    var Func25_arg_4: integer;
+    var Func25_arg_0: real
+  ): boolean;
+  var
+    Func25_var_28: integer;
+    Func25_var_26: integer;
+    Func25_var_24: integer;
+    Func25_var_18: real;
+    Func25_var_12: real;
+    Func25_var_6: real;
+    Func25_unused_0: array[1..6] of byte;
+
+    function Func26(Func26_arg_6: real; Func26_arg_0: real): boolean;
     begin
-      ShowMessage(
-        78,
-        (('?תתל ןכומ התא' + WareName[2]) + 'ןוט המכ'),
-        '',
-        ''
-      );
-      GotoXY(20, 16);
-      repeat
-      Func25_var_26 := Trunc(Func18(0, 0, 8));
-      until (Func25_var_26 >= 0);
-    end
-    until Func27(Func25_var_26, Func25_arg_8);
-  end;
-  if (Func25_arg_4 > 0) then
-  begin
-    repeat
-    begin
-      ShowMessage(
-        78,
-        (('?תתל ןכומ התא' + WareName[3]) + 'ןוט המכ'),
-        '',
-        ''
-      );
-      GotoXY(20, 16);
-      repeat
-      Func25_var_24 := Trunc(Func18(0, 0, 8));
-      until (Func25_var_24 >= 0);
-    end
-    until Func27(Func25_var_24, Func25_arg_4);
-  end;
-  if (Func25_arg_0 > (Func8 / 10)) then
-  begin
-    repeat
-    begin
-      ShowMessage(
-        78,
-        '?תתל ןכומ התא ףסכ המכ',
-        '',
-        ''
-      );
-      GotoXY(20, 16);
-      repeat
-      Func25_var_18 := Trunc(Func18(0, 0, 8));
-      until (Func25_var_18 >= 0);
-    end
-    until Func26(Func25_var_18, Func25_arg_0);
-  end;
-  Func25_var_12 := ((((Func25_var_28 * BaseWarePrice[1]) + (Func25_var_26 * BaseWarePrice[2])) + (Func25_var_24 *
- BaseWarePrice[3])) + Func25_var_18);
-  Func25_var_6 := ((Func8 + Func25_arg_0) / (Random(6) + 4));
-  if (Func25_var_12 > Func25_var_6) then
-  begin
-    Func25_arg_0 := (Func25_arg_0 - Func25_var_18);
-    Func25_arg_12 := (Func25_arg_12 - Func25_var_28);
-    Func25_arg_8 := (Func25_arg_8 - Func25_var_26);
-    Func25_arg_4 := (Func25_arg_4 - Func25_var_24);
-    Func25 := True;
-  end
-  else
-  begin
-    Func25 := False;
-  end;
-end;
-procedure Func28(
-  Func28_arg_8: byte;
-  var Func28_arg_4: integer;
-  var Func28_arg_0: str_7
-);
-var
-  Func28_var_8: boolean;
-  Func28_var_6: integer;
-  Func28_var_4: integer;
-  Func28_var_2: integer;
-  Func28_var_0: integer;
-begin
-  Func28_var_0 := 0;
-  Func28_var_8 := False;
-  if (Func28_arg_8 = 142) then
-  begin
-    for Func28_var_6 := 1 to 3 do
-    begin
-      if ((not Func28_var_8) and (Cargo[Func28_var_6] > 2)) then
-      begin
-        Func28_var_0 := Trunc(
-          (((20.0 + Random(21)) / 100) * Cargo[Func28_var_6])
-        );
-        if (Func28_var_0 < 1) then
-        begin
-          Func28_var_0 := 1;
-        end;
-        Cargo[Func28_var_6] := (Cargo[Func28_var_6] - Ord(Func28_var_0));
-        Func28_arg_4 := Func28_var_6;
-        Func28_var_8 := True;
-      end;
-    end;
-  end
-  else
-  begin
-    if (Func28_arg_8 = 153) then
-    begin
-      if (Func9 <= (3 * ShipCapacity)) then
-      begin
-        Func28(142, Func28_arg_4, Func28_arg_0);
-        Val(Func28_arg_0, Func28_var_0, Func28_var_6);
-      end
+      if Func26_arg_6 < 0 then
+        Func26_arg_6 := 0;
+      if Func26_arg_6 <= Func26_arg_0 then
+        Func26 := True
       else
       begin
-        Func28_arg_4 := 1;
-        if (Cargo[2] > Cargo[1]) then
+        ShowMessage(87, '', '!הז םוכס ךתושרב ןיא', #7);
+        Func26 := False;
+      end;
+    end;
+
+    function Func27(var Func27_arg_6: integer; Func27_arg_0: real): boolean;
+    begin
+      if Func27_arg_6 < 0 then
+        Func27_arg_6 := 0;
+
+      if Func27_arg_6 <= Func27_arg_0 then
+        Func27 := True
+      else
+      begin
+        ShowMessage(87, '', '!הז םוכס ךתושרב ןיא', #7);
+        Func27 := False;
+      end;
+    end;
+
+  begin
+    Func25_var_28 := 0;
+    Func25_var_26 := 0;
+    Func25_var_24 := 0;
+    Func25_var_18 := 0;
+    if Func25_arg_12 > 0 then
+    begin
+      repeat
+      begin
+        ShowMessage(78,'?תתל ןכומ התא' + WareName[Copper] + 'ןוט המכ', '', '');
+        GotoXY(20, 16);
+        repeat
+          Func25_var_28 := Trunc(Func18(0, 0, 8));
+        until Func25_var_28 >= 0;
+      end
+      until (Func25_var_28 >= 0) and Func27(Func25_var_28, Func25_arg_12);
+    end;
+    if Func25_arg_8 > 0 then
+    begin
+      repeat
+      begin
+        ShowMessage(78,'?תתל ןכומ התא' + WareName[Olives] + 'ןוט המכ', '', '');
+        GotoXY(20, 16);
+        repeat
+          Func25_var_26 := Trunc(Func18(0, 0, 8));
+        until Func25_var_26 >= 0;
+      end
+      until Func27(Func25_var_26, Func25_arg_8);
+    end;
+    if Func25_arg_4 > 0 then
+    begin
+      repeat
+      begin
+        ShowMessage(78, (('?תתל ןכומ התא' + WareName[Wheat]) + 'ןוט המכ'), '', '');
+        GotoXY(20, 16);
+        repeat
+          Func25_var_24 := Trunc(Func18(0, 0, 8));
+        until Func25_var_24 >= 0;
+      end
+      until Func27(Func25_var_24, Func25_arg_4);
+    end;
+    if Func25_arg_0 > (Func8 / 10) then
+    begin
+      repeat
+      begin
+        ShowMessage(78, '?תתל ןכומ התא ףסכ המכ', '', '');
+        GotoXY(20, 16);
+        repeat
+          Func25_var_18 := Trunc(Func18(0, 0, 8));
+        until Func25_var_18 >= 0;
+      end
+      until Func26(Func25_var_18, Func25_arg_0);
+    end;
+    Func25_var_12 := Func25_var_28 * BaseWarePrice[Copper] + Func25_var_26 * BaseWarePrice[Olives] +
+        Func25_var_24 * BaseWarePrice[Wheat] + Func25_var_18;
+    Func25_var_6 := (Func8 + Func25_arg_0) / (Random(6) + 4);
+    if Func25_var_12 > Func25_var_6 then
+    begin
+      Func25_arg_0 := Func25_arg_0 - Func25_var_18;
+      Func25_arg_12 := Func25_arg_12 - Func25_var_28;
+      Func25_arg_8 := Func25_arg_8 - Func25_var_26;
+      Func25_arg_4 := Func25_arg_4 - Func25_var_24;
+      Func25 := True;
+    end
+    else
+      Func25 := False;
+  end;
+
+  procedure Func28(
+    Func28_arg_8: byte;
+    var Func28_arg_4: integer;
+    var Func28_arg_0: str_7
+  );
+  var
+    Func28_var_8: boolean;
+    Func28_var_6: integer;
+    Func28_var_4: integer;
+    Func28_var_2: integer;
+    Func28_var_0: integer;
+  begin
+    Func28_var_0 := 0;
+    Func28_var_8 := False;
+    if (Func28_arg_8 = 142) then
+    begin
+      for Func28_var_6 := 1 to 3 do
+      begin
+        if ((not Func28_var_8) and (Cargo[Func28_var_6] > 2)) then
         begin
-          Func28_arg_4 := 2;
-        end;
-        if (Cargo[3] > Cargo[Func28_arg_4]) then
-        begin
-          Func28_arg_4 := 3;
-        end;
-        Func28_var_0 := (Func9 - (3 * ShipCapacity));
-        if (Func28_var_0 >= Cargo[Func28_arg_4]) then
-        begin
-          Func28_var_0 := Cargo[Func28_arg_4];
-          Cargo[Func28_arg_4] := 0;
-        end
-        else
-        begin
-          Cargo[Func28_arg_4] := (Cargo[Func28_arg_4] - Ord(Func28_var_0));
-          Func28(142, Func28_var_4, Func28_arg_0);
-          Val(Func28_arg_0, Func28_var_2, Func28_var_6);
-          if (Func28_var_4 = Func28_arg_4) then
+          Func28_var_0 := Trunc(
+            (((20.0 + Random(21)) / 100) * Cargo[Func28_var_6])
+          );
+          if (Func28_var_0 < 1) then
           begin
-            Func28_var_0 := (Func28_var_0 + Func28_var_2);
-          end
-          else
-          begin
-            Cargo[Func28_var_4] := (Cargo[Func28_var_4] + Func28_var_2);
+            Func28_var_0 := 1;
           end;
+          Cargo[Func28_var_6] := (Cargo[Func28_var_6] - Ord(Func28_var_0));
+          Func28_arg_4 := Func28_var_6;
+          Func28_var_8 := True;
         end;
       end;
     end
     else
     begin
-      if (Func28_arg_8 = 139) then
+      if (Func28_arg_8 = 153) then
       begin
-        Func28_var_0 := (10 * Trunc((Money / (Random(40) + 40))));
-        Money := (Money - Func28_var_0);
-      end
-      else
-      begin
-        if (Func28_arg_8 = 144) then
+        if (Func9 <= (3 * ShipCapacity)) then
         begin
-          Func28_var_0 := (10 * Trunc(((Money + Func8) / (Random(30) + 50))));
-          if (Func28_var_0 < 100) then
+          Func28(142, Func28_arg_4, Func28_arg_0);
+          Val(Func28_arg_0, Func28_var_0, Func28_var_6);
+        end
+        else
+        begin
+          Func28_arg_4 := 1;
+          if (Cargo[Olives] > Cargo[Copper]) then
           begin
-            Func28_var_0 := 100;
+            Func28_arg_4 := 2;
           end;
-          ShipDamage := (ShipDamage + Func28_var_0);
-        end;
-      end;
-    end;
-  end;
-  Str(Func28_var_0, Func28_arg_0);
-end;
-procedure Func29;
-begin
-  Func21_var_109 := ((BaseWarePrice[1] - 500) + (Random(11) * 100));
-  Func21_var_103 := ((BaseWarePrice[2] - 150) + (Random(7) * 50));
-  Func21_var_97 := ((BaseWarePrice[3] - 15) + (Random(8) * 5));
-  Func21_var_107 := ((BaseWarePrice[1] - 500) + (Random(11) * 100));
-  Func21_var_101 := ((BaseWarePrice[2] - 150) + (Random(7) * 50));
-  Func21_var_95 := ((BaseWarePrice[3] - 15) + (Random(8) * 5));
-  Func21_var_105 := ((BaseWarePrice[1] - 500) + (Random(11) * 100));
-  Func21_var_99 := ((BaseWarePrice[2] - 150) + (Random(7) * 50));
-  Func21_var_93 := ((BaseWarePrice[3] - 15) + (Random(8) * 5));
-end;
-procedure Func30(var Func30_arg_0: str_10);
-var
-  Func30_unused_0: array[1..2] of byte;
-begin
-  if ((Random(8) < 3) and (Day <> 1)) then
-  begin
-    Func30_arg_0 := CountryIndexToName((Random(3) + 1));
-  end
-  else
-  begin
-    Func30_arg_0 := ' ';
-  end;
-end;
-procedure Func31;
-var
-  Func31_var_183: integer;
-  Func31_var_181: integer;
-  Func31_var_179: integer;
-  Func31_var_177: integer;
-  Func31_var_175: integer;
-  Func31_var_173: integer;
-  Func31_var_171: integer;
-  Func31_var_169: integer;
-  Func31_var_167: integer;
-  Func31_var_165: integer;
-  Func31_var_163: integer;
-  Func31_var_155: str_7;
-  Func31_var_147: str_7;
-  Func31_var_139: str_7;
-  Func31_var_103: MessageLine;
-  Func31_var_23: arr_record_1479674575002027080_10;
-  Func31_var_22: boolean;
-  Func31_var_16: real;
-  Func31_var_10: real;
-  Func31_var_4: array[1..3] of integer;
-  Func31_var_2: integer;
-  Func31_var_0: integer;
-procedure Func32(
-  Func32_arg_6: integer;
-  Func32_arg_4: integer;
-  Func32_arg_2: integer;
-  Func32_arg_0: integer
-);
-var
-  Func32_var_8: str_6;
-  Func32_var_0: str_7;
-begin
-  if (Func32_arg_6 = 1) then
-  begin
-    Func32_var_8 := '-ל ץפק';
-  end
-  else
-  begin
-    Func32_var_8 := '-ל דרי';
-  end;
-  Str(Func32_arg_2, Func32_var_0);
-  case Func32_arg_4 of
-    1:   begin
-        case Func32_arg_0 of
-          1:   begin
-              Func21_var_107 := Func32_arg_2;
-            end;
-          2:   begin
-              Func21_var_101 := Func32_arg_2;
-            end;
-          3:   begin
-              Func21_var_95 := Func32_arg_2;
-            end;
-        end;
-        GotoXY(7, (2 + (21 * (Func32_arg_6 - 1))));
-        Writeln(
-          'היכרותב' + WareName[Func32_arg_0] + '' + 'ה ריחמ':27
-        );
-        GotoXY(7, (3 + (21 * (Func32_arg_6 - 1))));
-        Writeln('!!םילקש ' + Func32_var_0 + Func32_var_8:25);
-      end;
-    2:   begin
-        case Func32_arg_0 of
-          1:   begin
-              Func21_var_109 := Func32_arg_2;
-            end;
-          2:   begin
-              Func21_var_103 := Func32_arg_2;
-            end;
-          3:   begin
-              Func21_var_97 := Func32_arg_2;
-            end;
-        end;
-        GotoXY(7, (2 + (21 * (Func32_arg_6 - 1))));
-        Writeln(
-          'לארשיב' + WareName[Func32_arg_0] + '' + 'ה ריחמ':27
-        );
-        GotoXY(7, (3 + (21 * (Func32_arg_6 - 1))));
-        Writeln('!!םילקש ' + Func32_var_0 + Func32_var_8:25);
-      end;
-    3:   begin
-        case Func32_arg_0 of
-          1:   begin
-              Func21_var_105 := Func32_arg_2;
-            end;
-          2:   begin
-              Func21_var_99 := Func32_arg_2;
-            end;
-          3:   begin
-              Func21_var_93 := Func32_arg_2;
-            end;
-        end;
-        GotoXY(7, (2 + (21 * (Func32_arg_6 - 1))));
-        Writeln(
-          'םירצמב' + WareName[Func32_arg_0] + '' + 'ה ריחמ':27
-        );
-        GotoXY(7, (3 + (21 * (Func32_arg_6 - 1))));
-        Writeln('!!םילקש ' + Func32_var_0 + Func32_var_8:25);
-      end;
-  end;
-  WaitForKey;
-end;
-begin
-  repeat
-  begin
-    Func31_var_22 := True;
-    repeat
-    Func31_var_183 := (Random(30) + 1);
-    until (((((((((((((Func31_var_183 <> LastNightEvent) and (not ((Func31_var_183 in [1..2]) and (LastNightEvent in [1..2]))))
- and (not ((Func31_var_183 in [3..4]) and (LastNightEvent in [3..4])))) and (not ((Func31_var_183 in [5..6]) and
- (LastNightEvent in [5..6])))) and (not ((Func31_var_183 in [7..8]) and (LastNightEvent in [7..8])))) and (not ((Func31_var_183
- in [9..10]) and (LastNightEvent in [9..10])))) and (not ((Func31_var_183 in [11..12]) and (LastNightEvent in [11..12])))) and
- (not ((Func31_var_183 in [13..18]) and (LastNightEvent in [13..18])))) and (not ((Func31_var_183 in [19..20]) and
- (LastNightEvent in [19..20])))) and (not ((Func31_var_183 in [21..22]) and (LastNightEvent in [21..22])))) and (not
- ((Func31_var_183 in [23..26]) and (LastNightEvent in [23..26])))) and (not ((Func31_var_183 in [27..28]) and (LastNightEvent
- in [27..28])))) and (not ((Func31_var_183 in [29..30]) and (LastNightEvent in [29..30]))));
-    if ((Money > 20000.0) and (Random(6) = 1)) then
-    begin
-      Func31_var_183 := 15;
-    end;
-    if ((Money > 45000.0) and (Random(6) = 1)) then
-    begin
-      Func31_var_183 := 15;
-    end;
-    case Func31_var_183 of
-      1..2:   begin
-          PutPic(CopperUpScreen^, 0, 199);
-          Func31_var_181 := (Random(3) + 1);
-          Func31_var_179 := ((BaseWarePrice[1] + 1100) + (100 * Random(5)));
-          Func32(1, Func31_var_181, Func31_var_179, 1);
-        end;
-      3..4:   begin
-          PutPic(OlivesUpScreen^, 0, 199);
-          Func31_var_181 := (Random(3) + 1);
-          Func31_var_179 := ((BaseWarePrice[2] + 200) + (50 * Random(4)));
-          Func32(1, Func31_var_181, Func31_var_179, 2);
-        end;
-      5..6:   begin
-          PutPic(WheatUpScreen^, 0, 199);
-          Func31_var_181 := (Random(3) + 1);
-          Func31_var_179 := ((BaseWarePrice[3] + 20) + (Random(5) * 5));
-          Func32(1, Func31_var_181, Func31_var_179, 3);
-        end;
-      7..8:   begin
-          PutPic(CopperDownScreen^, 0, 199);
-          Func31_var_181 := (Random(3) + 1);
-          Func31_var_179 := ((BaseWarePrice[1] - 1100) - (100 * Random(5)));
-          Func32(2, Func31_var_181, Func31_var_179, 1);
-        end;
-      9..10:   begin
-          PutPic(OlivesDownScreen^, 0, 199);
-          Func31_var_181 := (Random(3) + 1);
-          Func31_var_179 := ((BaseWarePrice[2] - 150) - (Random(3) * 50));
-          Func32(2, Func31_var_181, Func31_var_179, 2);
-        end;
-      11..12:   begin
-          PutPic(WheatDownScreen^, 0, 199);
-          Func31_var_181 := (Random(3) + 1);
-          Func31_var_179 := ((BaseWarePrice[3] - 15) - (Random(3) * 5));
-          Func32(2, Func31_var_181, Func31_var_179, 3);
-        end;
-      13..18:   begin
-          Func31_var_2 := 0;
-          Func31_var_0 := 0;
-          Func31_var_169 := 0;
-          for global_var_21 := 1 to 3 do
+          if (Cargo[Wheat] > Cargo[Func28_arg_4]) then
           begin
-            Func31_var_4[global_var_21] := 0;
+            Func28_arg_4 := 3;
           end;
-          Func31_var_173 := (50 * (Random(2) + 1));
-          Func31_var_175 := (10 * (Random(Func31_var_173) + (2 * Func31_var_173)));
-          if (Func31_var_175 <= ((Money + BankBalance) + Func8)) then
+          Func28_var_0 := (Func9 - (3 * ShipCapacity));
+          if (Func28_var_0 >= Cargo[Func28_arg_4]) then
           begin
-            PutPic(ExpandScreen^, 0, 199);
-            GotoXY(29, 14);
-            Write(Func31_var_173:3);
-            if (Money > Func31_var_175) then
+            Func28_var_0 := Cargo[Func28_arg_4];
+            Cargo[Func28_arg_4] := 0;
+          end
+          else
+          begin
+            Cargo[Func28_arg_4] := (Cargo[Func28_arg_4] - Ord(Func28_var_0));
+            Func28(142, Func28_var_4, Func28_arg_0);
+            Val(Func28_arg_0, Func28_var_2, Func28_var_6);
+            if (Func28_var_4 = Func28_arg_4) then
             begin
-              Func31_var_2 := Func31_var_175;
+              Func28_var_0 := (Func28_var_0 + Func28_var_2);
             end
             else
             begin
-              if (BankBalance > Func31_var_175) then
+              Cargo[Func28_var_4] := (Cargo[Func28_var_4] + Func28_var_2);
+            end;
+          end;
+        end;
+      end
+      else
+      begin
+        if (Func28_arg_8 = 139) then
+        begin
+          Func28_var_0 := (10 * Trunc((Money / (Random(40) + 40))));
+          Money := (Money - Func28_var_0);
+        end
+        else
+        begin
+          if (Func28_arg_8 = 144) then
+          begin
+            Func28_var_0 := (10 * Trunc(((Money + Func8) / (Random(30) + 50))));
+            if (Func28_var_0 < 100) then
+            begin
+              Func28_var_0 := 100;
+            end;
+            ShipDamage := (ShipDamage + Func28_var_0);
+          end;
+        end;
+      end;
+    end;
+    Str(Func28_var_0, Func28_arg_0);
+  end;
+
+  procedure GenerateNewPrices;
+  begin
+    PriceCopperIsrael := BaseWarePrice[Copper] - 500 + Random(11) * 100;
+    PriceOlivesIsrael := BaseWarePrice[Olives] - 150 + Random(7) * 50;
+    PriceWheatIsrael := BaseWarePrice[Wheat] - 15 + Random(8) * 5;
+    PriceCopperTurkey := BaseWarePrice[Copper] - 500 + Random(11) * 100;
+    PriceOlivesTurkey := BaseWarePrice[Olives] - 150 + Random(7) * 50;
+    PriceWheatTurkey := BaseWarePrice[Wheat] - 15 + Random(8) * 5;
+    PriceCopperEgypt := BaseWarePrice[Copper] - 500 + Random(11) * 100;
+    PriceOlivesEgypt := BaseWarePrice[Olives] - 150 + Random(7) * 50;
+    PriceWheatEgypt := BaseWarePrice[Wheat] - 15 + Random(8) * 5;
+  end;
+
+  procedure UpdateStorm(var OutStormCountryName: TCountryName);
+  var
+    Unused: integer;
+  begin
+    if (Random(8) < 3) and (Day <> 1) then
+      OutStormCountryName := CountryIndexToName(Random(3) + 1)
+    else
+      OutStormCountryName := ' ';
+  end;
+
+  procedure Func31;
+  var
+    Func31_var_183: integer;
+    Func31_var_181: integer;
+    Func31_var_179: integer;
+    Func31_var_177: integer;
+    Func31_var_175: integer;
+    Func31_var_173: integer;
+    Func31_var_171: integer;
+    Func31_var_169: integer;
+    Func31_var_167: integer;
+    Func31_var_165: integer;
+    Func31_var_163: integer;
+    Func31_var_155: str_7;
+    Func31_var_147: str_7;
+    Func31_var_139: str_7;
+    Func31_var_103: TMessageLine;
+    Func31_var_23: arr_record_1479674575002027080_10;
+    Func31_var_22: boolean;
+    Func31_var_16: real;
+    Func31_var_10: real;
+    Func31_var_4: array[1..3] of integer;
+    Func31_var_2: integer;
+    Func31_var_0: integer;
+
+    procedure UpdateSpecialPrices(
+      { 1 = Up, 2 = Down }
+      UpDownFlag: integer;
+      Country: integer;
+      NewPrice: integer;
+      Ware: integer
+    );
+    var
+      UpDownString: string[6];
+      NewPriceString: str_7;
+    begin
+      if UpDownFlag = 1 then
+        UpDownString := '-ל ץפק'
+      else
+        UpDownString := '-ל דרי';
+      Str(NewPrice, NewPriceString);
+      case Country of
+        Turkey:   begin
+            case Ware of
+              Copper: PriceCopperTurkey := NewPrice;
+              Olives: PriceOlivesTurkey := NewPrice;
+              Wheat: PriceWheatTurkey := NewPrice;
+            end;
+            GotoXY(7, 2 + 21 * (UpDownFlag - 1));
+            Writeln('היכרותב' + WareName[Ware] + '' + 'ה ריחמ':27);
+            GotoXY(7, 3 + 21 * (UpDownFlag - 1));
+            Writeln('!!םילקש ' + NewPriceString + UpDownString:25);
+          end;
+        Israel:   begin
+            case Ware of
+              Copper: PriceCopperIsrael := NewPrice;
+              Olives: PriceOlivesIsrael := NewPrice;
+              Wheat: PriceWheatIsrael := NewPrice;
+            end;
+            GotoXY(7, 2 + 21 * (UpDownFlag - 1));
+            Writeln('לארשיב' + WareName[Ware] + '' + 'ה ריחמ':27);
+            GotoXY(7, 3 + 21 * (UpDownFlag - 1));
+            Writeln('!!םילקש ' + NewPriceString + UpDownString:25);
+          end;
+        Egypt:   begin
+            case Ware of
+              Copper: PriceCopperEgypt := NewPrice;
+              Olives: PriceOlivesEgypt := NewPrice;
+              Wheat: PriceWheatEgypt := NewPrice;
+            end;
+            GotoXY(7, 2 + 21 * (UpDownFlag - 1));
+            Writeln('םירצמב' + WareName[Ware] + '' + 'ה ריחמ':27);
+            GotoXY(7, 3 + 21 * (UpDownFlag - 1));
+            Writeln('!!םילקש ' + NewPriceString + UpDownString:25);
+          end;
+      end;
+      WaitForKey;
+    end;
+
+  begin
+    repeat
+    begin
+      Func31_var_22 := True;
+      repeat
+      Func31_var_183 := (Random(30) + 1);
+      until (((((((((((((Func31_var_183 <> LastNightEvent) and (not ((Func31_var_183 in [1..2]) and (LastNightEvent in [1..2]))))
+  and (not ((Func31_var_183 in [3..4]) and (LastNightEvent in [3..4])))) and (not ((Func31_var_183 in [5..6]) and
+  (LastNightEvent in [5..6])))) and (not ((Func31_var_183 in [7..8]) and (LastNightEvent in [7..8])))) and (not ((Func31_var_183
+  in [9..10]) and (LastNightEvent in [9..10])))) and (not ((Func31_var_183 in [11..12]) and (LastNightEvent in [11..12])))) and
+  (not ((Func31_var_183 in [13..18]) and (LastNightEvent in [13..18])))) and (not ((Func31_var_183 in [19..20]) and
+  (LastNightEvent in [19..20])))) and (not ((Func31_var_183 in [21..22]) and (LastNightEvent in [21..22])))) and (not
+  ((Func31_var_183 in [23..26]) and (LastNightEvent in [23..26])))) and (not ((Func31_var_183 in [27..28]) and (LastNightEvent
+  in [27..28])))) and (not ((Func31_var_183 in [29..30]) and (LastNightEvent in [29..30]))));
+      if ((Money > 20000.0) and (Random(6) = 1)) then
+      begin
+        Func31_var_183 := 15;
+      end;
+      if ((Money > 45000.0) and (Random(6) = 1)) then
+      begin
+        Func31_var_183 := 15;
+      end;
+      case Func31_var_183 of
+        1..2:   begin
+            PutPic(CopperUpScreen^, 0, 199);
+            Func31_var_181 := (Random(3) + 1);
+            Func31_var_179 := ((BaseWarePrice[1] + 1100) + (100 * Random(5)));
+            UpdateSpecialPrices(1, Func31_var_181, Func31_var_179, 1);
+          end;
+        3..4:   begin
+            PutPic(OlivesUpScreen^, 0, 199);
+            Func31_var_181 := (Random(3) + 1);
+            Func31_var_179 := ((BaseWarePrice[2] + 200) + (50 * Random(4)));
+            UpdateSpecialPrices(1, Func31_var_181, Func31_var_179, 2);
+          end;
+        5..6:   begin
+            PutPic(WheatUpScreen^, 0, 199);
+            Func31_var_181 := (Random(3) + 1);
+            Func31_var_179 := ((BaseWarePrice[3] + 20) + (Random(5) * 5));
+            UpdateSpecialPrices(1, Func31_var_181, Func31_var_179, 3);
+          end;
+        7..8:   begin
+            PutPic(CopperDownScreen^, 0, 199);
+            Func31_var_181 := (Random(3) + 1);
+            Func31_var_179 := ((BaseWarePrice[1] - 1100) - (100 * Random(5)));
+            UpdateSpecialPrices(2, Func31_var_181, Func31_var_179, 1);
+          end;
+        9..10:   begin
+            PutPic(OlivesDownScreen^, 0, 199);
+            Func31_var_181 := (Random(3) + 1);
+            Func31_var_179 := ((BaseWarePrice[2] - 150) - (Random(3) * 50));
+            UpdateSpecialPrices(2, Func31_var_181, Func31_var_179, 2);
+          end;
+        11..12:   begin
+            PutPic(WheatDownScreen^, 0, 199);
+            Func31_var_181 := (Random(3) + 1);
+            Func31_var_179 := ((BaseWarePrice[3] - 15) - (Random(3) * 5));
+            UpdateSpecialPrices(2, Func31_var_181, Func31_var_179, 3);
+          end;
+        13..18:   begin
+            Func31_var_2 := 0;
+            Func31_var_0 := 0;
+            Func31_var_169 := 0;
+            for global_var_21 := 1 to 3 do
+            begin
+              Func31_var_4[global_var_21] := 0;
+            end;
+            Func31_var_173 := (50 * (Random(2) + 1));
+            Func31_var_175 := (10 * (Random(Func31_var_173) + (2 * Func31_var_173)));
+            if (Func31_var_175 <= ((Money + BankBalance) + Func8)) then
+            begin
+              PutPic(ExpandScreen^, 0, 199);
+              GotoXY(29, 14);
+              Write(Func31_var_173:3);
+              if (Money > Func31_var_175) then
               begin
-                Func31_var_0 := Func31_var_175;
+                Func31_var_2 := Func31_var_175;
               end
               else
               begin
-                if ((Money + BankBalance) > Func31_var_175) then
+                if (BankBalance > Func31_var_175) then
                 begin
-                  Func31_var_2 := Trunc(Money);
-                  Func31_var_0 := (Func31_var_175 - Func31_var_2);
-                  Str(Func31_var_0, Func31_var_139);
+                  Func31_var_0 := Func31_var_175;
                 end
                 else
                 begin
-                  Func12(1, Func31_var_169, Func31_var_10);
-                  if (Func31_var_10 >= Func31_var_175) then
+                  if ((Money + BankBalance) > Func31_var_175) then
                   begin
-                    Func31_var_163 := Round(
-                      ((1.0 * Func31_var_175) / BaseWarePrice[Func31_var_169])
-                    );
-                    Func31_var_4[Func31_var_169] := Func31_var_163;
-                    Str(Func31_var_163, Func31_var_139);
+                    Func31_var_2 := Trunc(Money);
+                    Func31_var_0 := (Func31_var_175 - Func31_var_2);
+                    Str(Func31_var_0, Func31_var_139);
                   end
                   else
                   begin
-                    Str(Cargo[Func31_var_169], Func31_var_139);
-                    Func31_var_4[Func31_var_169] := Cargo[Func31_var_169];
-                    if ((Money > BankBalance) or (Money >= Func31_var_2)) then
+                    Func12(1, Func31_var_169, Func31_var_10);
+                    if (Func31_var_10 >= Func31_var_175) then
                     begin
-                      Func31_var_2 := (Func31_var_175 - Trunc(Func31_var_10));
-                      if (Func31_var_2 > Money) then
-                      begin
-                        Func31_var_2 := Trunc(Money);
-                      end;
-                      Str(Func31_var_2, Func31_var_139);
+                      Func31_var_163 := Round(
+                        ((1.0 * Func31_var_175) / BaseWarePrice[Func31_var_169])
+                      );
+                      Func31_var_4[Func31_var_169] := Func31_var_163;
+                      Str(Func31_var_163, Func31_var_139);
                     end
                     else
                     begin
-                      Func31_var_0 := (Func31_var_175 - Trunc(Func31_var_10));
-                      if (Func31_var_0 > BankBalance) then
+                      Str(Cargo[Func31_var_169], Func31_var_139);
+                      Func31_var_4[Func31_var_169] := Cargo[Func31_var_169];
+                      if ((Money > BankBalance) or (Money >= Func31_var_2)) then
                       begin
-                        Func31_var_0 := Trunc(BankBalance);
+                        Func31_var_2 := (Func31_var_175 - Trunc(Func31_var_10));
+                        if (Func31_var_2 > Money) then
+                        begin
+                          Func31_var_2 := Trunc(Money);
+                        end;
+                        Str(Func31_var_2, Func31_var_139);
+                      end
+                      else
+                      begin
+                        Func31_var_0 := (Func31_var_175 - Trunc(Func31_var_10));
+                        if (Func31_var_0 > BankBalance) then
+                        begin
+                          Func31_var_0 := Trunc(BankBalance);
+                        end;
+                        Str(Func31_var_0, Func31_var_139);
                       end;
-                      Str(Func31_var_0, Func31_var_139);
                     end;
                   end;
                 end;
               end;
-            end;
-            GotoXY(18, 15);
-            if ((Func31_var_2 + Func31_var_0) > 0) then
-            begin
-              Write('ח"ש ', (Func31_var_2 + Func31_var_0));
-            end;
-            GotoXY(15, 16);
-            if ((Func31_var_169 > 0) and (Func31_var_4[Func31_var_169] > 0)) then
-            begin
-              Str(Func31_var_4[Func31_var_169], Func31_var_139);
-              Func31_var_103 := (((#46 + WareName[Func31_var_169]) + 'ןוט ') + Func31_var_139);
+              GotoXY(18, 15);
               if ((Func31_var_2 + Func31_var_0) > 0) then
               begin
-                Func31_var_103 := (Func31_var_103 + ' ףסונבו');
+                Write('ח"ש ', (Func31_var_2 + Func31_var_0));
               end;
-              Write(Func31_var_103:22);
-            end;
-            GotoXY(18, 18);
-            if InputYesNo then
-            begin
-              ShipCapacity := (ShipCapacity + Func31_var_173);
-              Money := (Money - Func31_var_2);
-              BankBalance := (BankBalance - Func31_var_0);
-              for global_var_21 := 1 to 3 do
+              GotoXY(15, 16);
+              if ((Func31_var_169 > 0) and (Func31_var_4[Func31_var_169] > 0)) then
               begin
-                Cargo[global_var_21] := (Cargo[global_var_21] - Func31_var_4[global_var_21]);
+                Str(Func31_var_4[Func31_var_169], Func31_var_139);
+                Func31_var_103 := (((#46 + WareName[Func31_var_169]) + 'ןוט ') + Func31_var_139);
+                if ((Func31_var_2 + Func31_var_0) > 0) then
+                begin
+                  Func31_var_103 := (Func31_var_103 + ' ףסונבו');
+                end;
+                Write(Func31_var_103:22);
               end;
-              PutPic(MessageSign^, 90, 194);
-              GotoXY(18, 23);
-              Write('.העצוב  הבחרהה');
-              WaitForKey;
-              Str(Func31_var_0, Func31_var_139);
-              if (Func31_var_0 > 0) then
+              GotoXY(18, 18);
+              if InputYesNo then
               begin
-                if (Func31_var_2 > 0) then
+                ShipCapacity := (ShipCapacity + Func31_var_173);
+                Money := (Money - Func31_var_2);
+                BankBalance := (BankBalance - Func31_var_0);
+                for global_var_21 := 1 to 3 do
                 begin
-                  ShowMessage(
-                    87,
-                    ('ךנובשחמ וחקלנ לקש ' + Func31_var_139),
-                    '.קנבב',
-                    ''
-                  );
-                end
-                else
+                  Cargo[global_var_21] := (Cargo[global_var_21] - Func31_var_4[global_var_21]);
+                end;
+                PutPic(MessageSign^, 90, 194);
+                GotoXY(18, 23);
+                Write('.העצוב  הבחרהה');
+                WaitForKey;
+                Str(Func31_var_0, Func31_var_139);
+                if (Func31_var_0 > 0) then
                 begin
-                  ShowMessage(
-                    87,
-                    '.קנבב ךנובשחמ חקלנ ףסכה',
-                    '',
-                    ''
-                  );
+                  if (Func31_var_2 > 0) then
+                  begin
+                    ShowMessage(
+                      87,
+                      ('ךנובשחמ וחקלנ לקש ' + Func31_var_139),
+                      '.קנבב',
+                      ''
+                    );
+                  end
+                  else
+                  begin
+                    ShowMessage(
+                      87,
+                      '.קנבב ךנובשחמ חקלנ ףסכה',
+                      '',
+                      ''
+                    );
+                  end;
                 end;
               end;
-            end;
-          end
-          else
-          begin
-            Func31_var_22 := False;
-          end;
-        end;
-      19..20:   begin
-          if (Day < 6) then
-          begin
-            PutPic(CrewScreen^, 0, 199);
-            GotoXY(7, 3);
-            Write(Cargo[1]:5);
-            GotoXY(7, 4);
-            Write(Cargo[2]:5);
-            GotoXY(7, 5);
-            Write(Cargo[3]:5);
-            GotoXY(7, 6);
-            Write(Money:5:0);
-            Func31_var_23[1].field_0 := 54;
-            Func31_var_23[1].field_2 := 177;
-            Func31_var_23[1].field_4 := 198;
-            Func31_var_23[1].field_6 := 183;
-            Func31_var_23[2].field_0 := 78;
-            Func31_var_23[2].field_2 := 186;
-            Func31_var_23[2].field_4 := 198;
-            Func31_var_23[2].field_6 := 192;
-            repeat
-            Func31_var_165 := Func17(Func31_var_23, 2);
-            until (Func31_var_165 > 0);
-            if (Func31_var_165 = 1) then
-            begin
-              Func21_var_88 := True;
-              ShowMessage(
-                87,
-                '...תרחמל',
-                '.שדח תווצ םע דבוע התא',
-                ''
-              );
-            end
-            else
-            begin
-              if Func25(
-                Cargo[1],
-                Cargo[2],
-                Cargo[3],
-                Money
-              ) then
-              begin
-                ShowMessage(87, '.ךתעצה תא לביק תווצה', '', '');
-              end
-              else
-              begin
-                ShowMessage(
-                  87,
-                  '.העצהל ברס תווצה',
-                  'אצומ התאו םיימוי ורבע',
-                  'שדח תווצ'
-                );
-                Day := (Day + 1);
-                Func21_var_88 := True;
-              end;
-            end;
-          end
-          else
-          begin
-            Func31_var_22 := False;
-          end;
-        end;
-      21..22:   begin
-          Func28(139, Func31_var_169, Func31_var_155);
-          GotoXY(14, 24);
-          if (Func31_var_155 > '0') then
-          begin
-            PutPic(ThievesScreen^, 0, 199);
-            Write(('.לקש ' + Func31_var_155):15);
-          end
-          else
-          begin
-            Func28(142, Func31_var_169, Func31_var_155);
-            if (Func31_var_155 > '0') then
-            begin
-              PutPic(ThievesScreen^, 0, 199);
-              Write(
-                (((#46 + WareName[Func31_var_169]) + ' ןוט ') + Func31_var_155):15
-              );
             end
             else
             begin
               Func31_var_22 := False;
             end;
           end;
-          if Func31_var_22 then
-          begin
-            WaitForKey;
-          end;
-        end;
-      23..26:   begin
-          if (Cargo[1] > 1) then
-          begin
-            PutPic(SocherScreen^, 0, 199);
-            Func31_var_177 := ((Func21_var_109 + (50 * Random(30))) - 600);
-            Str(Func31_var_177, Func31_var_147);
-            Str(Cargo[1], Func31_var_139);
-            GotoXY(3, 2);
-            Writeln(
-              '.הרוחסל תופיחדב קוקז רחוס':34
-            );
-            GotoXY(3, WhereY);
-            Writeln(
-              'ח"ש ' + Func31_var_147 + ' ךל עיצהל ןכומ אוה':34
-            );
-            GotoXY(3, WhereY);
-            Writeln(
-              'ול רוכמת םא ,' + WareName[1] + 'לש ןוט לכל':34
-            );
-            GotoXY(3, WhereY);
-            Writeln('.ךלש ןוטה ' + Func31_var_139 + ' תא':34);
-            Writeln;
-            GotoXY(3, WhereY);
-            Write(
-              '(ל/כ) ? ול רוכמל ןינועמ התא םאה':34
-            );
-            GotoXY(3, WhereY);
-            if InputYesNo then
+        19..20:   begin
+            if (Day < 6) then
             begin
-              Money := (Money + ((1.0 * Func31_var_177) * Cargo[1]));
-              Cargo[1] := 0;
-              GotoXY(3, (WhereY + 2));
-              Write('!!! רכמנ':25);
+              PutPic(CrewScreen^, 0, 199);
+              GotoXY(7, 3);
+              Write(Cargo[Copper]:5);
+              GotoXY(7, 4);
+              Write(Cargo[Olives]:5);
+              GotoXY(7, 5);
+              Write(Cargo[Wheat]:5);
+              GotoXY(7, 6);
+              Write(Money:5:0);
+              Func31_var_23[1].field_0 := 54;
+              Func31_var_23[1].field_2 := 177;
+              Func31_var_23[1].field_4 := 198;
+              Func31_var_23[1].field_6 := 183;
+              Func31_var_23[2].field_0 := 78;
+              Func31_var_23[2].field_2 := 186;
+              Func31_var_23[2].field_4 := 198;
+              Func31_var_23[2].field_6 := 192;
+              repeat
+              Func31_var_165 := Func17(Func31_var_23, 2);
+              until (Func31_var_165 > 0);
+              if (Func31_var_165 = 1) then
+              begin
+                Func21_var_88 := True;
+                ShowMessage(
+                  87,
+                  '...תרחמל',
+                  '.שדח תווצ םע דבוע התא',
+                  ''
+                );
+              end
+              else
+              begin
+                if Func25(
+                  Cargo[Copper],
+                  Cargo[Olives],
+                  Cargo[Wheat],
+                  Money
+                ) then
+                begin
+                  ShowMessage(87, '.ךתעצה תא לביק תווצה', '', '');
+                end
+                else
+                begin
+                  ShowMessage(
+                    87,
+                    '.העצהל ברס תווצה',
+                    'אצומ התאו םיימוי ורבע',
+                    'שדח תווצ'
+                  );
+                  Day := (Day + 1);
+                  Func21_var_88 := True;
+                end;
+              end;
+            end
+            else
+            begin
+              Func31_var_22 := False;
+            end;
+          end;
+        21..22:   begin
+            Func28(139, Func31_var_169, Func31_var_155);
+            GotoXY(14, 24);
+            if (Func31_var_155 > '0') then
+            begin
+              PutPic(ThievesScreen^, 0, 199);
+              Write(('.לקש ' + Func31_var_155):15);
+            end
+            else
+            begin
+              Func28(142, Func31_var_169, Func31_var_155);
+              if (Func31_var_155 > '0') then
+              begin
+                PutPic(ThievesScreen^, 0, 199);
+                Write(
+                  (((#46 + WareName[Func31_var_169]) + ' ןוט ') + Func31_var_155):15
+                );
+              end
+              else
+              begin
+                Func31_var_22 := False;
+              end;
+            end;
+            if Func31_var_22 then
+            begin
               WaitForKey;
             end;
-          end
-          else
-          begin
-            if (Cargo[2] > 1) then
+          end;
+        23..26:   begin
+            if (Cargo[Copper] > 1) then
             begin
               PutPic(SocherScreen^, 0, 199);
-              Func31_var_177 := ((Func21_var_103 + (10 * Random(70))) - 300);
+              Func31_var_177 := ((PriceCopperIsrael + (50 * Random(30))) - 600);
               Str(Func31_var_177, Func31_var_147);
-              Str(Cargo[2], Func31_var_139);
+              Str(Cargo[Copper], Func31_var_139);
               GotoXY(3, 2);
               Writeln(
                 '.הרוחסל תופיחדב קוקז רחוס':34
@@ -1279,7 +1200,7 @@ begin
               );
               GotoXY(3, WhereY);
               Writeln(
-                'ול רוכמת םא ,' + WareName[2] + 'לש ןוט לכל':34
+                'ול רוכמת םא ,' + WareName[1] + 'לש ןוט לכל':34
               );
               GotoXY(3, WhereY);
               Writeln('.ךלש ןוטה ' + Func31_var_139 + ' תא':34);
@@ -1291,8 +1212,8 @@ begin
               GotoXY(3, WhereY);
               if InputYesNo then
               begin
-                Money := (Money + ((1.0 * Func31_var_177) * Cargo[2]));
-                Cargo[2] := 0;
+                Money := (Money + ((1.0 * Func31_var_177) * Cargo[Copper]));
+                Cargo[Copper] := 0;
                 GotoXY(3, (WhereY + 2));
                 Write('!!! רכמנ':25);
                 WaitForKey;
@@ -1300,12 +1221,12 @@ begin
             end
             else
             begin
-              if (Cargo[3] > 1) then
+              if (Cargo[Olives] > 1) then
               begin
                 PutPic(SocherScreen^, 0, 199);
-                Func31_var_177 := ((Func21_var_97 + (5 * Random(14))) - 40);
+                Func31_var_177 := ((PriceOlivesIsrael + (10 * Random(70))) - 300);
                 Str(Func31_var_177, Func31_var_147);
-                Str(Cargo[3], Func31_var_139);
+                Str(Cargo[Olives], Func31_var_139);
                 GotoXY(3, 2);
                 Writeln(
                   '.הרוחסל תופיחדב קוקז רחוס':34
@@ -1316,7 +1237,7 @@ begin
                 );
                 GotoXY(3, WhereY);
                 Writeln(
-                  'ול רוכמת םא ,' + WareName[3] + 'לש ןוט לכל':34
+                  'ול רוכמת םא ,' + WareName[2] + 'לש ןוט לכל':34
                 );
                 GotoXY(3, WhereY);
                 Writeln('.ךלש ןוטה ' + Func31_var_139 + ' תא':34);
@@ -1328,8 +1249,8 @@ begin
                 GotoXY(3, WhereY);
                 if InputYesNo then
                 begin
-                  Money := (Money + ((1.0 * Func31_var_177) * Cargo[3]));
-                  Cargo[3] := 0;
+                  Money := (Money + ((1.0 * Func31_var_177) * Cargo[Olives]));
+                  Cargo[Olives] := 0;
                   GotoXY(3, (WhereY + 2));
                   Write('!!! רכמנ':25);
                   WaitForKey;
@@ -1337,1539 +1258,1503 @@ begin
               end
               else
               begin
-                Func31_var_22 := False;
+                if (Cargo[Wheat] > 1) then
+                begin
+                  PutPic(SocherScreen^, 0, 199);
+                  Func31_var_177 := ((PriceWheatIsrael + (5 * Random(14))) - 40);
+                  Str(Func31_var_177, Func31_var_147);
+                  Str(Cargo[Wheat], Func31_var_139);
+                  GotoXY(3, 2);
+                  Writeln(
+                    '.הרוחסל תופיחדב קוקז רחוס':34
+                  );
+                  GotoXY(3, WhereY);
+                  Writeln(
+                    'ח"ש ' + Func31_var_147 + ' ךל עיצהל ןכומ אוה':34
+                  );
+                  GotoXY(3, WhereY);
+                  Writeln(
+                    'ול רוכמת םא ,' + WareName[3] + 'לש ןוט לכל':34
+                  );
+                  GotoXY(3, WhereY);
+                  Writeln('.ךלש ןוטה ' + Func31_var_139 + ' תא':34);
+                  Writeln;
+                  GotoXY(3, WhereY);
+                  Write(
+                    '(ל/כ) ? ול רוכמל ןינועמ התא םאה':34
+                  );
+                  GotoXY(3, WhereY);
+                  if InputYesNo then
+                  begin
+                    Money := (Money + ((1.0 * Func31_var_177) * Cargo[Wheat]));
+                    Cargo[Wheat] := 0;
+                    GotoXY(3, (WhereY + 2));
+                    Write('!!! רכמנ':25);
+                    WaitForKey;
+                  end;
+                end
+                else
+                begin
+                  Func31_var_22 := False;
+                end;
               end;
             end;
           end;
-        end;
-      27..28:   begin
-          Func31_var_169 := (Random(3) + 1);
-          Func31_var_177 := (5 * ((BaseWarePrice[Func31_var_169] div 10) + (Random(BaseWarePrice[Func31_var_169]) div 5)));
-          Func31_var_16 := (Random((Trunc((0.75 * Money)) + 1)) + (0.25 * Money));
-          Func31_var_171 := (5 * Trunc(
-            (((Func31_var_16 / BaseWarePrice[Func31_var_169]) / 5) + 1)
-          ));
-          if ((((1.0 * Func31_var_177) * Func31_var_171) <= Money) and (Money > 0)) then
-          begin
-            PutPic(SocherScreen^, 0, 199);
-            Str(Func31_var_177, Func31_var_147);
-            Str(Func31_var_171, Func31_var_139);
-            if (Func31_var_139 = '1') then
+        27..28:   begin
+            Func31_var_169 := (Random(3) + 1);
+            Func31_var_177 := (5 * ((BaseWarePrice[Func31_var_169] div 10) + (Random(BaseWarePrice[Func31_var_169]) div 5)));
+            Func31_var_16 := (Random((Trunc((0.75 * Money)) + 1)) + (0.25 * Money));
+            Func31_var_171 := (5 * Trunc(
+              (((Func31_var_16 / BaseWarePrice[Func31_var_169]) / 5) + 1)
+            ));
+            if ((((1.0 * Func31_var_177) * Func31_var_171) <= Money) and (Money > 0)) then
             begin
-              Func31_var_139 := '';
-            end;
-            GotoXY(3, 2);
-            Writeln(
-              WareName[Func31_var_169] + ' ןוט ' + Func31_var_139 + ' ךל רוכמל ןינועמ רחוס':34
-            );
-            Writeln;
-            GotoXY(3, WhereY);
-            Writeln(
-              'ןוטל לקש ' + Func31_var_147 + ' ריחמב':34
-            );
-            Writeln;
-            GotoXY(3, WhereY);
-            Write(
-              '(ל/כ) ? תונקל ןינועמ התא םאה':34
-            );
-            GotoXY(3, WhereY);
-            if InputYesNo then
-            begin
-              Money := (Money - (Func31_var_177 * Func31_var_171));
-              case Func31_var_169 of
-                1:   begin
-                    Cargo[1] := (Cargo[1] + Func31_var_171);
-                  end;
-                2:   begin
-                    Cargo[2] := (Cargo[2] + Func31_var_171);
-                  end;
-                3:   begin
-                    Cargo[3] := (Cargo[3] + Func31_var_171);
-                  end;
+              PutPic(SocherScreen^, 0, 199);
+              Str(Func31_var_177, Func31_var_147);
+              Str(Func31_var_171, Func31_var_139);
+              if (Func31_var_139 = '1') then
+              begin
+                Func31_var_139 := '';
               end;
+              GotoXY(3, 2);
+              Writeln(
+                WareName[Func31_var_169] + ' ןוט ' + Func31_var_139 + ' ךל רוכמל ןינועמ רחוס':34
+              );
               Writeln;
-              Writeln('            !!! תינק':25);
-              WaitForKey;
+              GotoXY(3, WhereY);
+              Writeln(
+                'ןוטל לקש ' + Func31_var_147 + ' ריחמב':34
+              );
+              Writeln;
+              GotoXY(3, WhereY);
+              Write(
+                '(ל/כ) ? תונקל ןינועמ התא םאה':34
+              );
+              GotoXY(3, WhereY);
+              if InputYesNo then
+              begin
+                Money := (Money - (Func31_var_177 * Func31_var_171));
+                case Func31_var_169 of
+                  1:   begin
+                      Cargo[Copper] := (Cargo[Copper] + Func31_var_171);
+                    end;
+                  2:   begin
+                      Cargo[Olives] := (Cargo[Olives] + Func31_var_171);
+                    end;
+                  3:   begin
+                      Cargo[Wheat] := (Cargo[Wheat] + Func31_var_171);
+                    end;
+                end;
+                Writeln;
+                Writeln('            !!! תינק':25);
+                WaitForKey;
+              end;
+            end
+            else
+            begin
+              Func31_var_22 := False;
             end;
-          end
-          else
-          begin
-            Func31_var_22 := False;
           end;
-        end;
-      29..30:   begin
-          Func31_var_167 := (10 * Trunc(((Func8 + Money) / (Random(80) + 150))));
-          if (Func31_var_167 > 0) then
-          begin
-            ShowScrFile((BasePath + 'fishing.scr'));
-            ShipDamage := (ShipDamage + Func31_var_167);
-            GotoXY(20, 3);
-            Write(Func31_var_167:4);
-            WaitForKey;
-          end
-          else
-          begin
-            Func31_var_22 := False;
-          end;
-        end;
-    end;
-  end
-  until Func31_var_22;
-  LastNightEvent := Func31_var_183;
-end;
-procedure Func33;
-var
-  Func33_var_8: PSgnBuffer;
-  Func33_var_0: str_7;
-begin
-  Str(Day, Func33_var_0);
-  Func33_var_8 := LoadSgnFile(('day' + Func33_var_0));
-  ShowScrFile((BasePath + 'newday.scr'));
-  PutPic(Func33_var_8^, 165, 89);
-  Dispose(Func33_var_8);
-  WaitForKey;
-end;
-procedure Func34(
-  Func34_arg_4: integer;
-  Func34_arg_2: integer;
-  Func34_arg_0: integer
-);
-var
-  Func34_unused_96: array[1..2] of byte;
-  Func34_var_94: integer;
-  Func34_var_92: integer;
-  Func34_var_86: real;
-  Func34_var_80: real;
-  Func34_var_0: arr_record_1479674575002027080_10;
-begin
-  Func34_var_80 := 0;
-  if (Money < Func34_arg_0) then
-  begin
-    ShowMessage(
-      87,
-      'ךל רשפאמ וניא ךפסכ',
-      'תורוחס תינק',
-      ''
-    );
-  end
-  else
-  begin
-    case CountryNameToIndex(CurrentCountryName) of
-      1:   begin
-          PutPic(BuyTurkeyWindow^, 1, 142);
-          Func34_var_0[1].field_0 := 177;
-          Func34_var_0[1].field_2 := 2;
-          Func34_var_0[1].field_4 := 236;
-          Func34_var_0[1].field_6 := 18;
-          Func34_var_0[2].field_0 := 72;
-          Func34_var_0[2].field_2 := 2;
-          Func34_var_0[2].field_4 := 131;
-          Func34_var_0[2].field_6 := 18;
-          Func34_var_0[3].field_0 := 180;
-          Func34_var_0[3].field_2 := 65;
-          Func34_var_0[3].field_4 := 237;
-          Func34_var_0[3].field_6 := 80;
-        end;
-      2:   begin
-          PutPic(BuyIsraelWindow^, 1, 142);
-          Func34_var_0[1].field_0 := 177;
-          Func34_var_0[1].field_2 := 2;
-          Func34_var_0[1].field_4 := 236;
-          Func34_var_0[1].field_6 := 18;
-          Func34_var_0[2].field_0 := 8;
-          Func34_var_0[2].field_2 := 2;
-          Func34_var_0[2].field_4 := 67;
-          Func34_var_0[2].field_6 := 18;
-          Func34_var_0[3].field_0 := 179;
-          Func34_var_0[3].field_2 := 86;
-          Func34_var_0[3].field_4 := 236;
-          Func34_var_0[3].field_6 := 101;
-        end;
-      3:   begin
-          PutPic(BuyEgyptWindow^, 1, 142);
-          Func34_var_0[1].field_0 := 177;
-          Func34_var_0[1].field_2 := 2;
-          Func34_var_0[1].field_4 := 236;
-          Func34_var_0[1].field_6 := 18;
-          Func34_var_0[2].field_0 := 177;
-          Func34_var_0[2].field_2 := 33;
-          Func34_var_0[2].field_4 := 236;
-          Func34_var_0[2].field_6 := 49;
-          Func34_var_0[3].field_0 := 179;
-          Func34_var_0[3].field_2 := 86;
-          Func34_var_0[3].field_4 := 236;
-          Func34_var_0[3].field_6 := 101;
-        end;
-    end;
-    Func34_var_92 := Func17(Func34_var_0, 103);
-    if (Func34_var_92 > 0) then
-    begin
-      case Func34_var_92 of
-        1:   begin
-            Func34_var_94 := Func34_arg_4;
-          end;
-        2:   begin
-            Func34_var_94 := Func34_arg_2;
-          end;
-        3:   begin
-            Func34_var_94 := Func34_arg_0;
+        29..30:   begin
+            Func31_var_167 := (10 * Trunc(((Func8 + Money) / (Random(80) + 150))));
+            if (Func31_var_167 > 0) then
+            begin
+              ShowScrFile((BasePath + 'fishing.scr'));
+              ShipDamage := (ShipDamage + Func31_var_167);
+              GotoXY(20, 3);
+              Write(Func31_var_167:4);
+              WaitForKey;
+            end
+            else
+            begin
+              Func31_var_22 := False;
+            end;
           end;
       end;
-      if (Money < Func34_var_94) then
-      begin
-        ShowMessage(
-          87,
-          'ךל רשפאמ וניא ךפסכ',
-          (WareName[Func34_var_92] + 'תונקל'),
-          ''
-        );
-      end
-      else
-      begin
-        repeat
-        begin
-          PutPic(BuySign^, 22, 138);
-          GotoXY(6, 15);
-          Write(Trunc((Money / Func34_var_94)));
-          GotoXY(6, 17);
-          Func34_var_80 := Func18(0, 0, 8);
-          Func34_var_86 := ((1.0 * Func34_var_80) * Func34_var_94);
-        end
-        until (not Func24(Func34_var_86));
-      end;
-      if (Func34_var_80 > 0) then
-      begin
-        Money := (Money - Func34_var_86);
-        Cargo[Func34_var_92] := (Cargo[Func34_var_92] + Trunc(Func34_var_80));
-      end;
-    end;
+    end
+    until Func31_var_22;
+    LastNightEvent := Func31_var_183;
   end;
-end;
-procedure Func35(
-  Func35_arg_4: integer;
-  Func35_arg_2: integer;
-  Func35_arg_0: integer
-);
-var
-  Func35_unused_94: array[1..2] of byte;
-  Func35_var_92: integer;
-  Func35_var_86: real;
-  Func35_var_80: real;
-  Func35_var_0: arr_record_1479674575002027080_10;
-function Func36(Func36_arg_2: real; Func36_arg_0: integer): boolean;
-begin
-  if (Func36_arg_2 > Cargo[Func36_arg_0]) then
+
+  procedure Func33;
+  var
+    Func33_var_8: PSgnBuffer;
+    Func33_var_0: str_7;
   begin
-    ShowMessage(
-      87,
-      'הברה ךכ-לכ ךל ןיא',
-      ('רוכמל' + WareName[Func36_arg_0]),
-      #7
-    );
-    Func36 := True;
-  end
-  else
-  begin
-    Func36 := False;
+    Str(Day, Func33_var_0);
+    Func33_var_8 := LoadSgnFile(('day' + Func33_var_0));
+    ShowScrFile((BasePath + 'newday.scr'));
+    PutPic(Func33_var_8^, 165, 89);
+    Dispose(Func33_var_8);
+    WaitForKey;
   end;
-end;
-begin
-  if (((Cargo[1] = 0) and (Cargo[2] = 0)) and (Cargo[3] = 0)) then
+
+  procedure Func34(
+    Func34_arg_4: integer;
+    Func34_arg_2: integer;
+    Func34_arg_0: integer
+  );
+  var
+    Func34_unused_96: array[1..2] of byte;
+    Func34_var_94: integer;
+    Func34_var_92: integer;
+    Func34_var_86: real;
+    Func34_var_80: real;
+    Func34_var_0: arr_record_1479674575002027080_10;
   begin
-    ShowMessage(
-      87,
-      ' ',
-      'רוכמל  הרוחס  ךל  ןיא',
-      ' '
-    );
-  end
-  else
-  begin
-    case CountryNameToIndex(CurrentCountryName) of
-      1:   begin
-          PutPic(SellTurkeyWindow^, 0, 142);
-        end;
-      2:   begin
-          PutPic(SellIsraelWindow^, 0, 142);
-        end;
-      3:   begin
-          PutPic(SellEgyptWindow^, 0, 142);
-        end;
-    end;
-    Func35_var_0[1].field_0 := 19;
-    Func35_var_0[1].field_2 := 26;
-    Func35_var_0[2].field_0 := 19;
-    Func35_var_0[2].field_2 := 42;
-    Func35_var_0[3].field_0 := 19;
-    Func35_var_0[3].field_2 := 58;
-    if (CurrentCountryName = 'םירצמ') then
+    Func34_var_80 := 0;
+    if (Money < Func34_arg_0) then
     begin
-      Func35_var_0[1].field_4 := 58;
-      Func35_var_0[1].field_6 := 34;
-      Func35_var_0[2].field_4 := 57;
-      Func35_var_0[2].field_6 := 50;
-      Func35_var_0[3].field_4 := 57;
-      Func35_var_0[3].field_6 := 66;
+      ShowMessage(
+        87,
+        'ךל רשפאמ וניא ךפסכ',
+        'תורוחס תינק',
+        ''
+      );
     end
     else
     begin
-      Func35_var_0[1].field_4 := 59;
-      Func35_var_0[1].field_6 := 35;
-      Func35_var_0[2].field_4 := 59;
-      Func35_var_0[2].field_6 := 51;
-      Func35_var_0[3].field_4 := 59;
-      Func35_var_0[3].field_6 := 67;
-    end;
-    Func35_var_92 := Func17(Func35_var_0, 103);
-    if (Func35_var_92 > 0) then
-    begin
-      if (Cargo[Func35_var_92] > 0) then
+      case CountryNameToIndex(CurrentCountryName) of
+        Turkey:   begin
+            PutPic(BuyTurkeyWindow^, 1, 142);
+            Func34_var_0[1].field_0 := 177;
+            Func34_var_0[1].field_2 := 2;
+            Func34_var_0[1].field_4 := 236;
+            Func34_var_0[1].field_6 := 18;
+            Func34_var_0[2].field_0 := 72;
+            Func34_var_0[2].field_2 := 2;
+            Func34_var_0[2].field_4 := 131;
+            Func34_var_0[2].field_6 := 18;
+            Func34_var_0[3].field_0 := 180;
+            Func34_var_0[3].field_2 := 65;
+            Func34_var_0[3].field_4 := 237;
+            Func34_var_0[3].field_6 := 80;
+          end;
+        Israel:   begin
+            PutPic(BuyIsraelWindow^, 1, 142);
+            Func34_var_0[1].field_0 := 177;
+            Func34_var_0[1].field_2 := 2;
+            Func34_var_0[1].field_4 := 236;
+            Func34_var_0[1].field_6 := 18;
+            Func34_var_0[2].field_0 := 8;
+            Func34_var_0[2].field_2 := 2;
+            Func34_var_0[2].field_4 := 67;
+            Func34_var_0[2].field_6 := 18;
+            Func34_var_0[3].field_0 := 179;
+            Func34_var_0[3].field_2 := 86;
+            Func34_var_0[3].field_4 := 236;
+            Func34_var_0[3].field_6 := 101;
+          end;
+        Egypt:   begin
+            PutPic(BuyEgyptWindow^, 1, 142);
+            Func34_var_0[1].field_0 := 177;
+            Func34_var_0[1].field_2 := 2;
+            Func34_var_0[1].field_4 := 236;
+            Func34_var_0[1].field_6 := 18;
+            Func34_var_0[2].field_0 := 177;
+            Func34_var_0[2].field_2 := 33;
+            Func34_var_0[2].field_4 := 236;
+            Func34_var_0[2].field_6 := 49;
+            Func34_var_0[3].field_0 := 179;
+            Func34_var_0[3].field_2 := 86;
+            Func34_var_0[3].field_4 := 236;
+            Func34_var_0[3].field_6 := 101;
+          end;
+      end;
+      Func34_var_92 := Func17(Func34_var_0, 103);
+      if (Func34_var_92 > 0) then
       begin
-        repeat
+        case Func34_var_92 of
+          1:   begin
+              Func34_var_94 := Func34_arg_4;
+            end;
+          2:   begin
+              Func34_var_94 := Func34_arg_2;
+            end;
+          3:   begin
+              Func34_var_94 := Func34_arg_0;
+            end;
+        end;
+        if (Money < Func34_var_94) then
         begin
-          PutPic(SellSign^, 120, 60);
-          GotoXY(21, 7);
-          Func35_var_80 := Func18(0, 0, 8);
+          ShowMessage(
+            87,
+            'ךל רשפאמ וניא ךפסכ',
+            (WareName[Func34_var_92] + 'תונקל'),
+            ''
+          );
         end
-        until (not Func36(Func35_var_80, Func35_var_92));
-      end
-      else
+        else
+        begin
+          repeat
+          begin
+            PutPic(BuySign^, 22, 138);
+            GotoXY(6, 15);
+            Write(Trunc((Money / Func34_var_94)));
+            GotoXY(6, 17);
+            Func34_var_80 := Func18(0, 0, 8);
+            Func34_var_86 := ((1.0 * Func34_var_80) * Func34_var_94);
+          end
+          until (not Func24(Func34_var_86));
+        end;
+        if (Func34_var_80 > 0) then
+        begin
+          Money := (Money - Func34_var_86);
+          Cargo[Func34_var_92] := (Cargo[Func34_var_92] + Trunc(Func34_var_80));
+        end;
+      end;
+    end;
+  end;
+
+  procedure Func35(
+    Func35_arg_4: integer;
+    Func35_arg_2: integer;
+    Func35_arg_0: integer
+  );
+  var
+    Func35_unused_94: array[1..2] of byte;
+    Func35_var_92: integer;
+    Func35_var_86: real;
+    Func35_var_80: real;
+    Func35_var_0: arr_record_1479674575002027080_10;
+
+    function Func36(Func36_arg_2: real; Func36_arg_0: integer): boolean;
+    begin
+      if (Func36_arg_2 > Cargo[Func36_arg_0]) then
       begin
         ShowMessage(
           87,
-          (('רוכמל' + WareName[Func35_var_92]) + 'ךל ןיא'),
-          #7,
-          ''
+          'הברה ךכ-לכ ךל ןיא',
+          ('רוכמל' + WareName[Func36_arg_0]),
+          #7
         );
-        Func35_var_80 := 0;
-      end;
-      if (Func35_var_80 = -1) then
+        Func36 := True;
+      end
+      else
       begin
-        Func35_var_80 := 0;
+        Func36 := False;
       end;
-      case Func35_var_92 of
-        1:   begin
-            Func35_var_86 := ((1.0 * Func35_var_80) * Func35_arg_4);
-          end;
-        2:   begin
-            Func35_var_86 := ((1.0 * Func35_var_80) * Func35_arg_2);
-          end;
-        3:   begin
-            Func35_var_86 := ((1.0 * Func35_var_80) * Func35_arg_0);
-          end;
+    end;
+
+  begin
+    if (((Cargo[Copper] = 0) and (Cargo[Olives] = 0)) and (Cargo[Wheat] = 0)) then
+    begin
+      ShowMessage(
+        87,
+        ' ',
+        'רוכמל  הרוחס  ךל  ןיא',
+        ' '
+      );
+    end
+    else
+    begin
+      case CountryNameToIndex(CurrentCountryName) of
+        Turkey: PutPic(SellTurkeyWindow^, 0, 142);
+        Israel: PutPic(SellIsraelWindow^, 0, 142);
+        Egypt: PutPic(SellEgyptWindow^, 0, 142);
       end;
-      Money := (Money + Func35_var_86);
-      Cargo[Func35_var_92] := (Cargo[Func35_var_92] - Trunc(Func35_var_80));
+      Func35_var_0[1].field_0 := 19;
+      Func35_var_0[1].field_2 := 26;
+      Func35_var_0[2].field_0 := 19;
+      Func35_var_0[2].field_2 := 42;
+      Func35_var_0[3].field_0 := 19;
+      Func35_var_0[3].field_2 := 58;
+      if (CurrentCountryName = 'םירצמ') then
+      begin
+        Func35_var_0[1].field_4 := 58;
+        Func35_var_0[1].field_6 := 34;
+        Func35_var_0[2].field_4 := 57;
+        Func35_var_0[2].field_6 := 50;
+        Func35_var_0[3].field_4 := 57;
+        Func35_var_0[3].field_6 := 66;
+      end
+      else
+      begin
+        Func35_var_0[1].field_4 := 59;
+        Func35_var_0[1].field_6 := 35;
+        Func35_var_0[2].field_4 := 59;
+        Func35_var_0[2].field_6 := 51;
+        Func35_var_0[3].field_4 := 59;
+        Func35_var_0[3].field_6 := 67;
+      end;
+      Func35_var_92 := Func17(Func35_var_0, 103);
+      if (Func35_var_92 > 0) then
+      begin
+        if (Cargo[Func35_var_92] > 0) then
+        begin
+          repeat
+          begin
+            PutPic(SellSign^, 120, 60);
+            GotoXY(21, 7);
+            Func35_var_80 := Func18(0, 0, 8);
+          end
+          until (not Func36(Func35_var_80, Func35_var_92));
+        end
+        else
+        begin
+          ShowMessage(
+            87,
+            (('רוכמל' + WareName[Func35_var_92]) + 'ךל ןיא'),
+            #7,
+            ''
+          );
+          Func35_var_80 := 0;
+        end;
+        if (Func35_var_80 = -1) then
+        begin
+          Func35_var_80 := 0;
+        end;
+        case Func35_var_92 of
+          1:   begin
+              Func35_var_86 := ((1.0 * Func35_var_80) * Func35_arg_4);
+            end;
+          2:   begin
+              Func35_var_86 := ((1.0 * Func35_var_80) * Func35_arg_2);
+            end;
+          3:   begin
+              Func35_var_86 := ((1.0 * Func35_var_80) * Func35_arg_0);
+            end;
+        end;
+        Money := (Money + Func35_var_86);
+        Cargo[Func35_var_92] := (Cargo[Func35_var_92] - Trunc(Func35_var_80));
+      end;
     end;
   end;
-end;
-procedure Func37;
-var
-  Func37_var_87: integer;
-  Func37_var_86: byte;
-  Func37_var_6: arr_record_1479674575002027080_10;
-  Func37_var_0: real;
-begin
-  Func37_var_86 := 0;
-  PutPic(BankWindow^, 0, 142);
-  Func37_var_6[1].field_0 := 97;
-  Func37_var_6[1].field_2 := 7;
-  Func37_var_6[1].field_4 := 149;
-  Func37_var_6[1].field_6 := 16;
-  Func37_var_6[2].field_0 := 16;
-  Func37_var_6[2].field_2 := 7;
-  Func37_var_6[2].field_4 := 64;
-  Func37_var_6[2].field_6 := 16;
-  Func37_var_87 := Func17(Func37_var_6, 102);
-  case Func37_var_87 of
-    1:   begin
-        if (Money <= 0) then
-        begin
-          ShowMessage(
-            87,
-            ' ',
-            ('! דיקפהל ףסכ ךל ןיא' + ''),
-            ' '
-          );
-        end
-        else
-        begin
-          repeat
-          begin
-            PutPic(DepositSign^, 11, 139);
-            GotoXY(5, 17);
-            Func37_var_0 := Func18(0, 0, 8);
-            if (Func37_var_0 <= 0) then
-            begin
-              Func37_var_86 := 1;
-            end
-            else
-            begin
-              if (Func37_var_0 <= Money) then
-              begin
-                BankBalance := (BankBalance + Func37_var_0);
-                Money := (Money - Func37_var_0);
-                ShowMessage(
-                  87,
-                  ' ',
-                  'ףסכה תא לביק קנבה דיקפ',
-                  ' '
-                );
-                Func37_var_86 := 1;
-              end
-              else
-              begin
-                ShowMessage(
-                  87,
-                  ' ',
-                  ('! ףסכ הברה ךכ לכ ךל ןיא' + ''),
-                  ' '
-                );
-              end;
-            end;
-          end
-          until (Func37_var_86 = 1);
-        end;
-      end;
-    2:   begin
-        if (BankBalance > 0) then
-        begin
-          repeat
-          begin
-            PutPic(WithdrawSign^, 11, 139);
-            GotoXY(5, 17);
-            Func37_var_0 := Func18(0, 0, 8);
-            if (Func37_var_0 < 0) then
-            begin
-              Func37_var_86 := 1;
-            end
-            else
-            begin
-              if (Func37_var_0 <= BankBalance) then
-              begin
-                GotoXY(1, 1);
-                BankBalance := (BankBalance - Func37_var_0);
-                Money := (Money + Func37_var_0);
-                if (not (Func37_var_0 = 0)) then
-                begin
-                  ShowMessage(87, ' ', 'ףסכה תא תלביק', ' ');
-                end;
-                Func37_var_86 := 1;
-              end
-              else
-              begin
-                ShowMessage(
-                  87,
-                  ' ',
-                  ('! קנבב הזכ ףסכ םוכס ךל ןיא' + ''),
-                  ' '
-                );
-              end;
-            end;
-          end
-          until (Func37_var_86 = 1);
-        end
-        else
-        begin
-          ShowMessage(
-            87,
-            ' ',
-            ('! קנבב ףסכ ךל ןיא' + ''),
-            ' '
-          );
-        end;
-      end;
-  end;
-end;
-function Func38(Func38_arg_0: integer): boolean;
-var
-  Func38_unused_0: array[1..3] of byte;
-begin
-  if (Func38_arg_0 > ShipCapacity) then
+
+  procedure Func37;
+  var
+    Func37_var_87: integer;
+    Func37_var_86: byte;
+    Func37_var_6: arr_record_1479674575002027080_10;
+    Func37_var_0: real;
   begin
-    PutPic(OverweightWindow^, 0, 142);
-    GotoXY(53, 16);
-    if InputYesNo then
+    Func37_var_86 := 0;
+    PutPic(BankWindow^, 0, 142);
+    Func37_var_6[1].field_0 := 97;
+    Func37_var_6[1].field_2 := 7;
+    Func37_var_6[1].field_4 := 149;
+    Func37_var_6[1].field_6 := 16;
+    Func37_var_6[2].field_0 := 16;
+    Func37_var_6[2].field_2 := 7;
+    Func37_var_6[2].field_4 := 64;
+    Func37_var_6[2].field_6 := 16;
+    Func37_var_87 := Func17(Func37_var_6, 102);
+    case Func37_var_87 of
+      1:   begin
+          if (Money <= 0) then
+          begin
+            ShowMessage(
+              87,
+              ' ',
+              ('! דיקפהל ףסכ ךל ןיא' + ''),
+              ' '
+            );
+          end
+          else
+          begin
+            repeat
+            begin
+              PutPic(DepositSign^, 11, 139);
+              GotoXY(5, 17);
+              Func37_var_0 := Func18(0, 0, 8);
+              if (Func37_var_0 <= 0) then
+              begin
+                Func37_var_86 := 1;
+              end
+              else
+              begin
+                if (Func37_var_0 <= Money) then
+                begin
+                  BankBalance := (BankBalance + Func37_var_0);
+                  Money := (Money - Func37_var_0);
+                  ShowMessage(
+                    87,
+                    ' ',
+                    'ףסכה תא לביק קנבה דיקפ',
+                    ' '
+                  );
+                  Func37_var_86 := 1;
+                end
+                else
+                begin
+                  ShowMessage(
+                    87,
+                    ' ',
+                    ('! ףסכ הברה ךכ לכ ךל ןיא' + ''),
+                    ' '
+                  );
+                end;
+              end;
+            end
+            until (Func37_var_86 = 1);
+          end;
+        end;
+      2:   begin
+          if (BankBalance > 0) then
+          begin
+            repeat
+            begin
+              PutPic(WithdrawSign^, 11, 139);
+              GotoXY(5, 17);
+              Func37_var_0 := Func18(0, 0, 8);
+              if (Func37_var_0 < 0) then
+              begin
+                Func37_var_86 := 1;
+              end
+              else
+              begin
+                if (Func37_var_0 <= BankBalance) then
+                begin
+                  GotoXY(1, 1);
+                  BankBalance := (BankBalance - Func37_var_0);
+                  Money := (Money + Func37_var_0);
+                  if (not (Func37_var_0 = 0)) then
+                  begin
+                    ShowMessage(87, ' ', 'ףסכה תא תלביק', ' ');
+                  end;
+                  Func37_var_86 := 1;
+                end
+                else
+                begin
+                  ShowMessage(
+                    87,
+                    ' ',
+                    ('! קנבב הזכ ףסכ םוכס ךל ןיא' + ''),
+                    ' '
+                  );
+                end;
+              end;
+            end
+            until (Func37_var_86 = 1);
+          end
+          else
+          begin
+            ShowMessage(
+              87,
+              ' ',
+              ('! קנבב ףסכ ךל ןיא' + ''),
+              ' '
+            );
+          end;
+        end;
+    end;
+  end;
+
+  function Func38(Func38_arg_0: integer): boolean;
+  var
+    Func38_unused_0: array[1..3] of byte;
+  begin
+    if (Func38_arg_0 > ShipCapacity) then
+    begin
+      PutPic(OverweightWindow^, 0, 142);
+      GotoXY(53, 16);
+      if InputYesNo then
+      begin
+        Func38 := False;
+      end
+      else
+      begin
+        Func38 := True;
+      end;
+    end
+    else
     begin
       Func38 := False;
-    end
-    else
-    begin
-      Func38 := True;
     end;
-  end
-  else
-  begin
-    Func38 := False;
   end;
-end;
-procedure Func39(Func39_arg_0: str_10);
-var
-  Func39_var_0: PWinBuffer;
-begin
-  case CountryNameToIndex(Func39_arg_0) of
-    1:   begin
-        Func21_var_6 := 256;
-        Func21_var_4 := 303;
-      end;
-    2:   begin
-        Func21_var_6 := 147;
-        Func21_var_4 := 190;
-      end;
-    3:   begin
-        Func21_var_6 := 44;
-        Func21_var_4 := 86;
-      end;
-  end;
-  New(Func39_var_0);
-  GetPic(
-    Func39_var_0^,
-    Func21_var_6,
-    146,
-    Func21_var_4,
-    155
-  );
-  ColorTable(3, 2, 1, 0);
-  PutPic(Func39_var_0^, Func21_var_6, 155);
-  ColorTable(0, 1, 2, 3);
-  Dispose(Func39_var_0);
-end;
-procedure Func40(Func40_arg_0: str_10);
-var
-  Func40_var_173: boolean;
-  Func40_var_172: boolean;
-  Func40_var_170: integer;
-  Func40_var_168: integer;
-  Func40_unused_167: byte;
-  Func40_var_87: arr_record_1479674575002027080_10;
-  Func40_var_7: arr_record_1479674575002027080_10;
-  Func40_var_5: integer;
-  Func40_var_3: integer;
-  Func40_var_1: integer;
-  Func40_var_0: byte;
-procedure Func41(
-  Func41_arg_8: integer;
-  Func41_arg_6: integer;
-  Func41_arg_4: integer;
-  Func41_arg_2: integer;
-  Func41_arg_0: integer
-);
-var
-  Func41_var_266: integer;
-  Func41_var_264: integer;
-  Func41_var_135: arr_byte_129;
-  Func41_unused_6: arr_byte_129;
-  Func41_var_4: integer;
-  Func41_var_2: integer;
-  Func41_var_0: integer;
-begin
-  GotoXY(34, 17);
-  if (Money > 10000.0) then
+
+  procedure Func39(CountryName: TCountryName);
+  var
+    Func39_var_0: PWinBuffer;
   begin
-    GotoXY(33, 17);
+    case CountryNameToIndex(CountryName) of
+      Turkey:   begin
+          Func21_var_6 := 256;
+          Func21_var_4 := 303;
+        end;
+      Israel:   begin
+          Func21_var_6 := 147;
+          Func21_var_4 := 190;
+        end;
+      Egypt:   begin
+          Func21_var_6 := 44;
+          Func21_var_4 := 86;
+        end;
+    end;
+    New(Func39_var_0);
+    GetPic(
+      Func39_var_0^,
+      Func21_var_6,
+      146,
+      Func21_var_4,
+      155
+    );
+    ColorTable(3, 2, 1, 0);
+    PutPic(Func39_var_0^, Func21_var_6, 155);
+    ColorTable(0, 1, 2, 3);
+    Dispose(Func39_var_0);
   end;
-  if (Money > 100000.0) then
-  begin
-    GotoXY(32, 17);
-  end;
-  Write(Func10(Money):5);
-  PutPic(MapWindow^, 0, 142);
-  GetPic(
-    Func41_var_135,
-    Func41_arg_8,
-    Func41_arg_6,
-    (Func41_arg_8 + 18),
-    (Func41_arg_6 + 14)
-  );
-  Func41_var_0 := 0;
-  Func41_var_2 := ((Func40_var_0 - Ord(global_var_81)) * 60);
-  Func41_var_266 := Func41_arg_8;
-  Func41_var_264 := (Func41_arg_6 + 14);
-  for Func41_var_4 := 1 to Func41_var_2 do
-  begin
-    Func41_var_0 := (Func41_var_0 + 1);
-    if (Func41_var_0 < 60) then
+
+  procedure Func40(Func40_arg_0: TCountryName);
+  var
+    Func40_var_173: boolean;
+    Func40_var_172: boolean;
+    Func40_var_170: integer;
+    Func40_var_168: integer;
+    Func40_unused_167: byte;
+    Func40_var_87: arr_record_1479674575002027080_10;
+    Func40_var_7: arr_record_1479674575002027080_10;
+    Func40_var_5: integer;
+    Func40_var_3: integer;
+    Func40_var_1: integer;
+    Func40_var_0: byte;
+
+    procedure Func41(
+      Func41_arg_8: integer;
+      Func41_arg_6: integer;
+      Func41_arg_4: integer;
+      Func41_arg_2: integer;
+      Func41_arg_0: integer
+    );
+    var
+      Func41_var_266: integer;
+      Func41_var_264: integer;
+      Func41_var_135: arr_byte_129;
+      Func41_unused_6: arr_byte_129;
+      Func41_var_4: integer;
+      Func41_var_2: integer;
+      Func41_var_0: integer;
     begin
-      GotoXY(35, 5);
-      if (Func41_var_0 < 10) then
+      GotoXY(34, 17);
+      if (Money > 10000.0) then
       begin
-        Write(0);
+        GotoXY(33, 17);
       end;
-      if ((Func41_var_0 mod 15) = 0) then
+      if (Money > 100000.0) then
       begin
-        Write(Func41_var_0);
+        GotoXY(32, 17);
       end;
-    end
-    else
-    begin
+      Write(ToStrWithCommas(Money):5);
+      PutPic(MapWindow^, 0, 142);
+      GetPic(
+        Func41_var_135,
+        Func41_arg_8,
+        Func41_arg_6,
+        (Func41_arg_8 + 18),
+        (Func41_arg_6 + 14)
+      );
       Func41_var_0 := 0;
-      global_var_81 := (global_var_81 + 1);
-      GotoXY(32, 5);
-      Write(global_var_81:2, ':00');
-    end;
-    Func40_var_5 := Round(
-      ((0.0 + Func41_arg_8) + ((Func41_var_4 / Func41_var_2) * (Func41_arg_4 - Func41_arg_8)))
-    );
-    Func40_var_3 := Round(
-      (((0.0 + Func41_arg_6) + ((Func41_var_4 / Func41_var_2) * (Func41_arg_2 - Func41_arg_6))) + 14)
-    );
-    PutPic(Func41_var_135, Func40_var_5, Func40_var_3);
-    Delay(15);
-    Func41_var_266 := Func40_var_5;
-    Func41_var_264 := Func40_var_3;
-    Func40_var_3 := (Func40_var_3 - 14);
-  end;
-  GetPic(MapWindow^, 0, 0, 240, 142);
-end;
-procedure Func42(
-  Func42_arg_6: real;
-  Func42_arg_4: integer;
-  Func42_arg_2: integer;
-  Func42_arg_0: integer
-);
-var
-  Func42_unused_38: array[1..4] of byte;
-  Func42_var_36: integer;
-  Func42_var_34: integer;
-  Func42_var_32: integer;
-  Func42_var_24: str_7;
-  Func42_var_13: str_10;
-  Func42_var_12: byte;
-  Func42_var_10: integer;
-  Func42_var_8: integer;
-  Func42_unused_2: array[1..6] of byte;
-  Func42_var_1: boolean;
-  Func42_var_0: boolean;
-procedure Func43(Func43_arg_2: integer; Func43_arg_0: integer);
-var
-  Func43_var_106: integer;
-  Func43_var_104: integer;
-  Func43_var_102: integer;
-  Func43_var_100: integer;
-  Func43_var_98: integer;
-  Func43_var_92: string[5];
-  Func43_var_12: arr_record_1479674575002027080_10;
-  Func43_var_6: real;
-  Func43_var_0: real;
-procedure Func44(Func44_arg_0: integer);
-begin
-  if (Random(Func44_arg_0) = 0) then
-  begin
-    Func43_var_0 := (10 * Trunc(
-      (((Random(15) + 5) / 1000.0) * (Money + Func8))
-    ));
-    Str(Func43_var_0:1:0, Func43_var_92);
-    ShipDamage := (ShipDamage + Func43_var_0);
-    if (Func44_arg_0 = 2) then
-    begin
-      ShowMessage(
-        87,
-        'םרגנ ,ףסונב',
-        'יוושב קזנ הניפסל',
-        ('.םילקש ' + Func43_var_92)
-      );
-    end
-    else
-    begin
-      ShowMessage(
-        87,
-        'ךתניפס ,ךלזמ עורל',
-        '.ברקה ידכ ךות העגפנ',
-        (('.ח"ש ' + Func43_var_92) + ' קזנה יווש')
-      );
-    end;
-  end;
-end;
-procedure Func45;
-var
-  Func45_var_7: integer;
-  Func45_var_1: real;
-  Func45_unused_0: byte;
-begin
-  PutPic(ConfrontWindow^, 0, 142);
-  Func45_var_7 := Random(4);
-  if ((Func45_var_7 < (Func43_arg_2 - Func43_var_98)) or (((Func43_arg_2 - Func43_var_98) <= 0) and (Random(6) = 1))) then
-  begin
-    ShowMessage(
-      87,
-      '- ךשוממ ברק רחאל',
-      '! םיטריפה תא תסבה',
-      ''
-    );
-    if (Random(3) = 1) then
-    begin
-      ShipCapacity := (ShipCapacity + 50);
-      ShowMessage(
-        87,
-        'תניפס תא יבשב תחקל',
-        'הניפסה תלוביקו ,םיה ידדוש',
-        '.ןוט 50-ב הלדג ךלש'
-      );
-    end
-    else
-    begin
-      Func43_arg_2 := (Func43_arg_2 + Func43_var_98);
-      Func43_var_6 := ((Int((((Money + Func8) + BankBalance) / 100)) * (Random(15) + 5)) + ((Func43_arg_2 *
- ((Money + Func8) + BankBalance)) / 10));
-      if (Func43_var_6 < 100) then
+      Func41_var_2 := ((Func40_var_0 - Ord(global_var_81)) * 60);
+      Func41_var_266 := Func41_arg_8;
+      Func41_var_264 := (Func41_arg_6 + 14);
+      for Func41_var_4 := 1 to Func41_var_2 do
       begin
-        Func43_var_6 := 100;
-      end;
-      Func43_var_6 := (5 * Int((Func43_var_6 / 5)));
-      Str(Func43_var_6:1:0, Func43_var_92);
-      ShowMessage(
-        87,
-        ' לש ןומטמ תאצמ',
-        ('םתניפס לע לקש ' + Func43_var_92),
-        ''
-      );
-      Money := (Money + Func43_var_6);
-    end;
-    Func44(4);
-  end
-  else
-  begin
-    Str(Func43_arg_2, Func43_var_92);
-    if (Func43_arg_2 = 0) then
-    begin
-      ShowMessage(
-        87,
-        ',רמשמ תוניפס תנגה אלל',
-        'םיטריפה ידי לע תסבוה התא',
-        ''
-      );
-    end
-    else
-    begin
-      if (Func43_arg_2 = 1) then
-      begin
-        ShowMessage(
-          87,
-          'תניפס לע ורבגתה םיטריפה',
-          'ךלש רמשמה',
-          ''
-        );
-      end
-      else
-      begin
-        if (Func43_arg_2 > 1) then
+        Func41_var_0 := (Func41_var_0 + 1);
+        if (Func41_var_0 < 60) then
         begin
-          ShowMessage(
-            87,
-            'תא וחצינ םיטריפה',
-            ('ךלש רמשמה תוניפס ' + Func43_var_92),
-            ''
-          );
-        end;
-      end;
-    end;
-    Func43_arg_2 := (Func43_arg_2 + Func43_var_98);
-    if (Func43_arg_2 > 3) then
-    begin
-      Func43_arg_2 := 3;
-    end;
-    Func12(5, Func42_var_36, Func45_var_1);
-    if (Func45_var_1 > Money) then
-    begin
-      Func43_var_0 := (((1.0 * (Random(15) + 5)) * Cargo[Func42_var_36]) / 100);
-      if (Func43_arg_2 < 3) then
-      begin
-        Func43_var_0 := (Func43_var_0 + (((3 - Func43_arg_2) * Cargo[Func42_var_36]) div 10));
-      end;
-      if (Func43_var_0 < 1) then
-      begin
-        Func43_var_0 := 1;
-      end;
-      Cargo[Func42_var_36] := (Cargo[Func42_var_36] - Trunc(Func43_var_0));
-      Str(Trunc(Func43_var_0):1, Func42_var_24);
-      ShowMessage(
-        87,
-        '     השק ברק ירחא',
-        ' םיה ידדוש ךממ ובנג',
-        ((WareName[Func42_var_36] + 'ןוט ') + Func42_var_24)
-      );
-      Func44(2);
-    end
-    else
-    begin
-      if (Money > 500) then
-      begin
-        Func43_var_0 := (10 * Trunc(
-          (Random(Trunc((0.015 * Money))) + (Money / 200))
-        ));
-        if (Func43_arg_2 < 3) then
-        begin
-          Func43_var_0 := (Func43_var_0 + ((3 - Func43_arg_2) * Trunc((Money / 10))));
-        end;
-        Func43_var_0 := Trunc(Func43_var_0);
-        Money := (Money - Func43_var_0);
-        Str(Func43_var_0:1:0, Func42_var_24);
-        ShowMessage(
-          87,
-          (('םילקש ' + Func42_var_24) + ' ךממ ובנג םה'),
-          '',
-          ''
-        );
-        Func44(2);
-      end
-      else
-      begin
-        Func43_var_0 := (Int(
-          ((((Random(15) + 35) - (10 * Func43_arg_2)) / 1000) * ((Func8 + Money) + BankBalance))
-        ) * 10);
-        if (Func43_var_0 < 100) then
-        begin
-          Func43_var_0 := 100;
-        end;
-        Str(Func43_var_0:1:0, Func43_var_92);
-        ShipDamage := (ShipDamage + Func43_var_0);
-        ShowMessage(
-          87,
-          'ךתניפס ,ךלזמ עורל',
-          '.ברקה ידכ ךות העגפנ',
-          (('ח"ש ' + Func43_var_92) + ' קזנה יווש')
-        );
-      end;
-    end;
-  end;
-  Func22;
-end;
-begin
-  PutPic(PiratesWindow^, 0, 142);
-  WaitForKey;
-  PutPic(PiratesSign^, 4, 139);
-  GotoXY(18, 17);
-  Write(Func40_var_1:2);
-  Func43_var_12[1].field_0 := 108;
-  Func43_var_12[1].field_2 := 117;
-  Func43_var_12[1].field_4 := 133;
-  Func43_var_12[1].field_6 := 123;
-  Func43_var_12[2].field_0 := 72;
-  Func43_var_12[2].field_2 := 117;
-  Func43_var_12[2].field_4 := 96;
-  Func43_var_12[2].field_6 := 123;
-  Func43_var_12[3].field_0 := 7;
-  Func43_var_12[3].field_2 := 117;
-  Func43_var_12[3].field_4 := 58;
-  Func43_var_12[3].field_6 := 123;
-  Func43_var_104 := Func17(Func43_var_12, 3);
-  case Func43_var_104 of
-    1:   begin
-        Func43_var_98 := 0;
-        Func45;
-      end;
-    2:   begin
-        Func43_var_100 := 0;
-        Func43_var_98 := 1;
-        PutPic(RunAwayWindow^, 0, 142);
-        if (Func43_arg_0 > (0.81 * ShipCapacity)) then
-        begin
-          Func43_var_102 := 0;
+          GotoXY(35, 5);
+          if (Func41_var_0 < 10) then
+          begin
+            Write(0);
+          end;
+          if ((Func41_var_0 mod 15) = 0) then
+          begin
+            Write(Func41_var_0);
+          end;
         end
         else
         begin
-          Func43_var_106 := (((ShipCapacity div 30) - (Func43_arg_0 div 30)) + 1);
-          if (Func43_var_106 < 1) then
-          begin
-            Func43_var_106 := 1;
-          end;
-          Func43_var_102 := Random(Func43_var_106);
+          Func41_var_0 := 0;
+          global_var_81 := (global_var_81 + 1);
+          GotoXY(32, 5);
+          Write(global_var_81:2, ':00');
         end;
-        if (Func43_var_102 > 0) then
+        Func40_var_5 := Round(
+          ((0.0 + Func41_arg_8) + ((Func41_var_4 / Func41_var_2) * (Func41_arg_4 - Func41_arg_8)))
+        );
+        Func40_var_3 := Round(
+          (((0.0 + Func41_arg_6) + ((Func41_var_4 / Func41_var_2) * (Func41_arg_2 - Func41_arg_6))) + 14)
+        );
+        PutPic(Func41_var_135, Func40_var_5, Func40_var_3);
+        Delay(15);
+        Func41_var_266 := Func40_var_5;
+        Func41_var_264 := Func40_var_3;
+        Func40_var_3 := (Func40_var_3 - 14);
+      end;
+      GetPic(MapWindow^, 0, 0, 240, 142);
+    end;
+
+    procedure Func42(
+      Func42_arg_6: real;
+      Func42_arg_4: integer;
+      Func42_arg_2: integer;
+      Func42_arg_0: integer
+    );
+    var
+      Func42_unused_38: array[1..4] of byte;
+      Func42_var_36: integer;
+      Func42_var_34: integer;
+      Func42_var_32: integer;
+      Func42_var_24: str_7;
+      Func42_var_13: TCountryName;
+      Func42_var_12: byte;
+      Func42_var_10: integer;
+      Func42_var_8: integer;
+      Func42_unused_2: array[1..6] of byte;
+      Func42_var_1: boolean;
+      Func42_var_0: boolean;
+
+      procedure Func43(Func43_arg_2: integer; Func43_arg_0: integer);
+      var
+        Func43_var_106: integer;
+        Func43_var_104: integer;
+        Func43_var_102: integer;
+        Func43_var_100: integer;
+        Func43_var_98: integer;
+        Func43_var_92: string[5];
+        Func43_var_12: arr_record_1479674575002027080_10;
+        Func43_var_6: real;
+        Func43_var_0: real;
+
+        procedure Func44(Func44_arg_0: integer);
         begin
-          Func43_var_100 := Random(((Trunc(ShipDamage) div 30) + 1));
-        end;
-        if (Func43_var_100 > 0) then
-        begin
-          Func43_var_102 := 0;
-        end;
-        if (Func43_var_102 = 0) then
-        begin
-          if (Func43_arg_0 > (0.5 * ShipCapacity)) then
+          if (Random(Func44_arg_0) = 0) then
           begin
-            ShowMessage(
-              87,
-              'אלו ,ידמ הדבכ ךתניפס',
-              'חורבל החילצה',
-              ''
-            );
-          end
-          else
-          begin
-            if (ShipDamage > 0) then
+            Func43_var_0 := (10 * Trunc(
+              (((Random(15) + 5) / 1000.0) * (Money + Func8))
+            ));
+            Str(Func43_var_0:1:0, Func43_var_92);
+            ShipDamage := (ShipDamage + Func43_var_0);
+            if (Func44_arg_0 = 2) then
             begin
               ShowMessage(
                 87,
-                'בקע חורבל תחלצה אל',
-                'ךתניפסבש קזנה',
-                ''
+                'םרגנ ,ףסונב',
+                'יוושב קזנ הניפסל',
+                ('.םילקש ' + Func43_var_92)
               );
             end
             else
             begin
               ShowMessage(
                 87,
-                'החילצה הריהמה םיטריפה תניפס',
-                'ךתניפס תא גישהל',
-                ''
+                'ךתניפס ,ךלזמ עורל',
+                '.ברקה ידכ ךות העגפנ',
+                (('.ח"ש ' + Func43_var_92) + ' קזנה יווש')
               );
             end;
           end;
-          Func45;
-        end
-        else
-        begin
-          ShowMessage(87, '', '! !  םהמ  טלמהל  תחלצה', '');
         end;
-      end;
-    3:   begin
-        Func43_var_98 := 1;
-        PutPic(OfferWindow^, 0, 142);
-        if Func25(
-          Cargo[1],
-          Cargo[2],
-          Cargo[3],
-          Money
-        ) then
+
+        procedure Func45;
+        var
+          Func45_var_7: integer;
+          Func45_var_1: real;
+          Func45_unused_0: byte;
         begin
-          ShowMessage(
-            87,
-            'לבקל וטילחה םיה ידדוש',
-            'ךתעצה תא',
-            ''
-          );
-          Func22;
-        end
-        else
-        begin
-          ShowMessage(
-            87,
-            'תא םיחוד םיה ידדוש',
-            '! ךתוא םיפקותו ךתעצה',
-            ''
-          );
-          Func45;
-        end;
-      end;
-  end;
-end;
-function Func46(Func46_arg_0: integer): boolean;
-var
-  Func46_var_0: integer;
-begin
-  Func46_var_0 := 30000;
-  if (Func46_arg_0 > (ShipCapacity + 70)) then
-  begin
-    Func46_var_0 := 1;
-  end
-  else
-  begin
-    if (Func46_arg_0 > (ShipCapacity + 60)) then
-    begin
-      Func46_var_0 := 2;
-    end
-    else
-    begin
-      if (Func46_arg_0 > (ShipCapacity + 40)) then
-      begin
-        Func46_var_0 := 3;
-      end
-      else
-      begin
-        if (Func46_arg_0 > (ShipCapacity + 20)) then
-        begin
-          Func46_var_0 := 4;
-        end
-        else
-        begin
-          if (Func46_arg_0 > ShipCapacity) then
-          begin
-            Func46_var_0 := 6;
-          end;
-        end;
-      end;
-    end;
-  end;
-  if (Random(Func46_var_0) = 0) then
-  begin
-    Func46 := True;
-  end
-  else
-  begin
-    Func46 := False;
-  end;
-end;
-function Func47(Func47_arg_2: real; Func47_arg_0: integer): boolean;
-begin
-  Func47 := ((Random(
-    ((1 + Trunc(((Func47_arg_2 + 399) / 400))) + (2 * Func47_arg_0))
-  ) > 0) and (Random(2) = 1));
-end;
-procedure Func48;
-begin
-  PutPic(ChangeWindow^, 0, 142);
-  Func42_var_13 := global_var_55;
-  if (global_var_55 = 'לארשי') then
-  begin
-    global_var_55 := 'היכרות';
-  end
-  else
-  begin
-    global_var_55 := 'לארשי';
-  end;
-  Delay(1500);
-  ShowMessage(
-    87,
-    'תוקזח תוחורמ האצותכ',
-    'תעגה ,טוונב תועטו',
-    (((Func42_var_13 + 'ל םוקמב ') + global_var_55) + 'ל')
-  );
-  if ((global_var_44 = 'םירצמ') and (global_var_55 = 'היכרות')) then
-  begin
-    Func40_var_0 := (Func40_var_0 + 4);
-  end;
-end;
-begin
-  global_var_109 := False;
-  Func40_var_172 := False;
-  if Func47(Func42_arg_6, Func42_arg_0) then
-  begin
-    if (Func42_arg_6 > 0) then
-    begin
-      Func42_var_0 := True;
-    end
-    else
-    begin
-      Func42_var_1 := (Random(3) = 1);
-    end;
-    if (Func42_var_0 or Func42_var_1) then
-    begin
-      ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
-      if ((StormCountryName = CurrentCountryName) or (StormCountryName = global_var_55)) then
-      begin
-        PutPic(StormWindow^, 0, 142);
-        WaitForKey;
-        if (Func8 > 10000) then
-        begin
-          Func28(142, Func42_var_36, Func42_var_24);
-          ShowMessage(
-            87,
-            'ךתניפסמ ופטש םיהובגה םילגה',
-            (((#46 + WareName[Func42_var_36]) + ' ןוט ') + Func42_var_24),
-            ''
-          );
-          Func22;
-        end
-        else
-        begin
-          Func28(144, Func42_var_36, Func42_var_24);
-          ShowMessage(
-            87,
-            'ךתניפסל םרגנ הרעסה בקע',
-            (('.ח"ש ' + Func42_var_24) + ' יוושב קזנ'),
-            ''
-          );
-        end;
-      end
-      else
-      begin
-        Func28(144, Func42_var_36, Func42_var_24);
-        if (global_var_81 > 16) then
-        begin
-          PutPic(ShoalWindow^, 0, 142);
-          ShowMessage(
-            87,
-            'םיעורגה תוארה יאנת בקע',
-            '.ןוטרש לע תילע - הלילב',
-            ''
-          );
-          ShowMessage(
-            87,
-            'קזנ ךתניפסל םרגנ',
-            (('.ח"ש ' + Func42_var_24) + ' יוושב'),
-            ''
-          );
-        end
-        else
-        begin
-          PutPic(DamagedWindow^, 0, 142);
-          if Func42_var_0 then
+          PutPic(ConfrontWindow^, 0, 142);
+          Func45_var_7 := Random(4);
+          if ((Func45_var_7 < (Func43_arg_2 - Func43_var_98)) or (((Func43_arg_2 - Func43_var_98) <= 0) and (Random(6) = 1))) then
           begin
             ShowMessage(
               87,
-              'הקוזינה ךתניפסב העיסנה',
-              (Func42_var_24 + '-ב קזנה תא הרימחה'),
-              '.םיפסונ לקש'
+              '- ךשוממ ברק רחאל',
+              '! םיטריפה תא תסבה',
+              ''
             );
+            if (Random(3) = 1) then
+            begin
+              ShipCapacity := (ShipCapacity + 50);
+              ShowMessage(
+                87,
+                'תניפס תא יבשב תחקל',
+                'הניפסה תלוביקו ,םיה ידדוש',
+                '.ןוט 50-ב הלדג ךלש'
+              );
+            end
+            else
+            begin
+              Func43_arg_2 := (Func43_arg_2 + Func43_var_98);
+              Func43_var_6 := ((Int((((Money + Func8) + BankBalance) / 100)) * (Random(15) + 5)) + ((Func43_arg_2 *
+        ((Money + Func8) + BankBalance)) / 10));
+              if (Func43_var_6 < 100) then
+              begin
+                Func43_var_6 := 100;
+              end;
+              Func43_var_6 := (5 * Int((Func43_var_6 / 5)));
+              Str(Func43_var_6:1:0, Func43_var_92);
+              ShowMessage(
+                87,
+                ' לש ןומטמ תאצמ',
+                ('םתניפס לע לקש ' + Func43_var_92),
+                ''
+              );
+              Money := (Money + Func43_var_6);
+            end;
+            Func44(4);
           end
           else
           begin
-            ShowMessage(
-              87,
-              'קזנ ךתניפסל םרגנ',
-              (('.ח"ש ' + Func42_var_24) + ' יוושב'),
-              ''
-            );
+            Str(Func43_arg_2, Func43_var_92);
+            if (Func43_arg_2 = 0) then
+            begin
+              ShowMessage(
+                87,
+                ',רמשמ תוניפס תנגה אלל',
+                'םיטריפה ידי לע תסבוה התא',
+                ''
+              );
+            end
+            else
+            begin
+              if (Func43_arg_2 = 1) then
+              begin
+                ShowMessage(
+                  87,
+                  'תניפס לע ורבגתה םיטריפה',
+                  'ךלש רמשמה',
+                  ''
+                );
+              end
+              else
+              begin
+                if (Func43_arg_2 > 1) then
+                begin
+                  ShowMessage(
+                    87,
+                    'תא וחצינ םיטריפה',
+                    ('ךלש רמשמה תוניפס ' + Func43_var_92),
+                    ''
+                  );
+                end;
+              end;
+            end;
+            Func43_arg_2 := (Func43_arg_2 + Func43_var_98);
+            if (Func43_arg_2 > 3) then
+            begin
+              Func43_arg_2 := 3;
+            end;
+            Func12(5, Func42_var_36, Func45_var_1);
+            if (Func45_var_1 > Money) then
+            begin
+              Func43_var_0 := (((1.0 * (Random(15) + 5)) * Cargo[Func42_var_36]) / 100);
+              if (Func43_arg_2 < 3) then
+              begin
+                Func43_var_0 := (Func43_var_0 + (((3 - Func43_arg_2) * Cargo[Func42_var_36]) div 10));
+              end;
+              if (Func43_var_0 < 1) then
+              begin
+                Func43_var_0 := 1;
+              end;
+              Cargo[Func42_var_36] := (Cargo[Func42_var_36] - Trunc(Func43_var_0));
+              Str(Trunc(Func43_var_0):1, Func42_var_24);
+              ShowMessage(
+                87,
+                '     השק ברק ירחא',
+                ' םיה ידדוש ךממ ובנג',
+                ((WareName[Func42_var_36] + 'ןוט ') + Func42_var_24)
+              );
+              Func44(2);
+            end
+            else
+            begin
+              if (Money > 500) then
+              begin
+                Func43_var_0 := (10 * Trunc(
+                  (Random(Trunc((0.015 * Money))) + (Money / 200))
+                ));
+                if (Func43_arg_2 < 3) then
+                begin
+                  Func43_var_0 := (Func43_var_0 + ((3 - Func43_arg_2) * Trunc((Money / 10))));
+                end;
+                Func43_var_0 := Trunc(Func43_var_0);
+                Money := (Money - Func43_var_0);
+                Str(Func43_var_0:1:0, Func42_var_24);
+                ShowMessage(
+                  87,
+                  (('םילקש ' + Func42_var_24) + ' ךממ ובנג םה'),
+                  '',
+                  ''
+                );
+                Func44(2);
+              end
+              else
+              begin
+                Func43_var_0 := (Int(
+                  ((((Random(15) + 35) - (10 * Func43_arg_2)) / 1000) * ((Func8 + Money) + BankBalance))
+                ) * 10);
+                if (Func43_var_0 < 100) then
+                begin
+                  Func43_var_0 := 100;
+                end;
+                Str(Func43_var_0:1:0, Func43_var_92);
+                ShipDamage := (ShipDamage + Func43_var_0);
+                ShowMessage(
+                  87,
+                  'ךתניפס ,ךלזמ עורל',
+                  '.ברקה ידכ ךות העגפנ',
+                  (('ח"ש ' + Func43_var_92) + ' קזנה יווש')
+                );
+              end;
+            end;
           end;
+          ShowHUD;
+        end;
+
+      begin
+        PutPic(PiratesWindow^, 0, 142);
+        WaitForKey;
+        PutPic(PiratesSign^, 4, 139);
+        GotoXY(18, 17);
+        Write(Func40_var_1:2);
+        Func43_var_12[1].field_0 := 108;
+        Func43_var_12[1].field_2 := 117;
+        Func43_var_12[1].field_4 := 133;
+        Func43_var_12[1].field_6 := 123;
+        Func43_var_12[2].field_0 := 72;
+        Func43_var_12[2].field_2 := 117;
+        Func43_var_12[2].field_4 := 96;
+        Func43_var_12[2].field_6 := 123;
+        Func43_var_12[3].field_0 := 7;
+        Func43_var_12[3].field_2 := 117;
+        Func43_var_12[3].field_4 := 58;
+        Func43_var_12[3].field_6 := 123;
+        Func43_var_104 := Func17(Func43_var_12, 3);
+        case Func43_var_104 of
+          1:   begin
+              Func43_var_98 := 0;
+              Func45;
+            end;
+          2:   begin
+              Func43_var_100 := 0;
+              Func43_var_98 := 1;
+              PutPic(RunAwayWindow^, 0, 142);
+              if (Func43_arg_0 > (0.81 * ShipCapacity)) then
+              begin
+                Func43_var_102 := 0;
+              end
+              else
+              begin
+                Func43_var_106 := (((ShipCapacity div 30) - (Func43_arg_0 div 30)) + 1);
+                if (Func43_var_106 < 1) then
+                begin
+                  Func43_var_106 := 1;
+                end;
+                Func43_var_102 := Random(Func43_var_106);
+              end;
+              if (Func43_var_102 > 0) then
+              begin
+                Func43_var_100 := Random(((Trunc(ShipDamage) div 30) + 1));
+              end;
+              if (Func43_var_100 > 0) then
+              begin
+                Func43_var_102 := 0;
+              end;
+              if (Func43_var_102 = 0) then
+              begin
+                if (Func43_arg_0 > (0.5 * ShipCapacity)) then
+                begin
+                  ShowMessage(
+                    87,
+                    'אלו ,ידמ הדבכ ךתניפס',
+                    'חורבל החילצה',
+                    ''
+                  );
+                end
+                else
+                begin
+                  if (ShipDamage > 0) then
+                  begin
+                    ShowMessage(
+                      87,
+                      'בקע חורבל תחלצה אל',
+                      'ךתניפסבש קזנה',
+                      ''
+                    );
+                  end
+                  else
+                  begin
+                    ShowMessage(
+                      87,
+                      'החילצה הריהמה םיטריפה תניפס',
+                      'ךתניפס תא גישהל',
+                      ''
+                    );
+                  end;
+                end;
+                Func45;
+              end
+              else
+              begin
+                ShowMessage(87, '', '! !  םהמ  טלמהל  תחלצה', '');
+              end;
+            end;
+          3:   begin
+              Func43_var_98 := 1;
+              PutPic(OfferWindow^, 0, 142);
+              if Func25(
+                Cargo[Copper],
+                Cargo[Olives],
+                Cargo[Wheat],
+                Money
+              ) then
+              begin
+                ShowMessage(
+                  87,
+                  'לבקל וטילחה םיה ידדוש',
+                  'ךתעצה תא',
+                  ''
+                );
+                ShowHUD;
+              end
+              else
+              begin
+                ShowMessage(
+                  87,
+                  'תא םיחוד םיה ידדוש',
+                  '! ךתוא םיפקותו ךתעצה',
+                  ''
+                );
+                Func45;
+              end;
+            end;
         end;
       end;
+
+      function Func46(Func46_arg_0: integer): boolean;
+      var
+        Func46_var_0: integer;
+      begin
+        Func46_var_0 := 30000;
+        if (Func46_arg_0 > (ShipCapacity + 70)) then
+        begin
+          Func46_var_0 := 1;
+        end
+        else
+        begin
+          if (Func46_arg_0 > (ShipCapacity + 60)) then
+          begin
+            Func46_var_0 := 2;
+          end
+          else
+          begin
+            if (Func46_arg_0 > (ShipCapacity + 40)) then
+            begin
+              Func46_var_0 := 3;
+            end
+            else
+            begin
+              if (Func46_arg_0 > (ShipCapacity + 20)) then
+              begin
+                Func46_var_0 := 4;
+              end
+              else
+              begin
+                if (Func46_arg_0 > ShipCapacity) then
+                begin
+                  Func46_var_0 := 6;
+                end;
+              end;
+            end;
+          end;
+        end;
+        if (Random(Func46_var_0) = 0) then
+        begin
+          Func46 := True;
+        end
+        else
+        begin
+          Func46 := False;
+        end;
+      end;
+
+      function Func47(Func47_arg_2: real; Func47_arg_0: integer): boolean;
+      begin
+        Func47 := ((Random(
+          ((1 + Trunc(((Func47_arg_2 + 399) / 400))) + (2 * Func47_arg_0))
+        ) > 0) and (Random(2) = 1));
+      end;
+
+      procedure Func48;
+      begin
+        PutPic(ChangeWindow^, 0, 142);
+        Func42_var_13 := global_var_55;
+        if global_var_55 = 'לארשי' then
+          global_var_55 := 'היכרות'
+        else
+          global_var_55 := 'לארשי';
+        Delay(1500);
+        ShowMessage(
+          87,
+          'תוקזח תוחורמ האצותכ',
+          'תעגה ,טוונב תועטו',
+          Func42_var_13 + 'ל םוקמב ' + global_var_55 + 'ל'
+        );
+        if (global_var_44 = 'םירצמ') and (global_var_55 = 'היכרות') then
+        begin
+          Func40_var_0 := (Func40_var_0 + 4);
+        end;
+      end;
+
+    begin
+      global_var_109 := False;
+      Func40_var_172 := False;
+      if Func47(Func42_arg_6, Func42_arg_0) then
+      begin
+        if (Func42_arg_6 > 0) then
+        begin
+          Func42_var_0 := True;
+        end
+        else
+        begin
+          Func42_var_1 := (Random(3) = 1);
+        end;
+        if Func42_var_0 or Func42_var_1 then
+        begin
+          ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
+          if (StormCountryName = CurrentCountryName) or (StormCountryName = global_var_55) then
+          begin
+            PutPic(StormWindow^, 0, 142);
+            WaitForKey;
+            if Func8 > 10000 then
+            begin
+              Func28(142, Func42_var_36, Func42_var_24);
+              ShowMessage(
+                87,
+                'ךתניפסמ ופטש םיהובגה םילגה',
+                (((#46 + WareName[Func42_var_36]) + ' ןוט ') + Func42_var_24),
+                ''
+              );
+              ShowHUD;
+            end
+            else
+            begin
+              Func28(144, Func42_var_36, Func42_var_24);
+              ShowMessage(
+                87,
+                'ךתניפסל םרגנ הרעסה בקע',
+                (('.ח"ש ' + Func42_var_24) + ' יוושב קזנ'),
+                ''
+              );
+            end;
+          end
+          else
+          begin
+            Func28(144, Func42_var_36, Func42_var_24);
+            if global_var_81 > 16 then
+            begin
+              PutPic(ShoalWindow^, 0, 142);
+              ShowMessage(87, 'םיעורגה תוארה יאנת בקע', '.ןוטרש לע תילע - הלילב', '');
+              ShowMessage(87, 'קזנ ךתניפסל םרגנ', '.ח"ש ' + Func42_var_24 + ' יוושב', '');
+            end
+            else
+            begin
+              PutPic(DamagedWindow^, 0, 142);
+              if Func42_var_0 then
+                ShowMessage(87, 'הקוזינה ךתניפסב העיסנה', Func42_var_24 + '-ב קזנה תא הרימחה', '.םיפסונ לקש')
+              else
+                ShowMessage(87, 'קזנ ךתניפסל םרגנ', '.ח"ש ' + Func42_var_24 + ' יוושב', '');
+            end;
+          end;
+        end
+        else
+          Func48;
+        global_var_109 := True;
+      end;
+      if ((not global_var_109) and (Func42_arg_4 > ShipCapacity)) then
+      begin
+        if Func46(Func42_arg_4) then
+        begin
+          ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
+          PutPic(SinkingWindow^, 0, 142);
+          WaitForKey;
+          Func28(153, Func42_var_36, Func42_var_24);
+          ShowMessage(
+            87,
+            'םיל ךילשהל תצלאנ',
+            ((WareName[Func42_var_36] + 'ןוט ') + Func42_var_24),
+            ''
+          );
+          ShowHUD;
+          global_var_109 := True;
+        end;
+      end;
+      if ((not global_var_109) and (((global_var_81 + Func42_arg_2) + (Func42_arg_2 div 2)) <= 20)) then
+      begin
+        if Random(12) = 0 then
+        begin
+          Func42_var_10 := Func40_var_5;
+          Func42_var_8 := Func40_var_3;
+          Func42_var_12 := CountryNameToIndex(global_var_55);
+          Func41(
+            Func42_var_10,
+            Func42_var_8,
+            global_var_264[Func42_var_12].field_0,
+            global_var_264[Func42_var_12].field_2,
+            9
+          );
+          if Random(2) = 1 then
+            ShowMessage(87, 'תינמז רוגס ' + global_var_55 + ' למנ', 'דבכ לפרע בקע', '')
+          else
+          begin
+            PutPic(StrikeWindow^, 0, 142);
+            WaitForKey;
+            ShowMessage(87, 'םישובישו התיבש לשב', global_var_55 + ' למנ ,הדובעב', 'רוגס ');
+          end;
+          ShowMessage(87, '', (global_var_44 + 'ל רוזחל ךילע'), '');
+          global_var_55 := global_var_44;
+          Func40_var_0 := (global_var_81 + (Func42_arg_2 div 2));
+          Func41(
+            global_var_264[Func42_var_12].field_0,
+            global_var_264[Func42_var_12].field_2,
+            Func42_var_10,
+            Func42_var_8,
+            9
+          );
+          Func40_var_0 := (global_var_81 + (Func42_arg_2 div 2));
+          global_var_109 := True;
+        end;
+      end;
+      Func42_var_34 := Random(20) + 1;
+      if global_var_81 >= 16 then
+        if Func42_var_34 > 15 then
+          Func42_var_34 := 1;
+      if not global_var_109 then
+      begin
+        case Func42_var_34 of
+          1..6:   begin
+              ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
+              global_var_109 := True;
+              Func43(Func40_var_1, Func42_arg_4);
+            end;
+          7:   begin
+              Func48;
+            end;
+          9, 10:   begin
+              ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
+              PutPic(DesertedWindow^, 0, 142);
+              Func42_var_36 := 0;
+              repeat
+              begin
+                Func42_var_36 := (Func42_var_36 + 1);
+                Func42_var_32 := Trunc(
+                  ((((Random(25) + 11) / 100.0) * (Money + Func8)) / BaseWarePrice[Func42_var_36])
+                );
+                if (Func42_var_32 > 0) then
+                begin
+                  GotoXY(45, 16);
+                  Write(WareName[Func42_var_36], ' ןוט ', Func42_var_32);
+                  case Func42_var_36 of
+                    Copper: Cargo[Copper] := Cargo[Copper] + Func42_var_32;
+                    Olives: Cargo[Olives] := Cargo[Olives] + Func42_var_32;
+                    Wheat: Cargo[Wheat] := Cargo[Wheat] + Func42_var_32;
+                  end;
+                  global_var_109 := True;
+                end;
+              end
+              until (global_var_109 or (Func42_var_36 = 3));
+              WaitForKey;
+              ShowHUD;
+            end;
+          8, 11..20:   begin
+              Func40_var_172 := True;
+            end;
+        end;
+      end;
+    end;
+
+    procedure Func49;
+    var
+      Func49_var_3: byte;
+      Func49_var_2: byte;
+      Func49_var_1: byte;
+      Func49_var_0: byte;
+
+      procedure Func50(var Func50_arg_0: integer);
+      var
+        Func50_var_116: real;
+        Line1: TMessageLine;
+        Line2: TMessageLine;
+        Line3: TMessageLine;
+        Func50_var_0: str_7;
+      begin
+        PutPic(GuardsWindow^, 0, 142);
+        Func50_var_116 := (5 * Trunc(((Func8 + Money) / (200 + Random(100)))));
+        if (Func50_var_116 < 75) then
+          Func50_var_116 := 75;
+        if (Func50_arg_0 > 0) then
+          Func50_var_116 := (Func50_var_116 + (Func50_var_116 / 3));
+        Func50_var_116 := (5 * Int((Func50_var_116 / 5)));
+        Str(Func50_var_116:1:0, Func50_var_0);
+        GotoXY(1, 15);
+        Line3 := '? הצור התא תוניפס המכ';
+        if Func50_var_116 <= Money then
+        begin
+          Line2 := ('ח"ש ' + Func50_var_0);
+          if (Func50_arg_0 = 0) then
+            Line1 := 'רמשמ תניפס לכ ריחמ'
+          else
+          begin
+            Line1 := 'םישרוד רמשמה תוניפס ילעב';
+            if (StormCountryName = CurrentCountryName) or (StormCountryName = global_var_55) then
+              Line2 := ('.רעוסה םיה לשב ,' + Line2)
+            else
+              Line2 := ('רבגומה ןוכיסה לשב ' + Line2);
+          end;
+          ShowMessage(78, Line1, Line2, Line3);
+          repeat
+          begin
+            GotoXY(4, 17);
+            Write('':4);
+            GotoXY(4, 17);
+            Func40_var_1 := Trunc(Func18(0, 0, 3));
+          end
+          until (not Func24(((1.0 * Func50_var_116) * Func40_var_1)));
+        end
+        else
+        begin
+          ShowMessage(78, 'םלשל ףסכ ךל ןיא', 'רמשמ תוניפסל', '');
+          Func40_var_1 := 0;
+          repeat
+          LastPressedKey := GetPressedKey;
+          until (LastPressedKey in [#13, #27]);
+          if LastPressedKey = #27 then
+            Func40_var_1 := -1;
+        end;
+        if (Func40_var_1 > 0) then
+          Money := (Money - (Func40_var_1 * Func50_var_116));
+      end;
+
+    begin
+      Func50(global_var_103);
+      if (Func40_var_1 < 0) then
+        global_var_55 := global_var_44
+      else
+      begin
+        Func49_var_0 := ((Func40_var_0 - Ord(global_var_81)) div 2);
+        Func40_var_0 := (Func40_var_0 - Ord(Func49_var_0));
+        Func49_var_3 := CountryNameToIndex(global_var_44);
+        Func49_var_2 := CountryNameToIndex(global_var_55);
+        Func49_var_1 := global_var_200[Func49_var_3, Func49_var_2];
+        Func41(
+          global_var_264[Func49_var_3].field_0,
+          global_var_264[Func49_var_3].field_2,
+          global_var_264[Func49_var_1].field_0,
+          global_var_264[Func49_var_1].field_2,
+          9
+        );
+        Func40_var_0 := (global_var_81 + Func49_var_0);
+        Func49_var_3 := Func49_var_1;
+        Func42(
+          ShipDamage,
+          Func9,
+          Func40_var_170,
+          global_var_103
+        );
+        Func49_var_2 := CountryNameToIndex(global_var_55);
+        Func49_var_1 := global_var_200[Func49_var_3, Func49_var_2];
+        if Func49_var_1 > 0 then
+        begin
+          Func49_var_0 := (Func49_var_0 div 2);
+          Func40_var_0 := (Func40_var_0 - Ord(Func49_var_0));
+        end;
+        while Func49_var_1 > 0 do
+        begin
+          Func41(
+            global_var_264[Func49_var_3].field_0,
+            global_var_264[Func49_var_3].field_2,
+            global_var_264[Func49_var_1].field_0,
+            global_var_264[Func49_var_1].field_2,
+            9
+          );
+          Func40_var_0 := global_var_81 + Func49_var_0;
+          Func49_var_3 := Func49_var_1;
+          Func49_var_1 := global_var_200[Func49_var_3, Func49_var_2];
+        end;
+        Func41(
+          global_var_264[Func49_var_3].field_0,
+          global_var_264[Func49_var_3].field_2,
+          global_var_264[Func49_var_2].field_0,
+          global_var_264[Func49_var_2].field_2,
+          9
+        );
+        if Func40_var_172 then
+          ShowMessage(78, '', '! !  ם ו ל ש ב   ת ע ג ה', '');
+      end;
+    end;
+
+  begin
+    Func40_var_170 := 0;
+    global_var_44 := CurrentCountryName;
+    Func40_var_173 := False;
+    global_var_103 := 0;
+    PutPic(MapWindow^, 0, 142);
+    Func40_var_87[1].field_0 := 144;
+    Func40_var_87[1].field_2 := 2;
+    Func40_var_87[1].field_4 := 182;
+    Func40_var_87[1].field_6 := 9;
+    Func40_var_87[2].field_0 := 228;
+    Func40_var_87[2].field_2 := 106;
+    Func40_var_87[2].field_4 := 237;
+    Func40_var_87[2].field_6 := 137;
+    Func40_var_87[3].field_0 := 75;
+    Func40_var_87[3].field_2 := 134;
+    Func40_var_87[3].field_4 := 111;
+    Func40_var_87[3].field_6 := 141;
+    global_var_21 := 1;
+    for global_var_23 := 1 to 3 do
+    begin
+      if global_var_23 <> CountryNameToIndex(global_var_44) then
+      begin
+        Func40_var_7[global_var_21] := Func40_var_87[global_var_23];
+        global_var_21 := (global_var_21 + 1);
+      end;
+    end;
+    case CountryNameToIndex(CurrentCountryName) of
+      Turkey: Func40_var_168 := Func17(Func40_var_7, 2) + 1;
+      Israel: Func40_var_168 := Func17(Func40_var_7, 2) * 2 - 1;
+      Egypt: Func40_var_168 := Func17(Func40_var_7, 2);
+    end;
+    if Func40_var_168 > 0 then
+    begin
+      global_var_55 := CountryIndexToName(Func40_var_168);
+      if ((global_var_44 = 'לארשי') or (global_var_55 = 'לארשי')) then
+      begin
+        Func40_var_170 := 4;
+      end
+      else
+      begin
+        Func40_var_170 := 8;
+      end;
+      if (not Func40_var_173) and ((global_var_81 + Func40_var_170) > 20) then
+      begin
+        ShowMessage(87, 'תרחואמ העשה', 'עיגהל לכות אלו', 'םויה םשל');
+        global_var_55 := global_var_44;
+        Func40_var_173 := True;
+      end;
+      if (not Func40_var_173) then
+      begin
+        if ((global_var_81 + Func40_var_170) > 16) then
+        begin
+          PutPic(NightWindow^, 0, 142);
+          GotoXY(4, 17);
+          if (not InputYesNo) then
+          begin
+            Func40_var_1 := -1;
+          end
+          else
+          begin
+            Func40_var_0 := (global_var_81 + Func40_var_170);
+            global_var_103 := 2;
+            if ((Func40_arg_0 = CurrentCountryName) or (Func40_arg_0 = global_var_55)) then
+            begin
+              global_var_103 := 4;
+            end;
+            Func49;
+          end;
+        end
+        else
+        begin
+          if ((Func40_arg_0 = CurrentCountryName) or (Func40_arg_0 = global_var_55)) then
+          begin
+            global_var_103 := 3;
+          end;
+          Func40_var_0 := (global_var_81 + Func40_var_170);
+          Func49;
+        end;
+      end;
+      if (Func40_var_1 < 0) then
+      begin
+        global_var_55 := global_var_44;
+      end;
+      CurrentCountryName := global_var_55;
+      if (Func40_var_1 >= 0) then
+      begin
+        GotoXY(73, 1);
+        Write(CurrentCountryName:6);
+        Func39(global_var_44);
+        Func39(CurrentCountryName);
+        WaitForKey;
+      end;
+    end;
+  end;
+
+  procedure Func51(var Func51_arg_0: real);
+  var
+    Func51_var_11: integer;
+    Func51_var_0: TCountryName;
+
+    function Func52(Func52_arg_0: real): boolean;
+    begin
+      if (Func52_arg_0 > 0) then
+      begin
+        if (Func52_arg_0 > Money) then
+        begin
+          ShowMessage(
+            87,
+            '',
+            'ףסכ הברה ךכ-לכ ךל ןיא',
+            #7
+          );
+          Func52 := True;
+        end
+        else
+        begin
+          Func52 := False;
+        end;
+      end;
+    end;
+
+  begin
+    repeat
+    begin
+      PutPic(RepairWindow^, 0, 142);
+      GotoXY(21, 17);
+      Write(Func51_arg_0:4:0);
+      GotoXY(5, 17);
+      Func51_var_11 := Trunc(Func18(0, 0, 5));
     end
-    else
+    until (not Func52(Func51_var_11));
+    if (Func51_var_11 >= 0) then
     begin
-      Func48;
-    end;
-    global_var_109 := True;
-  end;
-  if ((not global_var_109) and (Func42_arg_4 > ShipCapacity)) then
-  begin
-    if Func46(Func42_arg_4) then
-    begin
-      ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
-      PutPic(SinkingWindow^, 0, 142);
-      WaitForKey;
-      Func28(153, Func42_var_36, Func42_var_24);
-      ShowMessage(
-        87,
-        'םיל ךילשהל תצלאנ',
-        ((WareName[Func42_var_36] + 'ןוט ') + Func42_var_24),
-        ''
-      );
-      Func22;
-      global_var_109 := True;
-    end;
-  end;
-  if ((not global_var_109) and (((global_var_81 + Func42_arg_2) + (Func42_arg_2 div 2)) <= 20)) then
-  begin
-    if (Random(12) = 0) then
-    begin
-      Func42_var_10 := Func40_var_5;
-      Func42_var_8 := Func40_var_3;
-      Func42_var_12 := CountryNameToIndex(global_var_55);
-      Func41(
-        Func42_var_10,
-        Func42_var_8,
-        global_var_264[Func42_var_12].field_0,
-        global_var_264[Func42_var_12].field_2,
-        9
-      );
-      if (Random(2) = 1) then
+      Money := (Money - Func51_var_11);
+      Func51_arg_0 := (Func51_arg_0 - Func51_var_11);
+      if (Func51_arg_0 < 0) then
+      begin
+        Func51_arg_0 := 0;
+      end;
+      Str(Func51_arg_0:1:0, Func51_var_0);
+      if (Func51_arg_0 = 0) then
       begin
         ShowMessage(
           87,
-          (('תינמז רוגס ' + global_var_55) + ' למנ'),
-          'דבכ לפרע בקע',
+          '',
+          'ןיטולחל הניקת תעכ הניפסה',
           ''
         );
       end
       else
       begin
-        PutPic(StrikeWindow^, 0, 142);
-        WaitForKey;
         ShowMessage(
           87,
-          'םישובישו התיבש לשב',
-          (global_var_55 + ' למנ ,הדובעב'),
-          'רוגס '
+          '',
+          (('ח"ש ' + Func51_var_0) + ' ךסב קזנ ראשנ'),
+          ''
         );
       end;
-      ShowMessage(
-        87,
-        '',
-        (global_var_44 + 'ל רוזחל ךילע'),
-        ''
-      );
-      global_var_55 := global_var_44;
-      Func40_var_0 := (global_var_81 + (Func42_arg_2 div 2));
-      Func41(
-        global_var_264[Func42_var_12].field_0,
-        global_var_264[Func42_var_12].field_2,
-        Func42_var_10,
-        Func42_var_8,
-        9
-      );
-      Func40_var_0 := (global_var_81 + (Func42_arg_2 div 2));
-      global_var_109 := True;
     end;
   end;
-  Func42_var_34 := (Random(20) + 1);
-  if (global_var_81 >= 16) then
+
+  function Func53: boolean;
   begin
-    if (Func42_var_34 > 15) then
-    begin
-      Func42_var_34 := 1;
-    end;
+    Func53 := (ShipDamage > ((Money + BankBalance) + Func8));
   end;
-  if (not global_var_109) then
-  begin
-    case Func42_var_34 of
-      1..6:   begin
-          ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
-          global_var_109 := True;
-          Func43(Func40_var_1, Func42_arg_4);
-        end;
-      7:   begin
-          Func48;
-        end;
-      9, 10:   begin
-          ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
-          PutPic(DesertedWindow^, 0, 142);
-          Func42_var_36 := 0;
-          repeat
-          begin
-            Func42_var_36 := (Func42_var_36 + 1);
-            Func42_var_32 := Trunc(
-              ((((Random(25) + 11) / 100.0) * (Money + Func8)) / BaseWarePrice[Func42_var_36])
-            );
-            if (Func42_var_32 > 0) then
-            begin
-              GotoXY(45, 16);
-              Write(
-                WareName[Func42_var_36],
-                ' ןוט ',
-                Func42_var_32
-              );
-              case Func42_var_36 of
-                1:   begin
-                    Cargo[1] := (Cargo[1] + Func42_var_32);
-                  end;
-                2:   begin
-                    Cargo[2] := (Cargo[2] + Func42_var_32);
-                  end;
-                3:   begin
-                    Cargo[3] := (Cargo[3] + Func42_var_32);
-                  end;
-              end;
-              global_var_109 := True;
-            end;
-          end
-          until (global_var_109 or (Func42_var_36 = 3));
-          WaitForKey;
-          Func22;
-        end;
-      8, 11..20:   begin
-          Func40_var_172 := True;
-        end;
-    end;
-  end;
-end;
-procedure Func49;
-var
-  Func49_var_3: byte;
-  Func49_var_2: byte;
-  Func49_var_1: byte;
-  Func49_var_0: byte;
-procedure Func50(var Func50_arg_0: integer);
-var
-  Func50_var_116: real;
-  Line1: MessageLine;
-  Line2: MessageLine;
-  Line3: MessageLine;
-  Func50_var_0: str_7;
-begin
-  PutPic(GuardsWindow^, 0, 142);
-  Func50_var_116 := (5 * Trunc(((Func8 + Money) / (200 + Random(100)))));
-  if (Func50_var_116 < 75) then
-  begin
-    Func50_var_116 := 75;
-  end;
-  if (Func50_arg_0 > 0) then
-  begin
-    Func50_var_116 := (Func50_var_116 + (Func50_var_116 / 3));
-  end;
-  Func50_var_116 := (5 * Int((Func50_var_116 / 5)));
-  Str(Func50_var_116:1:0, Func50_var_0);
-  GotoXY(1, 15);
-  Line3 := '? הצור התא תוניפס המכ';
-  if (Func50_var_116 <= Money) then
-  begin
-    Line2 := ('ח"ש ' + Func50_var_0);
-    if (Func50_arg_0 = 0) then
-    begin
-      Line1 := 'רמשמ תניפס לכ ריחמ';
-    end
-    else
-    begin
-      Line1 := 'םישרוד רמשמה תוניפס ילעב';
-      if ((StormCountryName = CurrentCountryName) or (StormCountryName = global_var_55)) then
-      begin
-        Line2 := ('.רעוסה םיה לשב ,' + Line2);
-      end
-      else
-      begin
-        Line2 := ('רבגומה ןוכיסה לשב ' + Line2);
-      end;
-    end;
-    ShowMessage(78, Line1, Line2, Line3);
-    repeat
-    begin
-      GotoXY(4, 17);
-      Write('':4);
-      GotoXY(4, 17);
-      Func40_var_1 := Trunc(Func18(0, 0, 3));
-    end
-    until (not Func24(((1.0 * Func50_var_116) * Func40_var_1)));
-  end
-  else
-  begin
-    ShowMessage(
-      78,
-      'םלשל ףסכ ךל ןיא',
-      'רמשמ תוניפסל',
-      ''
-    );
-    Func40_var_1 := 0;
-    repeat
-    LastPressedKey := GetPressedKey;
-    until (LastPressedKey in [#13, #27]);
-    if (LastPressedKey = #27) then
-    begin
-      Func40_var_1 := -1;
-    end;
-  end;
-  if (Func40_var_1 > 0) then
-  begin
-    Money := (Money - (Func40_var_1 * Func50_var_116));
-  end;
-end;
-begin
-  Func50(global_var_103);
-  if (Func40_var_1 < 0) then
-  begin
-    global_var_55 := global_var_44;
-  end
-  else
-  begin
-    Func49_var_0 := ((Func40_var_0 - Ord(global_var_81)) div 2);
-    Func40_var_0 := (Func40_var_0 - Ord(Func49_var_0));
-    Func49_var_3 := CountryNameToIndex(global_var_44);
-    Func49_var_2 := CountryNameToIndex(global_var_55);
-    Func49_var_1 := global_var_200[Func49_var_3, Func49_var_2];
-    Func41(
-      global_var_264[Func49_var_3].field_0,
-      global_var_264[Func49_var_3].field_2,
-      global_var_264[Func49_var_1].field_0,
-      global_var_264[Func49_var_1].field_2,
-      9
-    );
-    Func40_var_0 := (global_var_81 + Func49_var_0);
-    Func49_var_3 := Func49_var_1;
-    Func42(
-      ShipDamage,
-      Func9,
-      Func40_var_170,
-      global_var_103
-    );
-    Func49_var_2 := CountryNameToIndex(global_var_55);
-    Func49_var_1 := global_var_200[Func49_var_3, Func49_var_2];
-    if (Func49_var_1 > 0) then
-    begin
-      Func49_var_0 := (Func49_var_0 div 2);
-      Func40_var_0 := (Func40_var_0 - Ord(Func49_var_0));
-    end;
-    while (Func49_var_1 > 0) do
-    begin
-      Func41(
-        global_var_264[Func49_var_3].field_0,
-        global_var_264[Func49_var_3].field_2,
-        global_var_264[Func49_var_1].field_0,
-        global_var_264[Func49_var_1].field_2,
-        9
-      );
-      Func40_var_0 := (global_var_81 + Func49_var_0);
-      Func49_var_3 := Func49_var_1;
-      Func49_var_1 := global_var_200[Func49_var_3, Func49_var_2];
-    end;
-    Func41(
-      global_var_264[Func49_var_3].field_0,
-      global_var_264[Func49_var_3].field_2,
-      global_var_264[Func49_var_2].field_0,
-      global_var_264[Func49_var_2].field_2,
-      9
-    );
-    if Func40_var_172 then
-    begin
-      ShowMessage(78, '', '! !  ם ו ל ש ב   ת ע ג ה', '');
-    end;
-  end;
-end;
-begin
-  Func40_var_170 := 0;
-  global_var_44 := CurrentCountryName;
-  Func40_var_173 := False;
-  global_var_103 := 0;
-  PutPic(MapWindow^, 0, 142);
-  Func40_var_87[1].field_0 := 144;
-  Func40_var_87[1].field_2 := 2;
-  Func40_var_87[1].field_4 := 182;
-  Func40_var_87[1].field_6 := 9;
-  Func40_var_87[2].field_0 := 228;
-  Func40_var_87[2].field_2 := 106;
-  Func40_var_87[2].field_4 := 237;
-  Func40_var_87[2].field_6 := 137;
-  Func40_var_87[3].field_0 := 75;
-  Func40_var_87[3].field_2 := 134;
-  Func40_var_87[3].field_4 := 111;
-  Func40_var_87[3].field_6 := 141;
-  global_var_21 := 1;
-  for global_var_23 := 1 to 3 do
-  begin
-    if (global_var_23 <> CountryNameToIndex(global_var_44)) then
-    begin
-      Func40_var_7[global_var_21] := Func40_var_87[global_var_23];
-      global_var_21 := (global_var_21 + 1);
-    end;
-  end;
-  case CountryNameToIndex(CurrentCountryName) of
-    1:   begin
-        Func40_var_168 := (Func17(Func40_var_7, 2) + 1);
-      end;
-    2:   begin
-        Func40_var_168 := ((Func17(Func40_var_7, 2) * 2) - 1);
-      end;
-    3:   begin
-        Func40_var_168 := Func17(Func40_var_7, 2);
-      end;
-  end;
-  if (Func40_var_168 > 0) then
-  begin
-    global_var_55 := CountryIndexToName(Func40_var_168);
-    if ((global_var_44 = 'לארשי') or (global_var_55 = 'לארשי')) then
-    begin
-      Func40_var_170 := 4;
-    end
-    else
-    begin
-      Func40_var_170 := 8;
-    end;
-    if ((not Func40_var_173) and ((global_var_81 + Func40_var_170) > 20)) then
-    begin
-      ShowMessage(
-        87,
-        'תרחואמ העשה',
-        'עיגהל לכות אלו',
-        'םויה םשל'
-      );
-      global_var_55 := global_var_44;
-      Func40_var_173 := True;
-    end;
-    if (not Func40_var_173) then
-    begin
-      if ((global_var_81 + Func40_var_170) > 16) then
-      begin
-        PutPic(NightWindow^, 0, 142);
-        GotoXY(4, 17);
-        if (not InputYesNo) then
-        begin
-          Func40_var_1 := -1;
-        end
-        else
-        begin
-          Func40_var_0 := (global_var_81 + Func40_var_170);
-          global_var_103 := 2;
-          if ((Func40_arg_0 = CurrentCountryName) or (Func40_arg_0 = global_var_55)) then
-          begin
-            global_var_103 := 4;
-          end;
-          Func49;
-        end;
-      end
-      else
-      begin
-        if ((Func40_arg_0 = CurrentCountryName) or (Func40_arg_0 = global_var_55)) then
-        begin
-          global_var_103 := 3;
-        end;
-        Func40_var_0 := (global_var_81 + Func40_var_170);
-        Func49;
-      end;
-    end;
-    if (Func40_var_1 < 0) then
-    begin
-      global_var_55 := global_var_44;
-    end;
-    CurrentCountryName := global_var_55;
-    if (Func40_var_1 >= 0) then
-    begin
-      GotoXY(73, 1);
-      Write(CurrentCountryName:6);
-      Func39(global_var_44);
-      Func39(CurrentCountryName);
-      WaitForKey;
-    end;
-  end;
-end;
-procedure Func51(var Func51_arg_0: real);
-var
-  Func51_var_11: integer;
-  Func51_var_0: str_10;
-function Func52(Func52_arg_0: real): boolean;
-begin
-  if (Func52_arg_0 > 0) then
-  begin
-    if (Func52_arg_0 > Money) then
-    begin
-      ShowMessage(
-        87,
-        '',
-        'ףסכ הברה ךכ-לכ ךל ןיא',
-        #7
-      );
-      Func52 := True;
-    end
-    else
-    begin
-      Func52 := False;
-    end;
-  end;
-end;
-begin
-  repeat
-  begin
-    PutPic(RepairWindow^, 0, 142);
-    GotoXY(21, 17);
-    Write(Func51_arg_0:4:0);
-    GotoXY(5, 17);
-    Func51_var_11 := Trunc(Func18(0, 0, 5));
-  end
-  until (not Func52(Func51_var_11));
-  if (Func51_var_11 >= 0) then
-  begin
-    Money := (Money - Func51_var_11);
-    Func51_arg_0 := (Func51_arg_0 - Func51_var_11);
-    if (Func51_arg_0 < 0) then
-    begin
-      Func51_arg_0 := 0;
-    end;
-    Str(Func51_arg_0:1:0, Func51_var_0);
-    if (Func51_arg_0 = 0) then
-    begin
-      ShowMessage(
-        87,
-        '',
-        'ןיטולחל הניקת תעכ הניפסה',
-        ''
-      );
-    end
-    else
-    begin
-      ShowMessage(
-        87,
-        '',
-        (('ח"ש ' + Func51_var_0) + ' ךסב קזנ ראשנ'),
-        ''
-      );
-    end;
-  end;
-end;
-function Func53: boolean;
-begin
-  Func53 := (ShipDamage > ((Money + BankBalance) + Func8));
-end;
+
 begin
   GotoXY(1, 2);
   global_var_81 := 8;
   Func21_var_88 := False;
-  Func29;
+  GenerateNewPrices;
   Func33;
   if (Day = 7) then
   begin
@@ -2886,7 +2771,7 @@ begin
       '! ךדיב רתוויש ףסכה'
     );
   end;
-  Func30(StormCountryName);
+  UpdateStorm(StormCountryName);
   Func13;
   GotoXY(1, 10);
   if (Day > 1) then
@@ -2901,7 +2786,7 @@ begin
     repeat
     begin
       PutPic(global_var_2060^, 0, 142);
-      Func22;
+      ShowHUD;
       TextColor(3);
       Func21_var_8[1].field_0 := 131;
       Func21_var_8[1].field_2 := 36;
@@ -2928,9 +2813,7 @@ begin
       Func21_var_8[6].field_4 := 160;
       Func21_var_8[6].field_6 := 123;
       if (ShipDamage = 0) then
-      begin
-        Func21_var_91 := 5;
-      end
+        Func21_var_91 := 5
       else
       begin
         PutPic(RepairOptionPic^, 35, 123);
@@ -2939,118 +2822,58 @@ begin
       Func21_var_89 := Func17(Func21_var_8, Func21_var_91);
       case Func21_var_89 of
         1:   begin
-            if (CurrentCountryName = 'לארשי') then
-            begin
-              Func34(Func21_var_109, Func21_var_103, Func21_var_97);
-            end
+            if CurrentCountryName = 'לארשי' then
+              Func34(PriceCopperIsrael, PriceOlivesIsrael, PriceWheatIsrael)
+            else if CurrentCountryName = 'היכרות' then
+              Func34(PriceCopperTurkey, PriceOlivesTurkey, PriceWheatTurkey)
             else
-            begin
-              if (CurrentCountryName = 'היכרות') then
-              begin
-                Func34(Func21_var_107, Func21_var_101, Func21_var_95);
-              end
-              else
-              begin
-                Func34(Func21_var_105, Func21_var_99, Func21_var_93);
-              end;
-            end;
+              Func34(PriceCopperEgypt, PriceOlivesEgypt, PriceWheatEgypt);
           end;
         2:   begin
-            if (CurrentCountryName = 'לארשי') then
-            begin
-              Func35(Func21_var_109, Func21_var_103, Func21_var_97);
-            end;
-            if (CurrentCountryName = 'היכרות') then
-            begin
-              Func35(Func21_var_107, Func21_var_101, Func21_var_95);
-            end;
-            if (CurrentCountryName = 'םירצמ') then
-            begin
-              Func35(Func21_var_105, Func21_var_99, Func21_var_93);
-            end;
+            if CurrentCountryName = 'לארשי' then
+              Func35(PriceCopperIsrael, PriceOlivesIsrael, PriceWheatIsrael);
+            if CurrentCountryName = 'היכרות' then
+              Func35(PriceCopperTurkey, PriceOlivesTurkey, PriceWheatTurkey);
+            if CurrentCountryName = 'םירצמ' then
+              Func35(PriceCopperEgypt, PriceOlivesEgypt, PriceWheatEgypt);
           end;
         3:   begin
-            if (global_var_81 > 16) then
-            begin
-              ShowMessage(
-                87,
-                'עוסנל ןתינ אל',
-                'תרחואמ הכ העשב',
-                ''
-              );
-            end
-            else
-            begin
-              if (ShipDamage > 1000) then
-              begin
-                ShowMessage(
-                  87,
-                  'וניא ךתניפסל םרגנש קזנה',
-                  '.גילפהל ךל רשפאמ',
-                  ''
-                );
-              end
-              else
-              begin
-                if (not Func38(Func9)) then
-                begin
-                  Func40(StormCountryName);
-                end;
-              end;
-            end;
+            if global_var_81 > 16 then
+              ShowMessage(87, 'עוסנל ןתינ אל', 'תרחואמ הכ העשב', '')
+            else if (ShipDamage > 1000) then
+              ShowMessage(87, 'וניא ךתניפסל םרגנש קזנה', '.גילפהל ךל רשפאמ', '' )
+            else if not Func38(Func9) then
+              Func40(StormCountryName);
           end;
         4:   begin
             if (ClosedBankDay = Day) then
-            begin
-              ShowMessage(87, '', 'םויה  רוגס  קנבה ', '');
-            end
+              ShowMessage(87, '', 'םויה  רוגס  קנבה ', '')
             else
-            begin
               Func37;
-            end;
           end;
         5:   begin
             PutPic(StayWindow^, 0, 142);
-            if (Day = 7) then
+            if Day = 7 then
             begin
-              ShowMessage(
-                78,
-                ',םיתסה רחסמה עובש',
-                'קחשמה םויסל  ───┘  שקה',
-                ''
-              );
+              ShowMessage(78, ',םיתסה רחסמה עובש', 'קחשמה םויסל  ───┘  שקה', '');
             end;
             repeat
             LastPressedKey := GetPressedKey;
-            until (LastPressedKey in [#27, #13]);
+            until LastPressedKey in [#27, #13];
           end;
         6:   begin
-            if (ClosedRepairDay <> Day) then
-            begin
-              Func51(ShipDamage);
-            end
+            if ClosedRepairDay <> Day then
+              Func51(ShipDamage)
             else
-            begin
-              ShowMessage(
-                87,
-                'רוגס למנב םינוקיתה ףיצר',
-                'ןיתמהל ץלאת - םויה',
-                'רחמ דע'
-              );
-            end;
+              ShowMessage(87, 'רוגס למנב םינוקיתה ףיצר', 'ןיתמהל ץלאת - םויה', 'רחמ דע');
           end;
       end;
     end
-    until ((Func21_var_89 = 5) and (LastPressedKey <> #27));
-    if ((Day < 7) and Func53) then
+    until (Func21_var_89 = 5) and (LastPressedKey <> #27);
+    if (Day < 7) and Func53 then
     begin
       Day := 7;
-      ShowMessage(
-        87,
-        'תא ןקתל ךתורשפאב ןיא',
-        '-ךתניפסל םרגנש קזנה',
-        '! !  ם י ת ס ה   ק ח ש מ ה'
-      );
+      ShowMessage(87, 'תא ןקתל ךתורשפאב ןיא', '-ךתניפסל םרגנש קזנה', '! !  ם י ת ס ה   ק ח ש מ ה');
     end;
   end;
 end;
@@ -3260,7 +3083,7 @@ begin
   Func56_var_11 := 0;
   Assign(Func56_var_312, 'winners.win');
   {$I-} Reset(Func56_var_312); {$I+}
-  if (IOResult <> 0) then
+  if IOResult <> 0 then
   begin
     Rewrite(Func56_var_312);
     Close(Func56_var_312);
@@ -3270,7 +3093,7 @@ begin
     while (not EOF(Func56_var_312)) do
     begin
       Read(Func56_var_312, Func56_var_15[Func56_var_13]);
-      if ((Func56_var_11 = 0) and (Func56_var_15[Func56_var_13].field_21 < Func56_arg_0)) then
+      if (Func56_var_11 = 0) and (Func56_var_15[Func56_var_13].field_21 < Func56_arg_0) then
       begin
         Func56_var_11 := Func56_var_13;
         Func56_var_13 := (Func56_var_13 + 1);
@@ -3289,9 +3112,7 @@ begin
     Func56_var_15[Func56_var_11].field_21 := Func56_arg_0;
   end;
   if (Func56_var_13 > 11) then
-  begin
     Func56_var_13 := 11;
-  end;
   if (Func56_var_11 <> 0) then
   begin
     ShowScrFile((BasePath + 'in_10.scr'));
@@ -3307,24 +3128,20 @@ begin
   ShowScrFile((BasePath + 'first_10.scr'));
   for Func56_var_9 := 1 to (Func56_var_13 - 1) do
   begin
-    GotoXY(11, (3 + (2 * Func56_var_9)));
+    GotoXY(11, 3 + 2 * Func56_var_9);
     Write(Func56_var_15[Func56_var_9].field_21:6:0);
-    GotoXY(20, (3 + (2 * Func56_var_9)));
+    GotoXY(20, 3 + 2 * Func56_var_9);
     Write(Func56_var_15[Func56_var_9].field_0:16);
   end;
-  if (Func56_var_11 = 0) then
+  if Func56_var_11 = 0 then
   begin
     global_var_2248 := LoadSgnFile('score');
     PutPic(global_var_2248^, 7, 130);
     GotoXY(3, 10);
-    if (Func56_arg_0 > 999) then
-    begin
-      Write(Func10(Func56_arg_0):6);
-    end
+    if Func56_arg_0 > 999 then
+      Write(ToStrWithCommas(Func56_arg_0):6)
     else
-    begin
-      Write(Func10(Func56_arg_0):4);
-    end;
+      Write(ToStrWithCommas(Func56_arg_0):4);
     Dispose(global_var_2248);
   end;
   WaitForKey;
@@ -3337,20 +3154,15 @@ begin
     StartWeek;
     repeat
     begin
-      Func21;
+      PlayDay;
       Day := Succ(Day);
     end
-    until (Day > 7);
-    Func56((Money + BankBalance));
+    until Day > 7;
+    Func56(Money + BankBalance);
     GraphColorMode;
     GraphBackground(1);
-    ShowMessage(
-      78,
-      'ןינועמ התא םאה',
-      '(ל/כ) ? ףסונ קחשמב',
-      ''
-    );
+    ShowMessage(78, 'ןינועמ התא םאה', '(ל/כ) ? ףסונ קחשמב', '');
     GotoXY(7, 16);
   end
-  until (not InputYesNo);
+  until not InputYesNo;
 end.

@@ -3,9 +3,12 @@ const
   Copper = 1;
   Olives = 2;
   Wheat = 3;
+  Turkey = 1;
+  Israel = 2;
+  Egypt = 3;
 type
   str_20 = string[20];
-  str_10 = string[10];
+  TCountryName = string[10];
   record_14871253875950162834 = record
     field_0: integer;
     field_2: integer;
@@ -19,7 +22,7 @@ type
   ptr_arr_byte_384 = ^arr_byte_384;
   TSgnBuffer = array[1..2176] of byte;
   PSgnBuffer = ^TSgnBuffer;
-  MessageLine = string[35];
+  TMessageLine = string[35];
   str_30 = string[30];
   str_15 = string[15];
   arr_byte_800 = array[1..800] of byte;
@@ -31,7 +34,6 @@ type
   end;
   arr_record_1479674575002027080_10 = array[1..10] of record_1479674575002027080;
   str_7 = string[7];
-  str_6 = string[6];
   arr_byte_129 = array[1..129] of byte;
   record_13866380471399314824 = record
     field_0: str_20;
@@ -46,10 +48,10 @@ var
   global_var_21: integer;
   global_var_23: integer;
   global_unused_25: array[1..8] of byte;
-  CurrentCountryName: str_10;
-  global_var_44: str_10;
-  global_var_55: str_10;
-  StormCountryName: str_10;
+  CurrentCountryName: TCountryName;
+  global_var_44: TCountryName;
+  global_var_55: TCountryName;
+  StormCountryName: TCountryName;
   ShipCapacity: integer;
   Day: integer;
   global_var_81: byte;
