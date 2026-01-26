@@ -1,22 +1,12 @@
 program Prog;
 type
   str_20 = string[20];
-  arr_byte_8 = array[1..8] of byte;
   str_10 = string[10];
-  arr_byte_1 = array[1..1] of byte;
-  arr_byte_4 = array[1..4] of byte;
-  arr_integer_3 = array[1..3] of integer;
-  str_9 = string[9];
-  arr_str_9_3 = array[1..3] of str_9;
-  str_5 = string[5];
-  arr_str_5_7 = array[1..7] of str_5;
-  arr_byte_8_8 = array[1..8, 1..8] of byte;
   record_14871253875950162834 = record
     field_0: integer;
     field_2: integer;
   end;
   arr_record_14871253875950162834_8 = array[1..8] of record_14871253875950162834;
-  arr_byte_1764 = array[1..1764] of byte;
   TWinBuffer = array[1..8832] of byte;
   PWinBuffer = ^TWinBuffer;
   TScrBuffer = array[1..16128] of byte;
@@ -37,11 +27,8 @@ type
     field_6: integer;
   end;
   arr_record_1479674575002027080_10 = array[1..10] of record_1479674575002027080;
-  arr_byte_2 = array[1..2] of byte;
-  arr_byte_6 = array[1..6] of byte;
   str_7 = string[7];
   str_6 = string[6];
-  arr_byte_3 = array[1..3] of byte;
   arr_byte_129 = array[1..129] of byte;
   record_13866380471399314824 = record
     field_0: str_20;
@@ -55,7 +42,7 @@ var
   BasePath: str_20;
   global_var_21: integer;
   global_var_23: integer;
-  global_unused_25: arr_byte_8;
+  global_unused_25: array[1..8] of byte;
   global_var_33: str_10;
   global_var_44: str_10;
   global_var_55: str_10;
@@ -63,7 +50,7 @@ var
   global_var_77: integer;
   global_var_79: integer;
   global_var_81: byte;
-  global_unused_82: arr_byte_1;
+  global_unused_82: byte;
   global_var_83: real;
   global_var_89: real;
   global_var_95: real;
@@ -74,14 +61,14 @@ var
   global_var_108: byte;
   global_var_109: boolean;
   global_var_110: integer;
-  global_unused_112: arr_byte_4;
-  global_var_116: arr_integer_3;
-  global_var_122: arr_str_9_3;
-  global_var_152: arr_integer_3;
-  global_var_158: arr_str_5_7;
-  global_var_200: arr_byte_8_8;
+  global_unused_112: array[1..4] of byte;
+  BaseWarePrice: array[1..3] of integer;
+  WareName: array[1..3] of string[9];
+  global_var_152: array[1..3] of integer;
+  DayName: array[1..7] of string[5];
+  global_var_200: array[1..8, 1..8] of byte;
   global_var_264: arr_record_14871253875950162834_8;
-  global_var_296: arr_byte_1764;
+  global_var_296: array[1..1764] of byte;
   global_var_2060: PWinBuffer;
   global_var_2064: PWinBuffer;
   StayWindow: PWinBuffer;
@@ -108,7 +95,7 @@ var
   OverweightWindow: PWinBuffer;
   GuardsWindow: PWinBuffer;
   DesertedWindow: PWinBuffer;
-  global_unused_2164: arr_byte_4;
+  global_unused_2164: array[1..4] of byte;
   NewDayScreen: PScrBuffer;
   SocherScreen: PScrBuffer;
   ExpandScreen: PScrBuffer;
@@ -120,10 +107,10 @@ var
   OlivesDownScreen: PScrBuffer;
   CopperUpScreen: PScrBuffer;
   CopperDownScreen: PScrBuffer;
-  global_unused_2212: arr_byte_4;
+  global_unused_2212: array[1..4] of byte;
   MainScreen: PScrBuffer;
   HelpScreen: PScrBuffer;
-  global_var_2224: ptr_arr_byte_384;
+  RepairOptionPic: ptr_arr_byte_384;
   BuySign: PSgnBuffer;
   SellSign: PSgnBuffer;
   WithdrawSign: PSgnBuffer;

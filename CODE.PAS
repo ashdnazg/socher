@@ -1,6 +1,6 @@
 
 function Func1: char; forward;
-procedure Func2;
+procedure WaitForKey;
 var
   Func2_var_0: char;
 begin
@@ -25,7 +25,7 @@ begin
   Write(Func3_arg_0);
   if ((Func3_arg_108 = 87) or (Func3_arg_108 = 82)) then
   begin
-    Func2;
+    WaitForKey;
     PutPic(global_var_296, 10, 138);
   end;
 end;
@@ -116,7 +116,7 @@ begin
   Func8_var_0 := 0;
   for Func8_var_6 := 1 to 3 do
   begin
-    Func8_var_0 := (Func8_var_0 + ((1.0 * global_var_152[Func8_var_6]) * global_var_116[Func8_var_6]));
+    Func8_var_0 := (Func8_var_0 + ((1.0 * global_var_152[Func8_var_6]) * BaseWarePrice[Func8_var_6]));
   end;
   Func8 := Func8_var_0;
 end;
@@ -171,11 +171,11 @@ begin
   Func12_arg_0 := 0;
   for Func12_var_0 := 1 to 3 do
   begin
-    if ((((1.0 * global_var_152[Func12_var_0]) * global_var_116[Func12_var_0]) > Func12_arg_0) and
+    if ((((1.0 * global_var_152[Func12_var_0]) * BaseWarePrice[Func12_var_0]) > Func12_arg_0) and
  (global_var_152[Func12_var_0] >= Func12_arg_8)) then
     begin
       Func12_arg_4 := Func12_var_0;
-      Func12_arg_0 := ((1.0 * global_var_152[Func12_var_0]) * global_var_116[Func12_var_0]);
+      Func12_arg_0 := ((1.0 * global_var_152[Func12_var_0]) * BaseWarePrice[Func12_var_0]);
     end;
   end;
 end;
@@ -191,7 +191,7 @@ begin
     ShowScrFile((BasePath + 'badwthr.scr'));
     Write(global_var_66:6);
   end;
-  Func2;
+  WaitForKey;
 end;
 procedure Func14;
 var
@@ -360,11 +360,11 @@ var
   Func18_var_24: boolean;
   Func18_var_22: integer;
   Func18_var_20: integer;
-  Func18_unused_16: arr_byte_4;
+  Func18_unused_16: array[1..4] of byte;
   Func18_var_14: integer;
-  Func18_unused_12: arr_byte_2;
-  Func18_var_6: str_5;
-  Func18_var_0: str_5;
+  Func18_unused_12: array[1..2] of byte;
+  Func18_var_6: string[5];
+  Func18_var_0: string[5];
 begin
   Func18_var_22 := WhereX;
   Func18_var_20 := WhereY;
@@ -536,13 +536,13 @@ var
   Func21_var_8: arr_record_1479674575002027080_10;
   Func21_var_6: integer;
   Func21_var_4: integer;
-  Func21_unused_0: arr_byte_4;
+  Func21_unused_0: array[1..4] of byte;
 procedure Func22;
 begin
   GotoXY(73, 1);
   Write(global_var_33:6);
   GotoXY(32, 3);
-  Write(global_var_158[global_var_79]);
+  Write(DayName[global_var_79]);
   GotoXY(32, 5);
   Write(global_var_81:2);
   Write(':00');
@@ -626,7 +626,7 @@ var
   Func25_var_18: real;
   Func25_var_12: real;
   Func25_var_6: real;
-  Func25_unused_0: arr_byte_6;
+  Func25_unused_0: array[1..6] of byte;
 function Func26(Func26_arg_6: real; Func26_arg_0: real): boolean;
 begin
   if (Func26_arg_6 < 0) then
@@ -670,7 +670,7 @@ begin
     begin
       Func3(
         78,
-        (('?תתל ןכומ התא' + global_var_122[1]) + 'ןוט המכ'),
+        (('?תתל ןכומ התא' + WareName[1]) + 'ןוט המכ'),
         '',
         ''
       );
@@ -687,7 +687,7 @@ begin
     begin
       Func3(
         78,
-        (('?תתל ןכומ התא' + global_var_122[2]) + 'ןוט המכ'),
+        (('?תתל ןכומ התא' + WareName[2]) + 'ןוט המכ'),
         '',
         ''
       );
@@ -704,7 +704,7 @@ begin
     begin
       Func3(
         78,
-        (('?תתל ןכומ התא' + global_var_122[3]) + 'ןוט המכ'),
+        (('?תתל ןכומ התא' + WareName[3]) + 'ןוט המכ'),
         '',
         ''
       );
@@ -732,8 +732,8 @@ begin
     end
     until Func26(Func25_var_18, Func25_arg_0);
   end;
-  Func25_var_12 := ((((Func25_var_28 * global_var_116[1]) + (Func25_var_26 * global_var_116[2])) + (Func25_var_24 *
- global_var_116[3])) + Func25_var_18);
+  Func25_var_12 := ((((Func25_var_28 * BaseWarePrice[1]) + (Func25_var_26 * BaseWarePrice[2])) + (Func25_var_24 *
+ BaseWarePrice[3])) + Func25_var_18);
   Func25_var_6 := ((Func8 + Func25_arg_0) / (Random(6) + 4));
   if (Func25_var_12 > Func25_var_6) then
   begin
@@ -848,19 +848,19 @@ begin
 end;
 procedure Func29;
 begin
-  Func21_var_109 := ((global_var_116[1] - 500) + (Random(11) * 100));
-  Func21_var_103 := ((global_var_116[2] - 150) + (Random(7) * 50));
-  Func21_var_97 := ((global_var_116[3] - 15) + (Random(8) * 5));
-  Func21_var_107 := ((global_var_116[1] - 500) + (Random(11) * 100));
-  Func21_var_101 := ((global_var_116[2] - 150) + (Random(7) * 50));
-  Func21_var_95 := ((global_var_116[3] - 15) + (Random(8) * 5));
-  Func21_var_105 := ((global_var_116[1] - 500) + (Random(11) * 100));
-  Func21_var_99 := ((global_var_116[2] - 150) + (Random(7) * 50));
-  Func21_var_93 := ((global_var_116[3] - 15) + (Random(8) * 5));
+  Func21_var_109 := ((BaseWarePrice[1] - 500) + (Random(11) * 100));
+  Func21_var_103 := ((BaseWarePrice[2] - 150) + (Random(7) * 50));
+  Func21_var_97 := ((BaseWarePrice[3] - 15) + (Random(8) * 5));
+  Func21_var_107 := ((BaseWarePrice[1] - 500) + (Random(11) * 100));
+  Func21_var_101 := ((BaseWarePrice[2] - 150) + (Random(7) * 50));
+  Func21_var_95 := ((BaseWarePrice[3] - 15) + (Random(8) * 5));
+  Func21_var_105 := ((BaseWarePrice[1] - 500) + (Random(11) * 100));
+  Func21_var_99 := ((BaseWarePrice[2] - 150) + (Random(7) * 50));
+  Func21_var_93 := ((BaseWarePrice[3] - 15) + (Random(8) * 5));
 end;
 procedure Func30(var Func30_arg_0: str_10);
 var
-  Func30_unused_0: arr_byte_2;
+  Func30_unused_0: array[1..2] of byte;
 begin
   if ((Random(8) < 3) and (global_var_79 <> 1)) then
   begin
@@ -892,7 +892,7 @@ var
   Func31_var_22: boolean;
   Func31_var_16: real;
   Func31_var_10: real;
-  Func31_var_4: arr_integer_3;
+  Func31_var_4: array[1..3] of integer;
   Func31_var_2: integer;
   Func31_var_0: integer;
 procedure Func32(
@@ -929,7 +929,7 @@ begin
         end;
         GotoXY(7, (2 + (21 * (Func32_arg_6 - 1))));
         Writeln(
-          'היכרותב' + global_var_122[Func32_arg_0] + '' + 'ה ריחמ':27
+          'היכרותב' + WareName[Func32_arg_0] + '' + 'ה ריחמ':27
         );
         GotoXY(7, (3 + (21 * (Func32_arg_6 - 1))));
         Writeln('!!םילקש ' + Func32_var_0 + Func32_var_8:25);
@@ -948,7 +948,7 @@ begin
         end;
         GotoXY(7, (2 + (21 * (Func32_arg_6 - 1))));
         Writeln(
-          'לארשיב' + global_var_122[Func32_arg_0] + '' + 'ה ריחמ':27
+          'לארשיב' + WareName[Func32_arg_0] + '' + 'ה ריחמ':27
         );
         GotoXY(7, (3 + (21 * (Func32_arg_6 - 1))));
         Writeln('!!םילקש ' + Func32_var_0 + Func32_var_8:25);
@@ -967,13 +967,13 @@ begin
         end;
         GotoXY(7, (2 + (21 * (Func32_arg_6 - 1))));
         Writeln(
-          'םירצמב' + global_var_122[Func32_arg_0] + '' + 'ה ריחמ':27
+          'םירצמב' + WareName[Func32_arg_0] + '' + 'ה ריחמ':27
         );
         GotoXY(7, (3 + (21 * (Func32_arg_6 - 1))));
         Writeln('!!םילקש ' + Func32_var_0 + Func32_var_8:25);
       end;
   end;
-  Func2;
+  WaitForKey;
 end;
 begin
   repeat
@@ -1001,37 +1001,37 @@ begin
       1..2:   begin
           PutPic(CopperUpScreen^, 0, 199);
           Func31_var_181 := (Random(3) + 1);
-          Func31_var_179 := ((global_var_116[1] + 1100) + (100 * Random(5)));
+          Func31_var_179 := ((BaseWarePrice[1] + 1100) + (100 * Random(5)));
           Func32(1, Func31_var_181, Func31_var_179, 1);
         end;
       3..4:   begin
           PutPic(OlivesUpScreen^, 0, 199);
           Func31_var_181 := (Random(3) + 1);
-          Func31_var_179 := ((global_var_116[2] + 200) + (50 * Random(4)));
+          Func31_var_179 := ((BaseWarePrice[2] + 200) + (50 * Random(4)));
           Func32(1, Func31_var_181, Func31_var_179, 2);
         end;
       5..6:   begin
           PutPic(WheatUpScreen^, 0, 199);
           Func31_var_181 := (Random(3) + 1);
-          Func31_var_179 := ((global_var_116[3] + 20) + (Random(5) * 5));
+          Func31_var_179 := ((BaseWarePrice[3] + 20) + (Random(5) * 5));
           Func32(1, Func31_var_181, Func31_var_179, 3);
         end;
       7..8:   begin
           PutPic(CopperDownScreen^, 0, 199);
           Func31_var_181 := (Random(3) + 1);
-          Func31_var_179 := ((global_var_116[1] - 1100) - (100 * Random(5)));
+          Func31_var_179 := ((BaseWarePrice[1] - 1100) - (100 * Random(5)));
           Func32(2, Func31_var_181, Func31_var_179, 1);
         end;
       9..10:   begin
           PutPic(OlivesDownScreen^, 0, 199);
           Func31_var_181 := (Random(3) + 1);
-          Func31_var_179 := ((global_var_116[2] - 150) - (Random(3) * 50));
+          Func31_var_179 := ((BaseWarePrice[2] - 150) - (Random(3) * 50));
           Func32(2, Func31_var_181, Func31_var_179, 2);
         end;
       11..12:   begin
           PutPic(WheatDownScreen^, 0, 199);
           Func31_var_181 := (Random(3) + 1);
-          Func31_var_179 := ((global_var_116[3] - 15) - (Random(3) * 5));
+          Func31_var_179 := ((BaseWarePrice[3] - 15) - (Random(3) * 5));
           Func32(2, Func31_var_181, Func31_var_179, 3);
         end;
       13..18:   begin
@@ -1073,7 +1073,7 @@ begin
                   if (Func31_var_10 >= Func31_var_175) then
                   begin
                     Func31_var_163 := Round(
-                      ((1.0 * Func31_var_175) / global_var_116[Func31_var_169])
+                      ((1.0 * Func31_var_175) / BaseWarePrice[Func31_var_169])
                     );
                     Func31_var_4[Func31_var_169] := Func31_var_163;
                     Str(Func31_var_163, Func31_var_139);
@@ -1113,7 +1113,7 @@ begin
             if ((Func31_var_169 > 0) and (Func31_var_4[Func31_var_169] > 0)) then
             begin
               Str(Func31_var_4[Func31_var_169], Func31_var_139);
-              Func31_var_103 := (((#46 + global_var_122[Func31_var_169]) + 'ןוט ') + Func31_var_139);
+              Func31_var_103 := (((#46 + WareName[Func31_var_169]) + 'ןוט ') + Func31_var_139);
               if ((Func31_var_2 + Func31_var_0) > 0) then
               begin
                 Func31_var_103 := (Func31_var_103 + ' ףסונבו');
@@ -1133,7 +1133,7 @@ begin
               PutPic(MessageSign^, 90, 194);
               GotoXY(18, 23);
               Write('.העצוב  הבחרהה');
-              Func2;
+              WaitForKey;
               Str(Func31_var_0, Func31_var_139);
               if (Func31_var_0 > 0) then
               begin
@@ -1240,7 +1240,7 @@ begin
             begin
               PutPic(ThievesScreen^, 0, 199);
               Write(
-                (((#46 + global_var_122[Func31_var_169]) + ' ןוט ') + Func31_var_155):15
+                (((#46 + WareName[Func31_var_169]) + ' ןוט ') + Func31_var_155):15
               );
             end
             else
@@ -1250,7 +1250,7 @@ begin
           end;
           if Func31_var_22 then
           begin
-            Func2;
+            WaitForKey;
           end;
         end;
       23..26:   begin
@@ -1270,7 +1270,7 @@ begin
             );
             GotoXY(3, WhereY);
             Writeln(
-              'ול רוכמת םא ,' + global_var_122[1] + 'לש ןוט לכל':34
+              'ול רוכמת םא ,' + WareName[1] + 'לש ןוט לכל':34
             );
             GotoXY(3, WhereY);
             Writeln('.ךלש ןוטה ' + Func31_var_139 + ' תא':34);
@@ -1286,7 +1286,7 @@ begin
               global_var_152[1] := 0;
               GotoXY(3, (WhereY + 2));
               Write('!!! רכמנ':25);
-              Func2;
+              WaitForKey;
             end;
           end
           else
@@ -1307,7 +1307,7 @@ begin
               );
               GotoXY(3, WhereY);
               Writeln(
-                'ול רוכמת םא ,' + global_var_122[2] + 'לש ןוט לכל':34
+                'ול רוכמת םא ,' + WareName[2] + 'לש ןוט לכל':34
               );
               GotoXY(3, WhereY);
               Writeln('.ךלש ןוטה ' + Func31_var_139 + ' תא':34);
@@ -1323,7 +1323,7 @@ begin
                 global_var_152[2] := 0;
                 GotoXY(3, (WhereY + 2));
                 Write('!!! רכמנ':25);
-                Func2;
+                WaitForKey;
               end;
             end
             else
@@ -1344,7 +1344,7 @@ begin
                 );
                 GotoXY(3, WhereY);
                 Writeln(
-                  'ול רוכמת םא ,' + global_var_122[3] + 'לש ןוט לכל':34
+                  'ול רוכמת םא ,' + WareName[3] + 'לש ןוט לכל':34
                 );
                 GotoXY(3, WhereY);
                 Writeln('.ךלש ןוטה ' + Func31_var_139 + ' תא':34);
@@ -1360,7 +1360,7 @@ begin
                   global_var_152[3] := 0;
                   GotoXY(3, (WhereY + 2));
                   Write('!!! רכמנ':25);
-                  Func2;
+                  WaitForKey;
                 end;
               end
               else
@@ -1372,10 +1372,10 @@ begin
         end;
       27..28:   begin
           Func31_var_169 := (Random(3) + 1);
-          Func31_var_177 := (5 * ((global_var_116[Func31_var_169] div 10) + (Random(global_var_116[Func31_var_169]) div 5)));
+          Func31_var_177 := (5 * ((BaseWarePrice[Func31_var_169] div 10) + (Random(BaseWarePrice[Func31_var_169]) div 5)));
           Func31_var_16 := (Random((Trunc((0.75 * global_var_89)) + 1)) + (0.25 * global_var_89));
           Func31_var_171 := (5 * Trunc(
-            (((Func31_var_16 / global_var_116[Func31_var_169]) / 5) + 1)
+            (((Func31_var_16 / BaseWarePrice[Func31_var_169]) / 5) + 1)
           ));
           if ((((1.0 * Func31_var_177) * Func31_var_171) <= global_var_89) and (global_var_89 > 0)) then
           begin
@@ -1388,7 +1388,7 @@ begin
             end;
             GotoXY(3, 2);
             Writeln(
-              global_var_122[Func31_var_169] + ' ןוט ' + Func31_var_139 + ' ךל רוכמל ןינועמ רחוס':34
+              WareName[Func31_var_169] + ' ןוט ' + Func31_var_139 + ' ךל רוכמל ןינועמ רחוס':34
             );
             Writeln;
             GotoXY(3, WhereY);
@@ -1417,7 +1417,7 @@ begin
               end;
               Writeln;
               Writeln('            !!! תינק':25);
-              Func2;
+              WaitForKey;
             end;
           end
           else
@@ -1433,7 +1433,7 @@ begin
             global_var_83 := (global_var_83 + Func31_var_167);
             GotoXY(20, 3);
             Write(Func31_var_167:4);
-            Func2;
+            WaitForKey;
           end
           else
           begin
@@ -1455,7 +1455,7 @@ begin
   ShowScrFile((BasePath + 'newday.scr'));
   PutPic(Func33_var_8^, 165, 89);
   Dispose(Func33_var_8);
-  Func2;
+  WaitForKey;
 end;
 procedure Func34(
   Func34_arg_4: integer;
@@ -1463,7 +1463,7 @@ procedure Func34(
   Func34_arg_0: integer
 );
 var
-  Func34_unused_96: arr_byte_2;
+  Func34_unused_96: array[1..2] of byte;
   Func34_var_94: integer;
   Func34_var_92: integer;
   Func34_var_86: real;
@@ -1548,7 +1548,7 @@ begin
         Func3(
           87,
           'ךל רשפאמ וניא ךפסכ',
-          (global_var_122[Func34_var_92] + 'תונקל'),
+          (WareName[Func34_var_92] + 'תונקל'),
           ''
         );
       end
@@ -1579,7 +1579,7 @@ procedure Func35(
   Func35_arg_0: integer
 );
 var
-  Func35_unused_94: arr_byte_2;
+  Func35_unused_94: array[1..2] of byte;
   Func35_var_92: integer;
   Func35_var_86: real;
   Func35_var_80: real;
@@ -1591,7 +1591,7 @@ begin
     Func3(
       87,
       'הברה ךכ-לכ ךל ןיא',
-      ('רוכמל' + global_var_122[Func36_arg_0]),
+      ('רוכמל' + WareName[Func36_arg_0]),
       #7
     );
     Func36 := True;
@@ -1665,7 +1665,7 @@ begin
       begin
         Func3(
           87,
-          (('רוכמל' + global_var_122[Func35_var_92]) + 'ךל ןיא'),
+          (('רוכמל' + WareName[Func35_var_92]) + 'ךל ןיא'),
           #7,
           ''
         );
@@ -1811,7 +1811,7 @@ begin
 end;
 function Func38(Func38_arg_0: integer): boolean;
 var
-  Func38_unused_0: arr_byte_3;
+  Func38_unused_0: array[1..3] of byte;
 begin
   if (Func38_arg_0 > global_var_77) then
   begin
@@ -1868,7 +1868,7 @@ var
   Func40_var_172: boolean;
   Func40_var_170: integer;
   Func40_var_168: integer;
-  Func40_unused_167: arr_byte_1;
+  Func40_unused_167: byte;
   Func40_var_87: arr_record_1479674575002027080_10;
   Func40_var_7: arr_record_1479674575002027080_10;
   Func40_var_5: integer;
@@ -1956,7 +1956,7 @@ procedure Func42(
   Func42_arg_0: integer
 );
 var
-  Func42_unused_38: arr_byte_4;
+  Func42_unused_38: array[1..4] of byte;
   Func42_var_36: integer;
   Func42_var_34: integer;
   Func42_var_32: integer;
@@ -1965,7 +1965,7 @@ var
   Func42_var_12: byte;
   Func42_var_10: integer;
   Func42_var_8: integer;
-  Func42_unused_2: arr_byte_6;
+  Func42_unused_2: array[1..6] of byte;
   Func42_var_1: boolean;
   Func42_var_0: boolean;
 procedure Func43(Func43_arg_2: integer; Func43_arg_0: integer);
@@ -1975,7 +1975,7 @@ var
   Func43_var_102: integer;
   Func43_var_100: integer;
   Func43_var_98: integer;
-  Func43_var_92: str_5;
+  Func43_var_92: string[5];
   Func43_var_12: arr_record_1479674575002027080_10;
   Func43_var_6: real;
   Func43_var_0: real;
@@ -2012,7 +2012,7 @@ procedure Func45;
 var
   Func45_var_7: integer;
   Func45_var_1: real;
-  Func45_unused_0: arr_byte_1;
+  Func45_unused_0: byte;
 begin
   PutPic(ConfrontWindow^, 0, 142);
   Func45_var_7 := Random(4);
@@ -2114,7 +2114,7 @@ begin
         87,
         '     השק ברק ירחא',
         ' םיה ידדוש ךממ ובנג',
-        ((global_var_122[Func42_var_36] + 'ןוט ') + Func42_var_24)
+        ((WareName[Func42_var_36] + 'ןוט ') + Func42_var_24)
       );
       Func44(2);
     end
@@ -2164,7 +2164,7 @@ begin
 end;
 begin
   PutPic(PiratesWindow^, 0, 142);
-  Func2;
+  WaitForKey;
   PutPic(PiratesSign^, 4, 139);
   GotoXY(18, 17);
   Write(Func40_var_1:2);
@@ -2376,14 +2376,14 @@ begin
       if ((global_var_66 = global_var_33) or (global_var_66 = global_var_55)) then
       begin
         PutPic(StormWindow^, 0, 142);
-        Func2;
+        WaitForKey;
         if (Func8 > 10000) then
         begin
           Func28(142, Func42_var_36, Func42_var_24);
           Func3(
             87,
             'ךתניפסמ ופטש םיהובגה םילגה',
-            (((#46 + global_var_122[Func42_var_36]) + ' ןוט ') + Func42_var_24),
+            (((#46 + WareName[Func42_var_36]) + ' ןוט ') + Func42_var_24),
             ''
           );
           Func22;
@@ -2454,12 +2454,12 @@ begin
     begin
       Func3(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
       PutPic(SinkingWindow^, 0, 142);
-      Func2;
+      WaitForKey;
       Func28(153, Func42_var_36, Func42_var_24);
       Func3(
         87,
         'םיל ךילשהל תצלאנ',
-        ((global_var_122[Func42_var_36] + 'ןוט ') + Func42_var_24),
+        ((WareName[Func42_var_36] + 'ןוט ') + Func42_var_24),
         ''
       );
       Func22;
@@ -2492,7 +2492,7 @@ begin
       else
       begin
         PutPic(StrikeWindow^, 0, 142);
-        Func2;
+        WaitForKey;
         Func3(
           87,
           'םישובישו התיבש לשב',
@@ -2546,13 +2546,13 @@ begin
           begin
             Func42_var_36 := (Func42_var_36 + 1);
             Func42_var_32 := Trunc(
-              ((((Random(25) + 11) / 100.0) * (global_var_89 + Func8)) / global_var_116[Func42_var_36])
+              ((((Random(25) + 11) / 100.0) * (global_var_89 + Func8)) / BaseWarePrice[Func42_var_36])
             );
             if (Func42_var_32 > 0) then
             begin
               GotoXY(45, 16);
               Write(
-                global_var_122[Func42_var_36],
+                WareName[Func42_var_36],
                 ' ןוט ',
                 Func42_var_32
               );
@@ -2571,7 +2571,7 @@ begin
             end;
           end
           until (global_var_109 or (Func42_var_36 = 3));
-          Func2;
+          WaitForKey;
           Func22;
         end;
       8, 11..20:   begin
@@ -2822,7 +2822,7 @@ begin
       Write(global_var_33:6);
       Func39(global_var_44);
       Func39(global_var_33);
-      Func2;
+      WaitForKey;
     end;
   end;
 end;
@@ -2961,7 +2961,7 @@ begin
       end
       else
       begin
-        PutPic(global_var_2224^, 35, 123);
+        PutPic(RepairOptionPic^, 35, 123);
         Func21_var_91 := 6;
       end;
       Func21_var_89 := Func17(Func21_var_8, Func21_var_91);
@@ -3082,19 +3082,19 @@ begin
     end;
   end;
 end;
-procedure Func54;
+procedure Init;
 var
-  Func54_var_93: byte;
-  Func54_var_92: byte;
-  Func54_var_16: file;
-  Func54_var_0: str_15;
+  I: byte;
+  J: byte;
+  Line6File: file;
+  CurrentDir: str_15;
 begin
   GraphColorMode;
   TextColor(3);
   Palette(0);
   GraphBackground(1);
-  GetDir(0, Func54_var_0);
-  if (Func54_var_0 = 'A:\') then
+  GetDir(0, CurrentDir);
+  if (CurrentDir = 'A:\') then
   begin
     BasePath := 'B:\';
   end
@@ -3103,21 +3103,21 @@ begin
     BasePath := '\kika\socher_b\';
   end;
   ShowScrFile((BasePath + 'mifne.scr'));
-  Func2;
+  WaitForKey;
   ShowScrFile((BasePath + 'credits.scr'));
-  global_var_116[1] := 3000;
-  global_var_116[2] := 500;
-  global_var_116[3] := 50;
-  global_var_122[1] := ' תשוחנ ';
-  global_var_122[2] := ' םיתיז ';
-  global_var_122[3] := ' הטיח ';
-  global_var_158[1] := 'ןושאר';
-  global_var_158[2] := '  ינש';
-  global_var_158[3] := 'ישילש';
-  global_var_158[4] := 'יעיבר';
-  global_var_158[5] := 'ישימח';
-  global_var_158[6] := ' ישיש';
-  global_var_158[7] := 'יעיבש';
+  BaseWarePrice[1] := 3000;
+  BaseWarePrice[2] := 500;
+  BaseWarePrice[3] := 50;
+  WareName[1] := ' תשוחנ ';
+  WareName[2] := ' םיתיז ';
+  WareName[3] := ' הטיח ';
+  DayName[1] := 'ןושאר';
+  DayName[2] := '  ינש';
+  DayName[3] := 'ישילש';
+  DayName[4] := 'יעיבר';
+  DayName[5] := 'ישימח';
+  DayName[6] := ' ישיש';
+  DayName[7] := 'יעיבש';
   MainScreen := LoadScrFile('mainscrn');
   NewDayScreen := LoadScrFile('newday');
   HelpScreen := LoadScrFile('help');
@@ -3162,11 +3162,11 @@ begin
   DepositSign := LoadSgnFile('deposit');
   MessageSign := LoadSgnFile('message');
   PiratesSign := LoadSgnFile('pirates');
-  New(global_var_2224);
-  Assign(Func54_var_16, 'line_6.lin');
-  Reset(Func54_var_16);
-  BlockRead(Func54_var_16, global_var_2224^, 3);
-  Close(Func54_var_16);
+  New(RepairOptionPic);
+  Assign(Line6File, 'line_6.lin');
+  Reset(Line6File);
+  BlockRead(Line6File, RepairOptionPic^, 3);
+  Close(Line6File);
   Randomize;
   global_var_264[1].field_0 := 191;
   global_var_264[1].field_2 := 23;
@@ -3184,11 +3184,11 @@ begin
   global_var_264[7].field_2 := 70;
   global_var_264[8].field_0 := 196;
   global_var_264[8].field_2 := 45;
-  for Func54_var_93 := 1 to 8 do
+  for I := 1 to 8 do
   begin
-    for Func54_var_92 := 1 to 8 do
+    for J := 1 to 8 do
     begin
-      global_var_200[Func54_var_93, Func54_var_92] := 0;
+      global_var_200[I, J] := 0;
     end;
   end;
   global_var_200[1, 2] := 4;
@@ -3199,7 +3199,7 @@ begin
   global_var_200[3, 1] := 6;
   global_var_200[6, 2] := 7;
   global_var_200[5, 1] := 8;
-  Func2;
+  WaitForKey;
 end;
 procedure Func55;
 begin
@@ -3219,7 +3219,7 @@ begin
   global_var_101 := 0;
   global_var_89 := 5000;
   global_var_105 := 0;
-  Func2;
+  WaitForKey;
 end;
 procedure Func56(Func56_arg_0: real);
 var
@@ -3229,7 +3229,7 @@ var
   Func56_var_11: integer;
   Func56_var_9: integer;
   Func56_var_8: byte;
-  Func56_unused_0: arr_byte_8;
+  Func56_unused_0: array[1..8] of byte;
 procedure Func57(var Func57_arg_2: str_20; Func57_arg_0: integer);
 var
   Func57_var_26: char;
@@ -3355,10 +3355,10 @@ begin
     end;
     Dispose(global_var_2248);
   end;
-  Func2;
+  WaitForKey;
 end;
 begin
-  Func54;
+  Init;
   repeat
   begin
     global_var_79 := 1;
