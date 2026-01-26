@@ -18,7 +18,6 @@ type
   str_35 = string[35];
   str_30 = string[30];
   str_15 = string[15];
-  str_8 = string[8];
   arr_byte_800 = array[1..800] of byte;
   record_1479674575002027080 = record
     field_0: integer;
@@ -46,18 +45,18 @@ var
   global_var_33: str_10;
   global_var_44: str_10;
   global_var_55: str_10;
-  global_var_66: str_10;
-  global_var_77: integer;
-  global_var_79: integer;
+  StormCountryName: str_10;
+  ShipCapacity: integer;
+  Day: integer;
   global_var_81: byte;
   global_unused_82: byte;
-  global_var_83: real;
+  ShipDamage: real;
   global_var_89: real;
-  global_var_95: real;
+  BankBalance: real;
   global_var_101: integer;
   global_var_103: integer;
   global_var_105: integer;
-  global_var_107: char;
+  LastPressedKey: char;
   global_var_108: byte;
   global_var_109: boolean;
   global_var_110: integer;
