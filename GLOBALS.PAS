@@ -6,14 +6,12 @@ const
   Turkey = 1;
   Israel = 2;
   Egypt = 3;
+  TurkeyName = 'היכרות';
+  IsraelName = 'לארשי';
+  EgyptName = 'םירצמ';
 type
   str_20 = string[20];
   TCountryName = string[10];
-  record_14871253875950162834 = record
-    field_0: integer;
-    field_2: integer;
-  end;
-  arr_record_14871253875950162834_8 = array[1..8] of record_14871253875950162834;
   TWinBuffer = array[1..8832] of byte;
   PWinBuffer = ^TWinBuffer;
   TScrBuffer = array[1..16128] of byte;
@@ -49,18 +47,19 @@ var
   global_var_23: integer;
   global_unused_25: array[1..8] of byte;
   CurrentCountryName: TCountryName;
-  global_var_44: TCountryName;
-  global_var_55: TCountryName;
+  TravelStart: TCountryName;
+  TravelDestination: TCountryName;
   StormCountryName: TCountryName;
   ShipCapacity: integer;
   Day: integer;
-  global_var_81: byte;
+  TimeOfDay: byte;
   global_unused_82: byte;
   ShipDamage: real;
   Money: real;
   BankBalance: real;
   ClosedBankDay: integer;
-  global_var_103: integer;
+  { 0 - Normal, 2 - Night, 3 - Storm, 4 - Night & Storm }
+  Risk: integer;
   LastNightEvent: integer;
   LastPressedKey: char;
   Unused1: byte;
@@ -71,8 +70,14 @@ var
   WareName: array[Copper..Wheat] of string[9];
   Cargo: array[Copper..Wheat] of integer;
   DayName: array[1..7] of string[5];
-  global_var_200: array[1..8, 1..8] of byte;
-  global_var_264: arr_record_14871253875950162834_8;
+  { MapWaypoints[i, j] contains the coordinate index of the waypoint between the i coordinate
+    and the j coordinate, or 0 if there is no waypoint between them }
+  MapWaypoints: array[1..8, 1..8] of byte;
+  { Coordinates in the map, where 1-3 are the countries, and the rest are waypoints between them }
+  MapCoordinates: array[1..8] of record
+    X: integer;
+    Y: integer;
+  end;
   PreMessageBackground: array[1..1764] of byte;
   global_var_2060: PWinBuffer;
   MapWindow: PWinBuffer;

@@ -251,53 +251,55 @@ end;
 
 function CountryNameToIndex(CountryName: TCountryName): integer;
 begin
-  if CountryName = 'היכרות' then
+  if CountryName = TurkeyName then
     CountryNameToIndex := Turkey
-  else if CountryName = 'לארשי' then
+  else if CountryName = IsraelName then
     CountryNameToIndex := Israel
-  else if CountryName = 'םירצמ' then
+  else if CountryName = EgyptName then
     CountryNameToIndex := Egypt;
 end;
 
 function CountryIndexToName(CountryIndex: integer): TCountryName;
 begin
   case CountryIndex of
-    Turkey: CountryIndexToName := 'היכרות';
-    Israel: CountryIndexToName := 'לארשי';
-    Egypt: CountryIndexToName := 'םירצמ';
+    Turkey: CountryIndexToName := TurkeyName;
+    Israel: CountryIndexToName := IsraelName;
+    Egypt: CountryIndexToName := EgyptName;
   end;
 end;
 
 function ShowOptions(
   OptionRects: TRectArray;
-  Func17_arg_0: integer
+  { Option count of 100 + N means flags that the option's unselected doesn't need to be restored
+    when Enter is pressed, e.g., when the screen is exited afterwards }
+  OptionCount: integer
 ): integer;
 var
   SelectedOption: integer;
-  SelectedOptionPic: arr_byte_800;
+  SelectedOptionOriginalPic: arr_byte_800;
   PressedKey: char;
-  Func17_var_0: boolean;
+  NeedsRestoreOnEnter: boolean;
 begin
-  Func17_var_0 := False;
-  if Func17_arg_0 > 100 then
-    Func17_arg_0 := Func17_arg_0 - 100
+  NeedsRestoreOnEnter := False;
+  if OptionCount > 100 then
+    OptionCount := OptionCount - 100
   else
-    Func17_var_0 := True;
+    NeedsRestoreOnEnter := True;
 
   SelectedOption := 1;
   repeat
     with OptionRects[SelectedOption] do
     begin
-      GetPic(SelectedOptionPic, X1, Y1, X2, Y2);
+      GetPic(SelectedOptionOriginalPic, X1, Y1, X2, Y2);
       ColorTable(3, 2, 1, 0);
-      PutPic(SelectedOptionPic, X1, Y2);
+      PutPic(SelectedOptionOriginalPic, X1, Y2);
       repeat
         PressedKey := GetPressedKey;
       until PressedKey in [#72, #75, #80, #77, ' ', #13, #27];
       ColorTable(0, 1, 2, 3);
 
-      if (PressedKey <> #13) or Func17_var_0 then
-        PutPic(SelectedOptionPic, X1, Y2);
+      if (PressedKey <> #13) or NeedsRestoreOnEnter then
+        PutPic(SelectedOptionOriginalPic, X1, Y2);
 
       case PressedKey of
         #72, #75: SelectedOption := SelectedOption - 1;
@@ -306,93 +308,87 @@ begin
       end;
 
       if SelectedOption = 0 then
-        SelectedOption := Func17_arg_0
-      else if SelectedOption = (Func17_arg_0 + 1) then
+        SelectedOption := OptionCount
+      else if SelectedOption = OptionCount + 1 then
         SelectedOption := 1;
     end;
   until (PressedKey = #13) or (PressedKey = #27);
   ShowOptions := SelectedOption;
 end;
 
-function Func18(
-  Func18_arg_4: integer;
-  Func18_arg_2: integer;
-  Func18_arg_0: integer
+function InputReal(
+  { Ignored if 0 }
+  MinNumber: integer;
+  { Ignored if 0 }
+  MaxNumber: integer;
+  MaxDigits: integer
 ): real;
 var
-  Func18_var_31: char;
-  Func18_var_25: real;
-  Func18_var_24: boolean;
-  Func18_var_22: integer;
-  Func18_var_20: integer;
-  Func18_unused_16: array[1..4] of byte;
-  Func18_var_14: integer;
-  Func18_unused_12: array[1..2] of byte;
-  Func18_var_6: string[5];
-  Func18_var_0: string[5];
+  PressedKey: char;
+  CurrentNumber: real;
+  ShouldReturn: boolean;
+  CurrentX: integer;
+  CurrentY: integer;
+  Unused: array[1..4] of byte;
+  DigitCount: integer;
+  Unused2: integer;
+  MaxNumberString: string[5];
+  MinNumberString: string[5];
 begin
-  Func18_var_22 := WhereX;
-  Func18_var_20 := WhereY;
-  Func18_var_14 := 0;
+  CurrentX := WhereX;
+  CurrentY := WhereY;
+  DigitCount := 0;
   repeat
   begin
-    Func18_var_25 := 0;
-    for Func18_var_14 := 1 to Func18_var_14 do
+    CurrentNumber := 0;
+    for DigitCount := 1 to DigitCount do
     begin
       Write(' ');
     end;
-    Func18_var_24 := False;
-    Func18_var_14 := 0;
-    GotoXY(Func18_var_22, Func18_var_20);
+    ShouldReturn := False;
+    DigitCount := 0;
+    GotoXY(CurrentX, CurrentY);
     repeat
     begin
-      Func18_var_31 := GetPressedKey;
-      case Func18_var_31 of
-        #68:   begin
-            ShowHelpScreen;
+      PressedKey := GetPressedKey;
+      case PressedKey of
+        #68: ShowHelpScreen;
+        '0': begin
+          if DigitCount < MaxDigits then
+          begin
+            CurrentNumber := 10 * CurrentNumber + Ord(PressedKey) - 48;
+            if (CurrentNumber <> 0) or (DigitCount = 0) then
+              Write(PressedKey);
+            DigitCount := DigitCount + 1;
           end;
-        #48:   begin
-            if (Func18_var_14 < Func18_arg_0) then
-            begin
-              Func18_var_25 := (((10 * Func18_var_25) + Ord(Func18_var_31)) - 48);
-              if ((Func18_var_25 <> 0) or (Func18_var_14 = 0)) then
-              begin
-                Write(Func18_var_31);
-              end;
-              Func18_var_14 := (Func18_var_14 + 1);
-            end;
+        end;
+        '1'..'9': begin
+          if DigitCount < MaxDigits then
+          begin
+            CurrentNumber := 10 * CurrentNumber + Ord(PressedKey) - 48;
+            Write(PressedKey);
+            if CurrentNumber <> 0 then
+              DigitCount := DigitCount + 1;
           end;
-        #49..#57:   begin
-            if (Func18_var_14 < Func18_arg_0) then
-            begin
-              Func18_var_25 := (((10 * Func18_var_25) + Ord(Func18_var_31)) - 48);
-              Write(Func18_var_31);
-              if (Func18_var_25 <> 0) then
-              begin
-                Func18_var_14 := (Func18_var_14 + 1);
-              end;
-            end;
+        end;
+        #8: begin
+          if DigitCount > 0 then
+          begin
+            CurrentNumber := Int(CurrentNumber / 10);
+            Write(#8, ' ', #8);
+            DigitCount := DigitCount - 1;
           end;
-        #8:   begin
-            if (Func18_var_14 > 0) then
-            begin
-              Func18_var_25 := Int((Func18_var_25 / 10));
-              Write(#8, ' ', #8);
-              Func18_var_14 := (Func18_var_14 - 1);
-            end;
-          end;
-        #13:   begin
-            if (Func18_var_14 > 0) then
-            begin
-              Func18_var_24 := True;
-            end;
-          end;
-        #27:   begin
-            Func18_var_25 := -1;
-            Func18_var_24 := True;
-          end;
+        end;
+        #13: begin
+          if DigitCount > 0 then
+            ShouldReturn := True;
+        end;
+        #27: begin
+          CurrentNumber := -1;
+          ShouldReturn := True;
+        end;
       end;
-      if (Func18_var_14 = Func18_arg_0) then
+      if DigitCount = MaxDigits then
       begin
         Sound(700);
         Delay(50);
@@ -400,34 +396,31 @@ begin
         Delay(80);
       end;
     end
-    until Func18_var_24;
-    if ((not ((Func18_arg_4 = 0) and (Func18_arg_2 = 0))) and (((Func18_var_25 >= 0) and (Func18_var_25 > Func18_arg_2)) or
- ((Func18_var_25 <= 0) and (Func18_var_25 < Func18_arg_4)))) then
+    until ShouldReturn;
+    if (not ((MinNumber = 0) and (MaxNumber = 0))) and
+        (((CurrentNumber >= 0) and (CurrentNumber > MaxNumber)) or
+        ((CurrentNumber <= 0) and (CurrentNumber < MinNumber))) then
     begin
       GotoXY(2, 10);
-      Str(Func18_arg_4, Func18_var_0);
-      Str(Func18_arg_2, Func18_var_6);
-      ShowMessage(
-        87,
-        '',
-        (((Func18_var_6 + ' -ל ') + Func18_var_0) + ' ןיב רפסמ סנכה אנ'),
-        #7
-      );
-      GotoXY(Func18_var_22, Func18_var_20);
-      Func18_var_24 := False;
+      Str(MinNumber, MinNumberString);
+      Str(MaxNumber, MaxNumberString);
+      ShowMessage(87, '', MaxNumberString + ' -ל ' + MinNumberString + ' ןיב רפסמ סנכה אנ', #7);
+      GotoXY(CurrentX, CurrentY);
+      ShouldReturn := False;
     end;
   end
-  until Func18_var_24;
-  Func18 := Func18_var_25;
+  until ShouldReturn;
+  InputReal := CurrentNumber;
 end;
 
-function Func19(
-  Func19_arg_4: integer;
-  Func19_arg_2: integer;
-  Func19_arg_0: integer
+{ Unused }
+function InputInteger(
+  MinNumber: integer;
+  MaxNumber: integer;
+  MaxDigits: integer
 ): integer;
 begin
-  Func19 := Trunc(Func18(Func19_arg_4, Func19_arg_2, Func19_arg_0));
+  InputInteger := Trunc(InputReal(MinNumber, MaxNumber, MaxDigits));
 end;
 
 function InputYesNo: boolean;
@@ -474,13 +467,9 @@ begin
     if (Func20_var_4 > 0) then
     begin
       if Func20_var_9 then
-      begin
-        Write('ןכ');
-      end
+        Write('ןכ')
       else
-      begin
         Write('אל');
-      end;
     end;
   end
   until ((Func20_var_8 = #13) and (Func20_var_4 > 0));
@@ -489,22 +478,22 @@ end;
 
 procedure PlayDay;
 var
-  PriceCopperIsrael: integer;
-  PriceCopperTurkey: integer;
-  PriceCopperEgypt: integer;
-  PriceOlivesIsrael: integer;
-  PriceOlivesTurkey: integer;
-  PriceOlivesEgypt: integer;
-  PriceWheatIsrael: integer;
-  PriceWheatTurkey: integer;
-  PriceWheatEgypt: integer;
-  Func21_var_91: integer;
+  CopperPriceIsrael: integer;
+  CopperPriceTurkey: integer;
+  CopperPriceEgypt: integer;
+  OlivesPriceIsrael: integer;
+  OlivesPriceTurkey: integer;
+  OlivesPriceEgypt: integer;
+  WheatPriceIsrael: integer;
+  WheatPriceTurkey: integer;
+  WheatPriceEgypt: integer;
+  MainMenuOptionCount: integer;
   Func21_var_89: integer;
   Func21_var_88: boolean;
-  Func21_var_8: TRectArray;
-  Func21_var_6: integer;
-  Func21_var_4: integer;
-  Func21_unused_0: array[1..4] of byte;
+  MainMenuOptionRects: TRectArray;
+  CountryNameX1: integer;
+  CountryNameX2: integer;
+  Unused: array[1..4] of byte;
 
   procedure ShowHUD;
   begin
@@ -513,7 +502,7 @@ var
     GotoXY(32, 3);
     Write(DayName[Day]);
     GotoXY(32, 5);
-    Write(global_var_81:2);
+    Write(TimeOfDay:2);
     Write(':00');
     GotoXY(32, 17);
     Write(' ':8);
@@ -532,23 +521,23 @@ var
     GotoXY(32, 13);
     Write(Cargo[Wheat]:3);
     GotoXY(30, 21);
-    Write(PriceCopperTurkey:4);
+    Write(CopperPriceTurkey:4);
     GotoXY(30, 23);
-    Write(PriceOlivesTurkey:4);
+    Write(OlivesPriceTurkey:4);
     GotoXY(30, 25);
-    Write(PriceWheatTurkey:4);
+    Write(WheatPriceTurkey:4);
     GotoXY(16, 21);
-    Write(PriceCopperIsrael:4);
+    Write(CopperPriceIsrael:4);
     GotoXY(16, 23);
-    Write(PriceOlivesIsrael:4);
+    Write(OlivesPriceIsrael:4);
     GotoXY(16, 25);
-    Write(PriceWheatIsrael:4);
+    Write(WheatPriceIsrael:4);
     GotoXY(2, 21);
-    Write(PriceCopperEgypt:4);
+    Write(CopperPriceEgypt:4);
     GotoXY(2, 23);
-    Write(PriceOlivesEgypt:4);
+    Write(OlivesPriceEgypt:4);
     GotoXY(2, 25);
-    Write(PriceWheatEgypt:4);
+    Write(WheatPriceEgypt:4);
   end;
 
   function Func23(Func23_arg_0: byte): boolean;
@@ -624,7 +613,7 @@ var
         ShowMessage(78,'?תתל ןכומ התא' + WareName[Copper] + 'ןוט המכ', '', '');
         GotoXY(20, 16);
         repeat
-          Func25_var_28 := Trunc(Func18(0, 0, 8));
+          Func25_var_28 := Trunc(InputReal(0, 0, 8));
         until Func25_var_28 >= 0;
       end
       until (Func25_var_28 >= 0) and Func27(Func25_var_28, Func25_arg_12);
@@ -636,7 +625,7 @@ var
         ShowMessage(78,'?תתל ןכומ התא' + WareName[Olives] + 'ןוט המכ', '', '');
         GotoXY(20, 16);
         repeat
-          Func25_var_26 := Trunc(Func18(0, 0, 8));
+          Func25_var_26 := Trunc(InputReal(0, 0, 8));
         until Func25_var_26 >= 0;
       end
       until Func27(Func25_var_26, Func25_arg_8);
@@ -648,7 +637,7 @@ var
         ShowMessage(78, (('?תתל ןכומ התא' + WareName[Wheat]) + 'ןוט המכ'), '', '');
         GotoXY(20, 16);
         repeat
-          Func25_var_24 := Trunc(Func18(0, 0, 8));
+          Func25_var_24 := Trunc(InputReal(0, 0, 8));
         until Func25_var_24 >= 0;
       end
       until Func27(Func25_var_24, Func25_arg_4);
@@ -660,7 +649,7 @@ var
         ShowMessage(78, '?תתל ןכומ התא ףסכ המכ', '', '');
         GotoXY(20, 16);
         repeat
-          Func25_var_18 := Trunc(Func18(0, 0, 8));
+          Func25_var_18 := Trunc(InputReal(0, 0, 8));
         until Func25_var_18 >= 0;
       end
       until Func26(Func25_var_18, Func25_arg_0);
@@ -781,15 +770,15 @@ var
 
   procedure GenerateNewPrices;
   begin
-    PriceCopperIsrael := BaseWarePrice[Copper] - 500 + Random(11) * 100;
-    PriceOlivesIsrael := BaseWarePrice[Olives] - 150 + Random(7) * 50;
-    PriceWheatIsrael := BaseWarePrice[Wheat] - 15 + Random(8) * 5;
-    PriceCopperTurkey := BaseWarePrice[Copper] - 500 + Random(11) * 100;
-    PriceOlivesTurkey := BaseWarePrice[Olives] - 150 + Random(7) * 50;
-    PriceWheatTurkey := BaseWarePrice[Wheat] - 15 + Random(8) * 5;
-    PriceCopperEgypt := BaseWarePrice[Copper] - 500 + Random(11) * 100;
-    PriceOlivesEgypt := BaseWarePrice[Olives] - 150 + Random(7) * 50;
-    PriceWheatEgypt := BaseWarePrice[Wheat] - 15 + Random(8) * 5;
+    CopperPriceIsrael := BaseWarePrice[Copper] - 500 + Random(11) * 100;
+    OlivesPriceIsrael := BaseWarePrice[Olives] - 150 + Random(7) * 50;
+    WheatPriceIsrael := BaseWarePrice[Wheat] - 15 + Random(8) * 5;
+    CopperPriceTurkey := BaseWarePrice[Copper] - 500 + Random(11) * 100;
+    OlivesPriceTurkey := BaseWarePrice[Olives] - 150 + Random(7) * 50;
+    WheatPriceTurkey := BaseWarePrice[Wheat] - 15 + Random(8) * 5;
+    CopperPriceEgypt := BaseWarePrice[Copper] - 500 + Random(11) * 100;
+    OlivesPriceEgypt := BaseWarePrice[Olives] - 150 + Random(7) * 50;
+    WheatPriceEgypt := BaseWarePrice[Wheat] - 15 + Random(8) * 5;
   end;
 
   procedure UpdateStorm(var OutStormCountryName: TCountryName);
@@ -844,39 +833,39 @@ var
         UpDownString := '-ל דרי';
       Str(NewPrice, NewPriceString);
       case Country of
-        Turkey:   begin
-            case Ware of
-              Copper: PriceCopperTurkey := NewPrice;
-              Olives: PriceOlivesTurkey := NewPrice;
-              Wheat: PriceWheatTurkey := NewPrice;
-            end;
-            GotoXY(7, 2 + 21 * (UpDownFlag - 1));
-            Writeln('היכרותב' + WareName[Ware] + '' + 'ה ריחמ':27);
-            GotoXY(7, 3 + 21 * (UpDownFlag - 1));
-            Writeln('!!םילקש ' + NewPriceString + UpDownString:25);
+        Turkey: begin
+          case Ware of
+            Copper: CopperPriceTurkey := NewPrice;
+            Olives: OlivesPriceTurkey := NewPrice;
+            Wheat: WheatPriceTurkey := NewPrice;
           end;
-        Israel:   begin
-            case Ware of
-              Copper: PriceCopperIsrael := NewPrice;
-              Olives: PriceOlivesIsrael := NewPrice;
-              Wheat: PriceWheatIsrael := NewPrice;
-            end;
-            GotoXY(7, 2 + 21 * (UpDownFlag - 1));
-            Writeln('לארשיב' + WareName[Ware] + '' + 'ה ריחמ':27);
-            GotoXY(7, 3 + 21 * (UpDownFlag - 1));
-            Writeln('!!םילקש ' + NewPriceString + UpDownString:25);
+          GotoXY(7, 2 + 21 * (UpDownFlag - 1));
+          Writeln('היכרותב' + WareName[Ware] + '' + 'ה ריחמ':27);
+          GotoXY(7, 3 + 21 * (UpDownFlag - 1));
+          Writeln('!!םילקש ' + NewPriceString + UpDownString:25);
+        end;
+        Israel: begin
+          case Ware of
+            Copper: CopperPriceIsrael := NewPrice;
+            Olives: OlivesPriceIsrael := NewPrice;
+            Wheat: WheatPriceIsrael := NewPrice;
           end;
-        Egypt:   begin
-            case Ware of
-              Copper: PriceCopperEgypt := NewPrice;
-              Olives: PriceOlivesEgypt := NewPrice;
-              Wheat: PriceWheatEgypt := NewPrice;
-            end;
-            GotoXY(7, 2 + 21 * (UpDownFlag - 1));
-            Writeln('םירצמב' + WareName[Ware] + '' + 'ה ריחמ':27);
-            GotoXY(7, 3 + 21 * (UpDownFlag - 1));
-            Writeln('!!םילקש ' + NewPriceString + UpDownString:25);
+          GotoXY(7, 2 + 21 * (UpDownFlag - 1));
+          Writeln('לארשיב' + WareName[Ware] + '' + 'ה ריחמ':27);
+          GotoXY(7, 3 + 21 * (UpDownFlag - 1));
+          Writeln('!!םילקש ' + NewPriceString + UpDownString:25);
+        end;
+        Egypt: begin
+          case Ware of
+            Copper: CopperPriceEgypt := NewPrice;
+            Olives: OlivesPriceEgypt := NewPrice;
+            Wheat: WheatPriceEgypt := NewPrice;
           end;
+          GotoXY(7, 2 + 21 * (UpDownFlag - 1));
+          Writeln('םירצמב' + WareName[Ware] + '' + 'ה ריחמ':27);
+          GotoXY(7, 3 + 21 * (UpDownFlag - 1));
+          Writeln('!!םילקש ' + NewPriceString + UpDownString:25);
+        end;
       end;
       WaitForKey;
     end;
@@ -944,13 +933,13 @@ var
             Func31_var_2 := 0;
             Func31_var_0 := 0;
             Func31_var_169 := 0;
-            for global_var_21 := 1 to 3 do
+            for global_var_21 := Copper to Wheat do
             begin
               Func31_var_4[global_var_21] := 0;
             end;
-            Func31_var_173 := (50 * (Random(2) + 1));
-            Func31_var_175 := (10 * (Random(Func31_var_173) + (2 * Func31_var_173)));
-            if (Func31_var_175 <= ((Money + BankBalance) + GetTotalCargoValue)) then
+            Func31_var_173 := 50 * (Random(2) + 1);
+            Func31_var_175 := 10 * (Random(Func31_var_173) + 2 * Func31_var_173);
+            if Func31_var_175 <= Money + BankBalance + GetTotalCargoValue then
             begin
               PutPic(ExpandScreen^, 0, 199);
               GotoXY(29, 14);
@@ -1032,7 +1021,7 @@ var
                 ShipCapacity := (ShipCapacity + Func31_var_173);
                 Money := (Money - Func31_var_2);
                 BankBalance := (BankBalance - Func31_var_0);
-                for global_var_21 := 1 to 3 do
+                for global_var_21 := Copper to Wheat do
                 begin
                   Cargo[global_var_21] := (Cargo[global_var_21] - Func31_var_4[global_var_21]);
                 end;
@@ -1041,26 +1030,12 @@ var
                 Write('.העצוב  הבחרהה');
                 WaitForKey;
                 Str(Func31_var_0, Func31_var_139);
-                if (Func31_var_0 > 0) then
+                if Func31_var_0 > 0 then
                 begin
-                  if (Func31_var_2 > 0) then
-                  begin
-                    ShowMessage(
-                      87,
-                      ('ךנובשחמ וחקלנ לקש ' + Func31_var_139),
-                      '.קנבב',
-                      ''
-                    );
-                  end
+                  if Func31_var_2 > 0 then
+                    ShowMessage(87, 'ךנובשחמ וחקלנ לקש ' + Func31_var_139, '.קנבב', '')
                   else
-                  begin
-                    ShowMessage(
-                      87,
-                      '.קנבב ךנובשחמ חקלנ ףסכה',
-                      '',
-                      ''
-                    );
-                  end;
+                    ShowMessage(87, '.קנבב ךנובשחמ חקלנ ףסכה', '', '');
                 end;
               end;
             end
@@ -1090,38 +1065,21 @@ var
               Func31_var_23[2].X2 := 198;
               Func31_var_23[2].Y2 := 192;
               repeat
-              Func31_var_165 := ShowOptions(Func31_var_23, 2);
-              until (Func31_var_165 > 0);
-              if (Func31_var_165 = 1) then
+                Func31_var_165 := ShowOptions(Func31_var_23, 2);
+              until Func31_var_165 > 0;
+              if Func31_var_165 = 1 then
               begin
                 Func21_var_88 := True;
-                ShowMessage(
-                  87,
-                  '...תרחמל',
-                  '.שדח תווצ םע דבוע התא',
-                  ''
-                );
+                ShowMessage(87, '...תרחמל', '.שדח תווצ םע דבוע התא', '');
               end
               else
               begin
-                if Func25(
-                  Cargo[Copper],
-                  Cargo[Olives],
-                  Cargo[Wheat],
-                  Money
-                ) then
-                begin
-                  ShowMessage(87, '.ךתעצה תא לביק תווצה', '', '');
-                end
+                if Func25(Cargo[Copper], Cargo[Olives], Cargo[Wheat], Money) then
+                  ShowMessage(87, '.ךתעצה תא לביק תווצה', '', '')
                 else
                 begin
-                  ShowMessage(
-                    87,
-                    '.העצהל ברס תווצה',
-                    'אצומ התאו םיימוי ורבע',
-                    'שדח תווצ'
-                  );
-                  Day := (Day + 1);
+                  ShowMessage(87, '.העצהל ברס תווצה', 'אצומ התאו םיימוי ורבע', 'שדח תווצ');
+                  Day := Day + 1;
                   Func21_var_88 := True;
                 end;
               end;
@@ -1163,7 +1121,7 @@ var
             if (Cargo[Copper] > 1) then
             begin
               PutPic(SocherScreen^, 0, 199);
-              Func31_var_177 := ((PriceCopperIsrael + (50 * Random(30))) - 600);
+              Func31_var_177 := ((CopperPriceIsrael + (50 * Random(30))) - 600);
               Str(Func31_var_177, Func31_var_147);
               Str(Cargo[Copper], Func31_var_139);
               GotoXY(3, 2);
@@ -1200,7 +1158,7 @@ var
               if (Cargo[Olives] > 1) then
               begin
                 PutPic(SocherScreen^, 0, 199);
-                Func31_var_177 := ((PriceOlivesIsrael + (10 * Random(70))) - 300);
+                Func31_var_177 := ((OlivesPriceIsrael + (10 * Random(70))) - 300);
                 Str(Func31_var_177, Func31_var_147);
                 Str(Cargo[Olives], Func31_var_139);
                 GotoXY(3, 2);
@@ -1237,7 +1195,7 @@ var
                 if (Cargo[Wheat] > 1) then
                 begin
                   PutPic(SocherScreen^, 0, 199);
-                  Func31_var_177 := ((PriceWheatIsrael + (5 * Random(14))) - 40);
+                  Func31_var_177 := ((WheatPriceIsrael + (5 * Random(14))) - 40);
                   Str(Func31_var_177, Func31_var_147);
                   Str(Cargo[Wheat], Func31_var_139);
                   GotoXY(3, 2);
@@ -1355,10 +1313,10 @@ var
     WaitForKey;
   end;
 
-  procedure Func34(
-    Func34_arg_4: integer;
-    Func34_arg_2: integer;
-    Func34_arg_0: integer
+  procedure ShowBuyScreen(
+    CopperPrice: integer;
+    OlivesPrice: integer;
+    WheatPrice: integer
   );
   var
     Unused: integer;
@@ -1369,7 +1327,7 @@ var
     Func34_var_0: TRectArray;
   begin
     Func34_var_80 := 0;
-    if Money < Func34_arg_0 then
+    if Money < WheatPrice then
       ShowMessage(87, 'ךל רשפאמ וניא ךפסכ', 'תורוחס תינק', '')
     else
     begin
@@ -1424,9 +1382,9 @@ var
       if Func34_var_92 > 0 then
       begin
         case Func34_var_92 of
-          Copper: Func34_var_94 := Func34_arg_4;
-          Olives: Func34_var_94 := Func34_arg_2;
-          Wheat: Func34_var_94 := Func34_arg_0;
+          Copper: Func34_var_94 := CopperPrice;
+          Olives: Func34_var_94 := OlivesPrice;
+          Wheat: Func34_var_94 := WheatPrice;
         end;
         if Money < Func34_var_94 then
           ShowMessage(87, 'ךל רשפאמ וניא ךפסכ', WareName[Func34_var_92] + 'תונקל', '')
@@ -1438,7 +1396,7 @@ var
             GotoXY(6, 15);
             Write(Trunc(Money / Func34_var_94));
             GotoXY(6, 17);
-            Func34_var_80 := Func18(0, 0, 8);
+            Func34_var_80 := InputReal(0, 0, 8);
             Func34_var_86 := 1.0 * Func34_var_80 * Func34_var_94;
           end
           until not CannotAfford(Func34_var_86);
@@ -1491,7 +1449,7 @@ var
       Func35_var_0[2].Y1 := 42;
       Func35_var_0[3].X1 := 19;
       Func35_var_0[3].Y1 := 58;
-      if CurrentCountryName = 'םירצמ' then
+      if CurrentCountryName = EgyptName then
       begin
         Func35_var_0[1].X2 := 58;
         Func35_var_0[1].Y2 := 34;
@@ -1518,7 +1476,7 @@ var
           begin
             PutPic(SellSign^, 120, 60);
             GotoXY(21, 7);
-            Func35_var_80 := Func18(0, 0, 8);
+            Func35_var_80 := InputReal(0, 0, 8);
           end
           until not Func36(Func35_var_80, Func35_var_92);
         end
@@ -1569,7 +1527,7 @@ var
           begin
             PutPic(DepositSign^, 11, 139);
             GotoXY(5, 17);
-            Func37_var_0 := Func18(0, 0, 8);
+            Func37_var_0 := InputReal(0, 0, 8);
             if Func37_var_0 <= 0 then
               Func37_var_86 := 1
             else
@@ -1595,7 +1553,7 @@ var
           begin
             PutPic(WithdrawSign^, 11, 139);
             GotoXY(5, 17);
-            Func37_var_0 := Func18(0, 0, 8);
+            Func37_var_0 := InputReal(0, 0, 8);
             if Func37_var_0 < 0 then
               Func37_var_86 := 1
             else
@@ -1638,58 +1596,59 @@ var
       Func38 := False;
   end;
 
-  procedure Func39(CountryName: TCountryName);
+  procedure ToggleCountryHighlight(CountryName: TCountryName);
   var
-    Func39_var_0: PWinBuffer;
+    CountryNamePic: PWinBuffer;
   begin
     case CountryNameToIndex(CountryName) of
       Turkey: begin
-        Func21_var_6 := 256;
-        Func21_var_4 := 303;
+        CountryNameX1 := 256;
+        CountryNameX2 := 303;
       end;
       Israel: begin
-        Func21_var_6 := 147;
-        Func21_var_4 := 190;
+        CountryNameX1 := 147;
+        CountryNameX2 := 190;
       end;
       Egypt: begin
-        Func21_var_6 := 44;
-        Func21_var_4 := 86;
+        CountryNameX1 := 44;
+        CountryNameX2 := 86;
       end;
     end;
-    New(Func39_var_0);
-    GetPic(Func39_var_0^, Func21_var_6, 146, Func21_var_4, 155);
+    New(CountryNamePic);
+    GetPic(CountryNamePic^, CountryNameX1, 146, CountryNameX2, 155);
     ColorTable(3, 2, 1, 0);
-    PutPic(Func39_var_0^, Func21_var_6, 155);
+    PutPic(CountryNamePic^, CountryNameX1, 155);
     ColorTable(0, 1, 2, 3);
-    Dispose(Func39_var_0);
+    Dispose(CountryNamePic);
   end;
 
-  procedure Func40(Func40_arg_0: TCountryName);
+  procedure TravelFlow(CurrentStormCountryName: TCountryName);
   var
-    Func40_var_173: boolean;
+    ShouldAbortTravel: boolean;
     Func40_var_172: boolean;
-    Func40_var_170: integer;
-    Func40_var_168: integer;
+    TravelDuration: integer;
+    ChosenDestination: integer;
     Func40_unused_167: byte;
-    Func40_var_87: TRectArray;
-    Func40_var_7: TRectArray;
+    FullTravelOptionRects: TRectArray;
+    TravelOptionRects: TRectArray;
     Func40_var_5: integer;
     Func40_var_3: integer;
-    Func40_var_1: integer;
-    Func40_var_0: byte;
+    { Negative number means travel was aborted }
+    GuardShipCount: integer;
+    TravelEndTime: byte;
 
-    procedure Func41(
-      Func41_arg_8: integer;
-      Func41_arg_6: integer;
-      Func41_arg_4: integer;
-      Func41_arg_2: integer;
-      Func41_arg_0: integer
+    procedure AnimateTravel(
+      FromX: integer;
+      FromY: integer;
+      ToX: integer;
+      ToY: integer;
+      Unused: integer
     );
     var
       Func41_var_266: integer;
       Func41_var_264: integer;
       Func41_var_135: arr_byte_129;
-      Func41_unused_6: arr_byte_129;
+      Unused2: arr_byte_129;
       Func41_var_4: integer;
       Func41_var_2: integer;
       Func41_var_0: integer;
@@ -1703,11 +1662,11 @@ var
 
       Write(ToStrWithCommas(Money):5);
       PutPic(MapWindow^, 0, 142);
-      GetPic(Func41_var_135, Func41_arg_8, Func41_arg_6, Func41_arg_8 + 18, Func41_arg_6 + 14);
+      GetPic(Func41_var_135, FromX, FromY, FromX + 18, FromY + 14);
       Func41_var_0 := 0;
-      Func41_var_2 := (Func40_var_0 - global_var_81) * 60;
-      Func41_var_266 := Func41_arg_8;
-      Func41_var_264 := Func41_arg_6 + 14;
+      Func41_var_2 := (TravelEndTime - TimeOfDay) * 60;
+      Func41_var_266 := FromX;
+      Func41_var_264 := FromY + 14;
       for Func41_var_4 := 1 to Func41_var_2 do
       begin
         Func41_var_0 := Func41_var_0 + 1;
@@ -1722,16 +1681,12 @@ var
         else
         begin
           Func41_var_0 := 0;
-          global_var_81 := global_var_81 + 1;
+          TimeOfDay := TimeOfDay + 1;
           GotoXY(32, 5);
-          Write(global_var_81:2, ':00');
+          Write(TimeOfDay:2, ':00');
         end;
-        Func40_var_5 := Round(
-          0.0 + Func41_arg_8 + Func41_var_4 / Func41_var_2 * (Func41_arg_4 - Func41_arg_8)
-        );
-        Func40_var_3 := Round(
-          0.0 + Func41_arg_6 + Func41_var_4 / Func41_var_2 * (Func41_arg_2 - Func41_arg_6) + 14
-        );
+        Func40_var_5 := Round(0.0 + FromX + Func41_var_4 / Func41_var_2 * (ToX - FromX));
+        Func40_var_3 := Round(0.0 + FromY + Func41_var_4 / Func41_var_2 * (ToY - FromY) + 14);
         PutPic(Func41_var_135, Func40_var_5, Func40_var_3);
         Delay(15);
         Func41_var_266 := Func40_var_5;
@@ -1753,7 +1708,7 @@ var
       Func42_var_34: integer;
       Func42_var_32: integer;
       Func42_var_24: str_7;
-      Func42_var_13: TCountryName;
+      OriginalDestination: TCountryName;
       Func42_var_12: byte;
       Func42_var_10: integer;
       Func42_var_8: integer;
@@ -1899,7 +1854,7 @@ var
         WaitForKey;
         PutPic(PiratesSign^, 4, 139);
         GotoXY(18, 17);
-        Write(Func40_var_1:2);
+        Write(GuardShipCount:2);
         Func43_var_12[1].X1 := 108;
         Func43_var_12[1].Y1 := 117;
         Func43_var_12[1].X2 := 133;
@@ -2071,22 +2026,15 @@ var
       procedure Func48;
       begin
         PutPic(ChangeWindow^, 0, 142);
-        Func42_var_13 := global_var_55;
-        if global_var_55 = 'לארשי' then
-          global_var_55 := 'היכרות'
+        OriginalDestination := TravelDestination;
+        if TravelDestination = IsraelName then
+          TravelDestination := TurkeyName
         else
-          global_var_55 := 'לארשי';
+          TravelDestination := IsraelName;
         Delay(1500);
-        ShowMessage(
-          87,
-          'תוקזח תוחורמ האצותכ',
-          'תעגה ,טוונב תועטו',
-          Func42_var_13 + 'ל םוקמב ' + global_var_55 + 'ל'
-        );
-        if (global_var_44 = 'םירצמ') and (global_var_55 = 'היכרות') then
-        begin
-          Func40_var_0 := (Func40_var_0 + 4);
-        end;
+        ShowMessage(87, 'תוקזח תוחורמ האצותכ', 'תעגה ,טוונב תועטו', OriginalDestination + 'ל םוקמב ' + TravelDestination + 'ל');
+        if (TravelStart = EgyptName) and (TravelDestination = TurkeyName) then
+          TravelEndTime := TravelEndTime + 4;
       end;
 
     begin
@@ -2105,7 +2053,7 @@ var
         if Func42_var_0 or Func42_var_1 then
         begin
           ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
-          if (StormCountryName = CurrentCountryName) or (StormCountryName = global_var_55) then
+          if (StormCountryName = CurrentCountryName) or (StormCountryName = TravelDestination) then
           begin
             PutPic(StormWindow^, 0, 142);
             WaitForKey;
@@ -2134,7 +2082,7 @@ var
           else
           begin
             Func28(144, Func42_var_36, Func42_var_24);
-            if global_var_81 > 16 then
+            if TimeOfDay > 16 then
             begin
               PutPic(ShoalWindow^, 0, 142);
               ShowMessage(87, 'םיעורגה תוארה יאנת בקע', '.ןוטרש לע תילע - הלילב', '');
@@ -2172,44 +2120,44 @@ var
           global_var_109 := True;
         end;
       end;
-      if ((not global_var_109) and (((global_var_81 + Func42_arg_2) + (Func42_arg_2 div 2)) <= 20)) then
+      if ((not global_var_109) and (((TimeOfDay + Func42_arg_2) + (Func42_arg_2 div 2)) <= 20)) then
       begin
         if Random(12) = 0 then
         begin
           Func42_var_10 := Func40_var_5;
           Func42_var_8 := Func40_var_3;
-          Func42_var_12 := CountryNameToIndex(global_var_55);
-          Func41(
+          Func42_var_12 := CountryNameToIndex(TravelDestination);
+          AnimateTravel(
             Func42_var_10,
             Func42_var_8,
-            global_var_264[Func42_var_12].field_0,
-            global_var_264[Func42_var_12].field_2,
+            MapCoordinates[Func42_var_12].X,
+            MapCoordinates[Func42_var_12].Y,
             9
           );
           if Random(2) = 1 then
-            ShowMessage(87, 'תינמז רוגס ' + global_var_55 + ' למנ', 'דבכ לפרע בקע', '')
+            ShowMessage(87, 'תינמז רוגס ' + TravelDestination + ' למנ', 'דבכ לפרע בקע', '')
           else
           begin
             PutPic(StrikeWindow^, 0, 142);
             WaitForKey;
-            ShowMessage(87, 'םישובישו התיבש לשב', global_var_55 + ' למנ ,הדובעב', 'רוגס ');
+            ShowMessage(87, 'םישובישו התיבש לשב', TravelDestination + ' למנ ,הדובעב', 'רוגס ');
           end;
-          ShowMessage(87, '', (global_var_44 + 'ל רוזחל ךילע'), '');
-          global_var_55 := global_var_44;
-          Func40_var_0 := (global_var_81 + (Func42_arg_2 div 2));
-          Func41(
-            global_var_264[Func42_var_12].field_0,
-            global_var_264[Func42_var_12].field_2,
+          ShowMessage(87, '', (TravelStart + 'ל רוזחל ךילע'), '');
+          TravelDestination := TravelStart;
+          TravelEndTime := (TimeOfDay + (Func42_arg_2 div 2));
+          AnimateTravel(
+            MapCoordinates[Func42_var_12].X,
+            MapCoordinates[Func42_var_12].Y,
             Func42_var_10,
             Func42_var_8,
             9
           );
-          Func40_var_0 := (global_var_81 + (Func42_arg_2 div 2));
+          TravelEndTime := (TimeOfDay + (Func42_arg_2 div 2));
           global_var_109 := True;
         end;
       end;
       Func42_var_34 := Random(20) + 1;
-      if global_var_81 >= 16 then
+      if TimeOfDay >= 16 then
         if Func42_var_34 > 15 then
           Func42_var_34 := 1;
       if not global_var_109 then
@@ -2218,7 +2166,7 @@ var
           1..6:   begin
               ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
               global_var_109 := True;
-              Func43(Func40_var_1, Func42_arg_4);
+              Func43(GuardShipCount, Func42_arg_4);
             end;
           7:   begin
               Func48;
@@ -2256,43 +2204,44 @@ var
       end;
     end;
 
-    procedure Func49;
+    procedure DoTravel;
     var
-      Func49_var_3: byte;
-      Func49_var_2: byte;
-      Func49_var_1: byte;
+      CurrentWaypoint: byte;
+      DestinationIndex: byte;
+      NextWaypoint: byte;
       Func49_var_0: byte;
 
-      procedure Func50(var Func50_arg_0: integer);
+      { Risk > 0 means 1/3 higher guard ship cost }
+      procedure ShowGuardShipWindow(var CurrentRisk: integer);
       var
-        Func50_var_116: real;
+        GuardShipPrice: real;
         Line1: TMessageLine;
         Line2: TMessageLine;
         Line3: TMessageLine;
-        Func50_var_0: str_7;
+        PriceString: string[7];
       begin
         PutPic(GuardsWindow^, 0, 142);
-        Func50_var_116 := (5 * Trunc(((GetTotalCargoValue + Money) / (200 + Random(100)))));
-        if (Func50_var_116 < 75) then
-          Func50_var_116 := 75;
-        if (Func50_arg_0 > 0) then
-          Func50_var_116 := (Func50_var_116 + (Func50_var_116 / 3));
-        Func50_var_116 := (5 * Int((Func50_var_116 / 5)));
-        Str(Func50_var_116:1:0, Func50_var_0);
+        GuardShipPrice := 5 * Trunc((GetTotalCargoValue + Money) / (200 + Random(100)));
+        if GuardShipPrice < 75 then
+          GuardShipPrice := 75;
+        if CurrentRisk > 0 then
+          GuardShipPrice := GuardShipPrice + GuardShipPrice / 3;
+        GuardShipPrice := 5 * Int(GuardShipPrice / 5);
+        Str(GuardShipPrice:1:0, PriceString);
         GotoXY(1, 15);
         Line3 := '? הצור התא תוניפס המכ';
-        if Func50_var_116 <= Money then
+        if GuardShipPrice <= Money then
         begin
-          Line2 := ('ח"ש ' + Func50_var_0);
-          if (Func50_arg_0 = 0) then
+          Line2 := 'ח"ש ' + PriceString;
+          if CurrentRisk = 0 then
             Line1 := 'רמשמ תניפס לכ ריחמ'
           else
           begin
             Line1 := 'םישרוד רמשמה תוניפס ילעב';
-            if (StormCountryName = CurrentCountryName) or (StormCountryName = global_var_55) then
-              Line2 := ('.רעוסה םיה לשב ,' + Line2)
+            if (StormCountryName = CurrentCountryName) or (StormCountryName = TravelDestination) then
+              Line2 := '.רעוסה םיה לשב ,' + Line2
             else
-              Line2 := ('רבגומה ןוכיסה לשב ' + Line2);
+              Line2 := 'רבגומה ןוכיסה לשב ' + Line2;
           end;
           ShowMessage(78, Line1, Line2, Line3);
           repeat
@@ -2300,75 +2249,70 @@ var
             GotoXY(4, 17);
             Write('':4);
             GotoXY(4, 17);
-            Func40_var_1 := Trunc(Func18(0, 0, 3));
+            GuardShipCount := Trunc(InputReal(0, 0, 3));
           end
-          until (not CannotAfford(((1.0 * Func50_var_116) * Func40_var_1)));
+          until not CannotAfford(1.0 * GuardShipPrice * GuardShipCount);
         end
         else
         begin
           ShowMessage(78, 'םלשל ףסכ ךל ןיא', 'רמשמ תוניפסל', '');
-          Func40_var_1 := 0;
+          GuardShipCount := 0;
           repeat
-          LastPressedKey := GetPressedKey;
-          until (LastPressedKey in [#13, #27]);
+            LastPressedKey := GetPressedKey;
+          until LastPressedKey in [#13, #27];
           if LastPressedKey = #27 then
-            Func40_var_1 := -1;
+            GuardShipCount := -1;
         end;
-        if (Func40_var_1 > 0) then
-          Money := (Money - (Func40_var_1 * Func50_var_116));
+        if GuardShipCount > 0 then
+          Money := Money - GuardShipCount * GuardShipPrice;
       end;
 
     begin
-      Func50(global_var_103);
-      if (Func40_var_1 < 0) then
-        global_var_55 := global_var_44
+      ShowGuardShipWindow(Risk);
+      if GuardShipCount < 0 then
+        TravelDestination := TravelStart
       else
       begin
-        Func49_var_0 := ((Func40_var_0 - Ord(global_var_81)) div 2);
-        Func40_var_0 := (Func40_var_0 - Ord(Func49_var_0));
-        Func49_var_3 := CountryNameToIndex(global_var_44);
-        Func49_var_2 := CountryNameToIndex(global_var_55);
-        Func49_var_1 := global_var_200[Func49_var_3, Func49_var_2];
-        Func41(
-          global_var_264[Func49_var_3].field_0,
-          global_var_264[Func49_var_3].field_2,
-          global_var_264[Func49_var_1].field_0,
-          global_var_264[Func49_var_1].field_2,
+        Func49_var_0 := (TravelEndTime - TimeOfDay) div 2;
+        TravelEndTime := TravelEndTime - Func49_var_0;
+        CurrentWaypoint := CountryNameToIndex(TravelStart);
+        DestinationIndex := CountryNameToIndex(TravelDestination);
+        NextWaypoint := MapWaypoints[CurrentWaypoint, DestinationIndex];
+        AnimateTravel(
+          MapCoordinates[CurrentWaypoint].X,
+          MapCoordinates[CurrentWaypoint].Y,
+          MapCoordinates[NextWaypoint].X,
+          MapCoordinates[NextWaypoint].Y,
           9
         );
-        Func40_var_0 := (global_var_81 + Func49_var_0);
-        Func49_var_3 := Func49_var_1;
-        Func42(
-          ShipDamage,
-          GetTotalCargoWeight,
-          Func40_var_170,
-          global_var_103
-        );
-        Func49_var_2 := CountryNameToIndex(global_var_55);
-        Func49_var_1 := global_var_200[Func49_var_3, Func49_var_2];
-        if Func49_var_1 > 0 then
+        TravelEndTime := TimeOfDay + Func49_var_0;
+        CurrentWaypoint := NextWaypoint;
+        Func42(ShipDamage, GetTotalCargoWeight, TravelDuration, Risk);
+        DestinationIndex := CountryNameToIndex(TravelDestination);
+        NextWaypoint := MapWaypoints[CurrentWaypoint, DestinationIndex];
+        if NextWaypoint > 0 then
         begin
-          Func49_var_0 := (Func49_var_0 div 2);
-          Func40_var_0 := (Func40_var_0 - Ord(Func49_var_0));
+          Func49_var_0 := Func49_var_0 div 2;
+          TravelEndTime := TravelEndTime - Ord(Func49_var_0);
         end;
-        while Func49_var_1 > 0 do
+        while NextWaypoint > 0 do
         begin
-          Func41(
-            global_var_264[Func49_var_3].field_0,
-            global_var_264[Func49_var_3].field_2,
-            global_var_264[Func49_var_1].field_0,
-            global_var_264[Func49_var_1].field_2,
+          AnimateTravel(
+            MapCoordinates[CurrentWaypoint].X,
+            MapCoordinates[CurrentWaypoint].Y,
+            MapCoordinates[NextWaypoint].X,
+            MapCoordinates[NextWaypoint].Y,
             9
           );
-          Func40_var_0 := global_var_81 + Func49_var_0;
-          Func49_var_3 := Func49_var_1;
-          Func49_var_1 := global_var_200[Func49_var_3, Func49_var_2];
+          TravelEndTime := TimeOfDay + Func49_var_0;
+          CurrentWaypoint := NextWaypoint;
+          NextWaypoint := MapWaypoints[CurrentWaypoint, DestinationIndex];
         end;
-        Func41(
-          global_var_264[Func49_var_3].field_0,
-          global_var_264[Func49_var_3].field_2,
-          global_var_264[Func49_var_2].field_0,
-          global_var_264[Func49_var_2].field_2,
+        AnimateTravel(
+          MapCoordinates[CurrentWaypoint].X,
+          MapCoordinates[CurrentWaypoint].Y,
+          MapCoordinates[DestinationIndex].X,
+          MapCoordinates[DestinationIndex].Y,
           9
         );
         if Func40_var_172 then
@@ -2377,124 +2321,105 @@ var
     end;
 
   begin
-    Func40_var_170 := 0;
-    global_var_44 := CurrentCountryName;
-    Func40_var_173 := False;
-    global_var_103 := 0;
+    TravelDuration := 0;
+    TravelStart := CurrentCountryName;
+    ShouldAbortTravel := False;
+    Risk := 0;
     PutPic(MapWindow^, 0, 142);
-    Func40_var_87[1].X1 := 144;
-    Func40_var_87[1].Y1 := 2;
-    Func40_var_87[1].X2 := 182;
-    Func40_var_87[1].Y2 := 9;
-    Func40_var_87[2].X1 := 228;
-    Func40_var_87[2].Y1 := 106;
-    Func40_var_87[2].X2 := 237;
-    Func40_var_87[2].Y2 := 137;
-    Func40_var_87[3].X1 := 75;
-    Func40_var_87[3].Y1 := 134;
-    Func40_var_87[3].X2 := 111;
-    Func40_var_87[3].Y2 := 141;
-    global_var_21 := 1;
-    for global_var_23 := 1 to 3 do
+    FullTravelOptionRects[Turkey].X1 := 144;
+    FullTravelOptionRects[Turkey].Y1 := 2;
+    FullTravelOptionRects[Turkey].X2 := 182;
+    FullTravelOptionRects[Turkey].Y2 := 9;
+    FullTravelOptionRects[Israel].X1 := 228;
+    FullTravelOptionRects[Israel].Y1 := 106;
+    FullTravelOptionRects[Israel].X2 := 237;
+    FullTravelOptionRects[Israel].Y2 := 137;
+    FullTravelOptionRects[Egypt].X1 := 75;
+    FullTravelOptionRects[Egypt].Y1 := 134;
+    FullTravelOptionRects[Egypt].X2 := 111;
+    FullTravelOptionRects[Egypt].Y2 := 141;
+    global_var_21 := Turkey;
+    for global_var_23 := Turkey to Egypt do
     begin
-      if global_var_23 <> CountryNameToIndex(global_var_44) then
+      if global_var_23 <> CountryNameToIndex(TravelStart) then
       begin
-        Func40_var_7[global_var_21] := Func40_var_87[global_var_23];
-        global_var_21 := (global_var_21 + 1);
+        TravelOptionRects[global_var_21] := FullTravelOptionRects[global_var_23];
+        global_var_21 := global_var_21 + 1;
       end;
     end;
     case CountryNameToIndex(CurrentCountryName) of
-      Turkey: Func40_var_168 := ShowOptions(Func40_var_7, 2) + 1;
-      Israel: Func40_var_168 := ShowOptions(Func40_var_7, 2) * 2 - 1;
-      Egypt: Func40_var_168 := ShowOptions(Func40_var_7, 2);
+      Turkey: ChosenDestination := ShowOptions(TravelOptionRects, 2) + 1;
+      Israel: ChosenDestination := ShowOptions(TravelOptionRects, 2) * 2 - 1;
+      Egypt: ChosenDestination := ShowOptions(TravelOptionRects, 2);
     end;
-    if Func40_var_168 > 0 then
+    if ChosenDestination > 0 then
     begin
-      global_var_55 := CountryIndexToName(Func40_var_168);
-      if ((global_var_44 = 'לארשי') or (global_var_55 = 'לארשי')) then
-      begin
-        Func40_var_170 := 4;
-      end
+      TravelDestination := CountryIndexToName(ChosenDestination);
+      if (TravelStart = IsraelName) or (TravelDestination = IsraelName) then
+        TravelDuration := 4
       else
-      begin
-        Func40_var_170 := 8;
-      end;
-      if (not Func40_var_173) and ((global_var_81 + Func40_var_170) > 20) then
+        TravelDuration := 8;
+      if (not ShouldAbortTravel) and (TimeOfDay + TravelDuration > 20) then
       begin
         ShowMessage(87, 'תרחואמ העשה', 'עיגהל לכות אלו', 'םויה םשל');
-        global_var_55 := global_var_44;
-        Func40_var_173 := True;
+        TravelDestination := TravelStart;
+        ShouldAbortTravel := True;
       end;
-      if (not Func40_var_173) then
+      if not ShouldAbortTravel then
       begin
-        if ((global_var_81 + Func40_var_170) > 16) then
+        if TimeOfDay + TravelDuration > 16 then
         begin
           PutPic(NightWindow^, 0, 142);
           GotoXY(4, 17);
-          if (not InputYesNo) then
-          begin
-            Func40_var_1 := -1;
-          end
+          if not InputYesNo then
+            GuardShipCount := -1
           else
           begin
-            Func40_var_0 := (global_var_81 + Func40_var_170);
-            global_var_103 := 2;
-            if ((Func40_arg_0 = CurrentCountryName) or (Func40_arg_0 = global_var_55)) then
-            begin
-              global_var_103 := 4;
-            end;
-            Func49;
+            TravelEndTime := TimeOfDay + TravelDuration;
+            Risk := 2;
+            if (CurrentStormCountryName = CurrentCountryName) or (CurrentStormCountryName = TravelDestination) then
+              Risk := 4;
+            DoTravel;
           end;
         end
         else
         begin
-          if ((Func40_arg_0 = CurrentCountryName) or (Func40_arg_0 = global_var_55)) then
-          begin
-            global_var_103 := 3;
-          end;
-          Func40_var_0 := (global_var_81 + Func40_var_170);
-          Func49;
+          if (CurrentStormCountryName = CurrentCountryName) or (CurrentStormCountryName = TravelDestination) then
+            Risk := 3;
+          TravelEndTime := TimeOfDay + TravelDuration;
+          DoTravel;
         end;
       end;
-      if (Func40_var_1 < 0) then
-      begin
-        global_var_55 := global_var_44;
-      end;
-      CurrentCountryName := global_var_55;
-      if (Func40_var_1 >= 0) then
+      if GuardShipCount < 0 then
+        TravelDestination := TravelStart;
+      CurrentCountryName := TravelDestination;
+      if GuardShipCount >= 0 then
       begin
         GotoXY(73, 1);
         Write(CurrentCountryName:6);
-        Func39(global_var_44);
-        Func39(CurrentCountryName);
+        ToggleCountryHighlight(TravelStart);
+        ToggleCountryHighlight(CurrentCountryName);
         WaitForKey;
       end;
     end;
   end;
 
-  procedure Func51(var Func51_arg_0: real);
+  procedure Func51(var OutShipDamage: real);
   var
-    Func51_var_11: integer;
-    Func51_var_0: TCountryName;
+    DamageToRepair: integer;
+    RemainingDamageString: string[10];
 
-    function Func52(Func52_arg_0: real): boolean;
+    function CannotAfford(Amount: real): boolean;
     begin
-      if (Func52_arg_0 > 0) then
+      if Amount > 0 then
       begin
-        if (Func52_arg_0 > Money) then
+        if Amount > Money then
         begin
-          ShowMessage(
-            87,
-            '',
-            'ףסכ הברה ךכ-לכ ךל ןיא',
-            #7
-          );
-          Func52 := True;
+          ShowMessage(87, '', 'ףסכ הברה ךכ-לכ ךל ןיא', #7);
+          CannotAfford := True;
         end
         else
-        begin
-          Func52 := False;
-        end;
+          CannotAfford := False;
       end;
     end;
 
@@ -2503,163 +2428,141 @@ var
     begin
       PutPic(RepairWindow^, 0, 142);
       GotoXY(21, 17);
-      Write(Func51_arg_0:4:0);
+      Write(OutShipDamage:4:0);
       GotoXY(5, 17);
-      Func51_var_11 := Trunc(Func18(0, 0, 5));
+      DamageToRepair := Trunc(InputReal(0, 0, 5));
     end
-    until (not Func52(Func51_var_11));
-    if (Func51_var_11 >= 0) then
+    until not CannotAfford(DamageToRepair);
+    if DamageToRepair >= 0 then
     begin
-      Money := (Money - Func51_var_11);
-      Func51_arg_0 := (Func51_arg_0 - Func51_var_11);
-      if (Func51_arg_0 < 0) then
-      begin
-        Func51_arg_0 := 0;
-      end;
-      Str(Func51_arg_0:1:0, Func51_var_0);
-      if (Func51_arg_0 = 0) then
-      begin
-        ShowMessage(
-          87,
-          '',
-          'ןיטולחל הניקת תעכ הניפסה',
-          ''
-        );
-      end
+      Money := Money - DamageToRepair;
+      OutShipDamage := OutShipDamage - DamageToRepair;
+      if OutShipDamage < 0 then
+        OutShipDamage := 0;
+
+      Str(OutShipDamage:1:0, RemainingDamageString);
+      if OutShipDamage = 0 then
+        ShowMessage(87, '', 'ןיטולחל הניקת תעכ הניפסה', '')
       else
-      begin
-        ShowMessage(
-          87,
-          '',
-          (('ח"ש ' + Func51_var_0) + ' ךסב קזנ ראשנ'),
-          ''
-        );
-      end;
+        ShowMessage(87, '', 'ח"ש ' + RemainingDamageString + ' ךסב קזנ ראשנ', '');
     end;
   end;
 
   function Func53: boolean;
   begin
-    Func53 := (ShipDamage > ((Money + BankBalance) + GetTotalCargoValue));
+    Func53 := ShipDamage > (Money + BankBalance + GetTotalCargoValue);
   end;
 
+const
+  Buy = 1;
+  Sell = 2;
+  Travel = 3;
+  Bank = 4;
+  Stay = 5;
+  Repair = 6;
 begin
   GotoXY(1, 2);
-  global_var_81 := 8;
+  TimeOfDay := 8;
   Func21_var_88 := False;
   GenerateNewPrices;
   ShowNewDayScreen;
-  if (Day = 7) then
+  if Day = 7 then
   begin
-    ShowMessage(
-      87,
-      '.ןורחאה רחסמה םוי והז',
-      'םויה ףוסב רוכמל רוכז',
-      ',ךתרוחס לכ תא'
-    );
-    ShowMessage(
-      87,
-      'רובצתש תודוקנהש ןויכמ',
-      'םוכס יפ לע הנעבקת',
-      '! ךדיב רתוויש ףסכה'
-    );
+    ShowMessage(87, '.ןורחאה רחסמה םוי והז', 'םויה ףוסב רוכמל רוכז', ',ךתרוחס לכ תא');
+    ShowMessage(87, 'רובצתש תודוקנהש ןויכמ', 'םוכס יפ לע הנעבקת', '! ךדיב רתוויש ףסכה');
   end;
   UpdateStorm(StormCountryName);
   ShowStormScreen;
   GotoXY(1, 10);
-  if (Day > 1) then
-  begin
+  if Day > 1 then
     Func31;
-  end;
-  if (not ((Day > 7) or Func21_var_88)) then
+  if not ((Day > 7) or Func21_var_88) then
   begin
     PutPic(MainScreen^, 0, 199);
     GetPic(global_var_2060^, 0, 0, 240, 142);
-    Func39(CurrentCountryName);
+    ToggleCountryHighlight(CurrentCountryName);
     repeat
     begin
       PutPic(global_var_2060^, 0, 142);
       ShowHUD;
       TextColor(3);
-      Func21_var_8[1].X1 := 131;
-      Func21_var_8[1].Y1 := 36;
-      Func21_var_8[1].X2 := 177;
-      Func21_var_8[1].Y2 := 45;
-      Func21_var_8[2].X1 := 126;
-      Func21_var_8[2].Y1 := 51;
-      Func21_var_8[2].X2 := 174;
-      Func21_var_8[2].Y2 := 60;
-      Func21_var_8[3].X1 := 125;
-      Func21_var_8[3].Y1 := 67;
-      Func21_var_8[3].X2 := 171;
-      Func21_var_8[3].Y2 := 76;
-      Func21_var_8[4].X1 := 81;
-      Func21_var_8[4].Y1 := 83;
-      Func21_var_8[4].X2 := 167;
-      Func21_var_8[4].Y2 := 92;
-      Func21_var_8[5].X1 := 42;
-      Func21_var_8[5].Y1 := 99;
-      Func21_var_8[5].X2 := 162;
-      Func21_var_8[5].Y2 := 108;
-      Func21_var_8[6].X1 := 33;
-      Func21_var_8[6].Y1 := 114;
-      Func21_var_8[6].X2 := 160;
-      Func21_var_8[6].Y2 := 123;
-      if (ShipDamage = 0) then
-        Func21_var_91 := 5
+      MainMenuOptionRects[Buy].X1 := 131;
+      MainMenuOptionRects[Buy].Y1 := 36;
+      MainMenuOptionRects[Buy].X2 := 177;
+      MainMenuOptionRects[Buy].Y2 := 45;
+      MainMenuOptionRects[Sell].X1 := 126;
+      MainMenuOptionRects[Sell].Y1 := 51;
+      MainMenuOptionRects[Sell].X2 := 174;
+      MainMenuOptionRects[Sell].Y2 := 60;
+      MainMenuOptionRects[Travel].X1 := 125;
+      MainMenuOptionRects[Travel].Y1 := 67;
+      MainMenuOptionRects[Travel].X2 := 171;
+      MainMenuOptionRects[Travel].Y2 := 76;
+      MainMenuOptionRects[Bank].X1 := 81;
+      MainMenuOptionRects[Bank].Y1 := 83;
+      MainMenuOptionRects[Bank].X2 := 167;
+      MainMenuOptionRects[Bank].Y2 := 92;
+      MainMenuOptionRects[Stay].X1 := 42;
+      MainMenuOptionRects[Stay].Y1 := 99;
+      MainMenuOptionRects[Stay].X2 := 162;
+      MainMenuOptionRects[Stay].Y2 := 108;
+      MainMenuOptionRects[Repair].X1 := 33;
+      MainMenuOptionRects[Repair].Y1 := 114;
+      MainMenuOptionRects[Repair].X2 := 160;
+      MainMenuOptionRects[Repair].Y2 := 123;
+      if ShipDamage = 0 then
+        MainMenuOptionCount := 5
       else
       begin
         PutPic(RepairOptionPic^, 35, 123);
-        Func21_var_91 := 6;
+        MainMenuOptionCount := 6;
       end;
-      Func21_var_89 := ShowOptions(Func21_var_8, Func21_var_91);
+      Func21_var_89 := ShowOptions(MainMenuOptionRects, MainMenuOptionCount);
       case Func21_var_89 of
-        1:   begin
-            if CurrentCountryName = 'לארשי' then
-              Func34(PriceCopperIsrael, PriceOlivesIsrael, PriceWheatIsrael)
-            else if CurrentCountryName = 'היכרות' then
-              Func34(PriceCopperTurkey, PriceOlivesTurkey, PriceWheatTurkey)
-            else
-              Func34(PriceCopperEgypt, PriceOlivesEgypt, PriceWheatEgypt);
-          end;
-        2:   begin
-            if CurrentCountryName = 'לארשי' then
-              Func35(PriceCopperIsrael, PriceOlivesIsrael, PriceWheatIsrael);
-            if CurrentCountryName = 'היכרות' then
-              Func35(PriceCopperTurkey, PriceOlivesTurkey, PriceWheatTurkey);
-            if CurrentCountryName = 'םירצמ' then
-              Func35(PriceCopperEgypt, PriceOlivesEgypt, PriceWheatEgypt);
-          end;
-        3:   begin
-            if global_var_81 > 16 then
-              ShowMessage(87, 'עוסנל ןתינ אל', 'תרחואמ הכ העשב', '')
-            else if (ShipDamage > 1000) then
-              ShowMessage(87, 'וניא ךתניפסל םרגנש קזנה', '.גילפהל ךל רשפאמ', '' )
-            else if not Func38(GetTotalCargoWeight) then
-              Func40(StormCountryName);
-          end;
-        4:   begin
-            if (ClosedBankDay = Day) then
-              ShowMessage(87, '', 'םויה  רוגס  קנבה ', '')
-            else
-              Func37;
-          end;
-        5:   begin
-            PutPic(StayWindow^, 0, 142);
-            if Day = 7 then
-            begin
-              ShowMessage(78, ',םיתסה רחסמה עובש', 'קחשמה םויסל  ───┘  שקה', '');
-            end;
-            repeat
+        Buy: begin
+          if CurrentCountryName = IsraelName then
+            ShowBuyScreen(CopperPriceIsrael, OlivesPriceIsrael, WheatPriceIsrael)
+          else if CurrentCountryName = TurkeyName then
+            ShowBuyScreen(CopperPriceTurkey, OlivesPriceTurkey, WheatPriceTurkey)
+          else
+            ShowBuyScreen(CopperPriceEgypt, OlivesPriceEgypt, WheatPriceEgypt);
+        end;
+        Sell: begin
+          if CurrentCountryName = IsraelName then
+            Func35(CopperPriceIsrael, OlivesPriceIsrael, WheatPriceIsrael);
+          if CurrentCountryName = TurkeyName then
+            Func35(CopperPriceTurkey, OlivesPriceTurkey, WheatPriceTurkey);
+          if CurrentCountryName = EgyptName then
+            Func35(CopperPriceEgypt, OlivesPriceEgypt, WheatPriceEgypt);
+        end;
+        Travel: begin
+          if TimeOfDay > 16 then
+            ShowMessage(87, 'עוסנל ןתינ אל', 'תרחואמ הכ העשב', '')
+          else if (ShipDamage > 1000) then
+            ShowMessage(87, 'וניא ךתניפסל םרגנש קזנה', '.גילפהל ךל רשפאמ', '' )
+          else if not Func38(GetTotalCargoWeight) then
+            TravelFlow(StormCountryName);
+        end;
+        Bank: begin
+          if (ClosedBankDay = Day) then
+            ShowMessage(87, '', 'םויה  רוגס  קנבה ', '')
+          else
+            Func37;
+        end;
+        Stay: begin
+          PutPic(StayWindow^, 0, 142);
+          if Day = 7 then
+            ShowMessage(78, ',םיתסה רחסמה עובש', 'קחשמה םויסל  ───┘  שקה', '');
+          repeat
             LastPressedKey := GetPressedKey;
-            until LastPressedKey in [#27, #13];
-          end;
-        6:   begin
-            if ClosedRepairDay <> Day then
-              Func51(ShipDamage)
-            else
-              ShowMessage(87, 'רוגס למנב םינוקיתה ףיצר', 'ןיתמהל ץלאת - םויה', 'רחמ דע');
-          end;
+          until LastPressedKey in [#27, #13];
+        end;
+        Repair: begin
+          if ClosedRepairDay <> Day then
+            Func51(ShipDamage)
+          else
+            ShowMessage(87, 'רוגס למנב םינוקיתה ףיצר', 'ןיתמהל ץלאת - םויה', 'רחמ דע');
+        end;
       end;
     end
     until (Func21_var_89 = 5) and (LastPressedKey <> #27);
@@ -2756,37 +2659,37 @@ begin
   BlockRead(Line6File, RepairOptionPic^, 3);
   Close(Line6File);
   Randomize;
-  global_var_264[1].field_0 := 191;
-  global_var_264[1].field_2 := 23;
-  global_var_264[2].field_0 := 198;
-  global_var_264[2].field_2 := 86;
-  global_var_264[3].field_0 := 123;
-  global_var_264[3].field_2 := 113;
-  global_var_264[4].field_0 := 198;
-  global_var_264[4].field_2 := 50;
-  global_var_264[5].field_0 := 161;
-  global_var_264[5].field_2 := 96;
-  global_var_264[6].field_0 := 123;
-  global_var_264[6].field_2 := 40;
-  global_var_264[7].field_0 := 123;
-  global_var_264[7].field_2 := 70;
-  global_var_264[8].field_0 := 196;
-  global_var_264[8].field_2 := 45;
+  MapCoordinates[1].X := 191;
+  MapCoordinates[1].Y := 23;
+  MapCoordinates[2].X := 198;
+  MapCoordinates[2].Y := 86;
+  MapCoordinates[3].X := 123;
+  MapCoordinates[3].Y := 113;
+  MapCoordinates[4].X := 198;
+  MapCoordinates[4].Y := 50;
+  MapCoordinates[5].X := 161;
+  MapCoordinates[5].Y := 96;
+  MapCoordinates[6].X := 123;
+  MapCoordinates[6].Y := 40;
+  MapCoordinates[7].X := 123;
+  MapCoordinates[7].Y := 70;
+  MapCoordinates[8].X := 196;
+  MapCoordinates[8].Y := 45;
   for I := 1 to 8 do
   begin
     for J := 1 to 8 do
     begin
-      global_var_200[I, J] := 0;
+      MapWaypoints[I, J] := 0;
     end;
   end;
-  global_var_200[1, 2] := 4;
-  global_var_200[2, 1] := 4;
-  global_var_200[3, 2] := 5;
-  global_var_200[2, 3] := 5;
-  global_var_200[1, 3] := 6;
-  global_var_200[3, 1] := 6;
-  global_var_200[6, 2] := 7;
-  global_var_200[5, 1] := 8;
+  MapWaypoints[1, 2] := 4;
+  MapWaypoints[2, 1] := 4;
+  MapWaypoints[3, 2] := 5;
+  MapWaypoints[2, 3] := 5;
+  MapWaypoints[1, 3] := 6;
+  MapWaypoints[3, 1] := 6;
+  MapWaypoints[6, 2] := 7;
+  MapWaypoints[5, 1] := 8;
   WaitForKey;
 end;
 procedure StartWeek;
@@ -2796,7 +2699,7 @@ begin
   Unused1 := 1;
   BankBalance := 0;
   ShipCapacity := 100;
-  CurrentCountryName := 'לארשי';
+  CurrentCountryName := IsraelName;
   StormCountryName := ' ';
   ShipDamage := 0;
   ClosedRepairDay := (Random(7) + 1);
