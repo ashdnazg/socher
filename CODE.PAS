@@ -114,29 +114,26 @@ begin
   LoadScrFile := Contents;
 end;
 
-function Func8: real;
+function GetTotalCargoValue: real;
 var
-  Func8_var_6: integer;
-  Func8_var_0: real;
+  Ware: integer;
+  Total: real;
 begin
-  Func8_var_0 := 0;
-  for Func8_var_6 := 1 to 3 do
-  begin
-    Func8_var_0 := (Func8_var_0 + ((1.0 * Cargo[Func8_var_6]) * BaseWarePrice[Func8_var_6]));
-  end;
-  Func8 := Func8_var_0;
+  Total := 0;
+  for Ware := Copper to Wheat do
+    Total := Total + (1.0 * Cargo[Ware] * BaseWarePrice[Ware]);
+  GetTotalCargoValue := Total;
 end;
-function Func9: integer;
+
+function GetTotalCargoWeight: integer;
 var
-  Func9_var_2: integer;
-  Func9_var_0: integer;
+  Ware: integer;
+  Total: integer;
 begin
-  Func9_var_0 := 0;
-  for Func9_var_2 := 1 to 3 do
-  begin
-    Func9_var_0 := (Func9_var_0 + Cargo[Func9_var_2]);
-  end;
-  Func9 := Func9_var_0;
+  Total := 0;
+  for Ware := Copper to Wheat do
+    Total := Total + Cargo[Ware];
+  GetTotalCargoWeight := Total;
 end;
 
 function ToStrWithCommas(Func10_arg_0: real): str_15;
@@ -148,12 +145,8 @@ var
   begin
     Str(Func11_arg_0:1:0, Func10_var_2);
     for Func10_var_0 := 1 to 2 do
-    begin
       if Length(Func10_var_2) < 3 then
-      begin
         Func10_var_2 := '0' + Func10_var_2;
-      end;
-    end;
     ZeroPad3 := Func10_var_2;
   end;
 
@@ -190,12 +183,10 @@ begin
   end;
 end;
 
-procedure Func13;
+procedure ShowStormScreen;
 begin
-  if (StormCountryName = ' ') then
-  begin
-    ShowScrFile((BasePath + 'goodwthr.scr'));
-  end
+  if StormCountryName = ' ' then
+    ShowScrFile((BasePath + 'goodwthr.scr'))
   else
   begin
     GotoXY(28, 20);
@@ -219,7 +210,7 @@ begin
   ColorTable(0, 1, 2, 3);
   PutPic(HelpScreen^, 0, 199);
   GotoXY(9, 7);
-  if (StormCountryName = ' ') then
+  if StormCountryName = ' ' then
     Write('האנ':17)
   else
     Write(StormCountryName + ' רוזאב הרעס':17);
@@ -230,7 +221,7 @@ begin
   Write('ןוט ' + Buffer:17);
   GotoXY(9, 22);
   Str(ShipDamage:1:0, Buffer);
-  if (ShipDamage <= 0) then
+  if ShipDamage <= 0 then
     Write('ןיקת':17)
   else
     Write('לקש ' + Buffer + ' לש קזנ':17);
@@ -250,7 +241,7 @@ begin
   Read(KBD, PressedKey);
   if (PressedKey = #27) and KeyPressed then
     Read(KBD, PressedKey);
-  if (PressedKey = #68) then
+  if PressedKey = #68 then
   begin
     ShowHelpScreen;
     PressedKey := GetPressedKey;
@@ -277,65 +268,50 @@ begin
   end;
 end;
 
-function Func17(
-  Func17_arg_2: arr_record_1479674575002027080_10;
+function ShowOptions(
+  OptionRects: TRectArray;
   Func17_arg_0: integer
 ): integer;
 var
-  Func17_var_802: integer;
-  Func17_var_2: arr_byte_800;
-  Func17_var_1: char;
+  SelectedOption: integer;
+  SelectedOptionPic: arr_byte_800;
+  PressedKey: char;
   Func17_var_0: boolean;
 begin
   Func17_var_0 := False;
-  if (Func17_arg_0 > 100) then
-  begin
-    Func17_arg_0 := (Func17_arg_0 - 100);
-  end
+  if Func17_arg_0 > 100 then
+    Func17_arg_0 := Func17_arg_0 - 100
   else
-  begin
     Func17_var_0 := True;
-  end;
-  Func17_var_802 := 1;
+
+  SelectedOption := 1;
   repeat
-  with Func17_arg_2[Func17_var_802] do
-  begin
-    GetPic(Func17_var_2, field_0, field_2, field_4, field_6);
-    ColorTable(3, 2, 1, 0);
-    PutPic(Func17_var_2, field_0, field_6);
-    repeat
-    Func17_var_1 := GetPressedKey;
-    until (Func17_var_1 in [#72, #75, #80, #77, ' ', #13, #27]);
-    ColorTable(0, 1, 2, 3);
-    if ((Func17_var_1 <> #13) or Func17_var_0) then
+    with OptionRects[SelectedOption] do
     begin
-      PutPic(Func17_var_2, field_0, field_6);
-    end;
-    case Func17_var_1 of
-      #72, #75:   begin
-          Func17_var_802 := (Func17_var_802 - 1);
-        end;
-      ' ', #80, #77:   begin
-          Func17_var_802 := (Func17_var_802 + 1);
-        end;
-      #27:   begin
-          Func17_var_802 := -1;
-        end;
-    end;
-    if (Func17_var_802 = 0) then
-    begin
-      Func17_var_802 := Func17_arg_0;
-    end
-    else
-    begin
-      if (Func17_var_802 = (Func17_arg_0 + 1)) then
-      begin
-        Func17_var_802 := 1;
+      GetPic(SelectedOptionPic, field_0, field_2, field_4, field_6);
+      ColorTable(3, 2, 1, 0);
+      PutPic(SelectedOptionPic, field_0, field_6);
+      repeat
+        PressedKey := GetPressedKey;
+      until PressedKey in [#72, #75, #80, #77, ' ', #13, #27];
+      ColorTable(0, 1, 2, 3);
+
+      if (PressedKey <> #13) or Func17_var_0 then
+        PutPic(SelectedOptionPic, field_0, field_6);
+
+      case PressedKey of
+        #72, #75: SelectedOption := SelectedOption - 1;
+        ' ', #80, #77: SelectedOption := SelectedOption + 1;
+        #27: SelectedOption := -1;
       end;
+
+      if SelectedOption = 0 then
+        SelectedOption := Func17_arg_0
+      else if SelectedOption = (Func17_arg_0 + 1) then
+        SelectedOption := 1;
     end;
-  end;
-  until ((Func17_var_1 = #13) or (Func17_var_1 = #27));
-  Func17 := Func17_var_802;
+  until (PressedKey = #13) or (PressedKey = #27);
+  ShowOptions := SelectedOption;
 end;
 
 function Func18(
@@ -525,7 +501,7 @@ var
   Func21_var_91: integer;
   Func21_var_89: integer;
   Func21_var_88: boolean;
-  Func21_var_8: arr_record_1479674575002027080_10;
+  Func21_var_8: TRectArray;
   Func21_var_6: integer;
   Func21_var_4: integer;
   Func21_unused_0: array[1..4] of byte;
@@ -583,15 +559,15 @@ var
       Func23 := False;
   end;
 
-  function Func24(Func24_arg_0: real): boolean;
+  function CannotAfford(Amount: real): boolean;
   begin
-    if Func24_arg_0 > Money then
+    if Amount > Money then
     begin
       ShowMessage(87, '', '!ףסכ קיפסמ ךתושרב ןיא', #7);
-      Func24 := True;
+      CannotAfford := True;
     end
     else
-      Func24 := False;
+      CannotAfford := False;
   end;
 
   function Func25(
@@ -677,7 +653,7 @@ var
       end
       until Func27(Func25_var_24, Func25_arg_4);
     end;
-    if Func25_arg_0 > (Func8 / 10) then
+    if Func25_arg_0 > (GetTotalCargoValue / 10) then
     begin
       repeat
       begin
@@ -691,7 +667,7 @@ var
     end;
     Func25_var_12 := Func25_var_28 * BaseWarePrice[Copper] + Func25_var_26 * BaseWarePrice[Olives] +
         Func25_var_24 * BaseWarePrice[Wheat] + Func25_var_18;
-    Func25_var_6 := (Func8 + Func25_arg_0) / (Random(6) + 4);
+    Func25_var_6 := (GetTotalCargoValue + Func25_arg_0) / (Random(6) + 4);
     if Func25_var_12 > Func25_var_6 then
     begin
       Func25_arg_0 := Func25_arg_0 - Func25_var_18;
@@ -741,7 +717,7 @@ var
     begin
       if (Func28_arg_8 = 153) then
       begin
-        if (Func9 <= (3 * ShipCapacity)) then
+        if (GetTotalCargoWeight <= (3 * ShipCapacity)) then
         begin
           Func28(142, Func28_arg_4, Func28_arg_0);
           Val(Func28_arg_0, Func28_var_0, Func28_var_6);
@@ -757,7 +733,7 @@ var
           begin
             Func28_arg_4 := 3;
           end;
-          Func28_var_0 := (Func9 - (3 * ShipCapacity));
+          Func28_var_0 := (GetTotalCargoWeight - (3 * ShipCapacity));
           if (Func28_var_0 >= Cargo[Func28_arg_4]) then
           begin
             Func28_var_0 := Cargo[Func28_arg_4];
@@ -790,7 +766,7 @@ var
         begin
           if (Func28_arg_8 = 144) then
           begin
-            Func28_var_0 := (10 * Trunc(((Money + Func8) / (Random(30) + 50))));
+            Func28_var_0 := (10 * Trunc(((Money + GetTotalCargoValue) / (Random(30) + 50))));
             if (Func28_var_0 < 100) then
             begin
               Func28_var_0 := 100;
@@ -843,7 +819,7 @@ var
     Func31_var_147: str_7;
     Func31_var_139: str_7;
     Func31_var_103: TMessageLine;
-    Func31_var_23: arr_record_1479674575002027080_10;
+    Func31_var_23: TRectArray;
     Func31_var_22: boolean;
     Func31_var_16: real;
     Func31_var_10: real;
@@ -974,7 +950,7 @@ var
             end;
             Func31_var_173 := (50 * (Random(2) + 1));
             Func31_var_175 := (10 * (Random(Func31_var_173) + (2 * Func31_var_173)));
-            if (Func31_var_175 <= ((Money + BankBalance) + Func8)) then
+            if (Func31_var_175 <= ((Money + BankBalance) + GetTotalCargoValue)) then
             begin
               PutPic(ExpandScreen^, 0, 199);
               GotoXY(29, 14);
@@ -1114,7 +1090,7 @@ var
               Func31_var_23[2].field_4 := 198;
               Func31_var_23[2].field_6 := 192;
               repeat
-              Func31_var_165 := Func17(Func31_var_23, 2);
+              Func31_var_165 := ShowOptions(Func31_var_23, 2);
               until (Func31_var_165 > 0);
               if (Func31_var_165 = 1) then
               begin
@@ -1356,7 +1332,7 @@ var
             end;
           end;
         29..30:   begin
-            Func31_var_167 := (10 * Trunc(((Func8 + Money) / (Random(80) + 150))));
+            Func31_var_167 := (10 * Trunc(((GetTotalCargoValue + Money) / (Random(80) + 150))));
             if (Func31_var_167 > 0) then
             begin
               ShowScrFile((BasePath + 'fishing.scr'));
@@ -1400,7 +1376,7 @@ var
     Func34_var_92: integer;
     Func34_var_86: real;
     Func34_var_80: real;
-    Func34_var_0: arr_record_1479674575002027080_10;
+    Func34_var_0: TRectArray;
   begin
     Func34_var_80 := 0;
     if (Money < Func34_arg_0) then
@@ -1461,7 +1437,7 @@ var
             Func34_var_0[3].field_6 := 101;
           end;
       end;
-      Func34_var_92 := Func17(Func34_var_0, 103);
+      Func34_var_92 := ShowOptions(Func34_var_0, 103);
       if (Func34_var_92 > 0) then
       begin
         case Func34_var_92 of
@@ -1495,7 +1471,7 @@ var
             Func34_var_80 := Func18(0, 0, 8);
             Func34_var_86 := ((1.0 * Func34_var_80) * Func34_var_94);
           end
-          until (not Func24(Func34_var_86));
+          until (not CannotAfford(Func34_var_86));
         end;
         if (Func34_var_80 > 0) then
         begin
@@ -1516,7 +1492,7 @@ var
     Func35_var_92: integer;
     Func35_var_86: real;
     Func35_var_80: real;
-    Func35_var_0: arr_record_1479674575002027080_10;
+    Func35_var_0: TRectArray;
 
     function Func36(Func36_arg_2: real; Func36_arg_0: integer): boolean;
     begin
@@ -1577,7 +1553,7 @@ var
         Func35_var_0[3].field_4 := 59;
         Func35_var_0[3].field_6 := 67;
       end;
-      Func35_var_92 := Func17(Func35_var_0, 103);
+      Func35_var_92 := ShowOptions(Func35_var_0, 103);
       if (Func35_var_92 > 0) then
       begin
         if (Cargo[Func35_var_92] > 0) then
@@ -1625,7 +1601,7 @@ var
   var
     Func37_var_87: integer;
     Func37_var_86: byte;
-    Func37_var_6: arr_record_1479674575002027080_10;
+    Func37_var_6: TRectArray;
     Func37_var_0: real;
   begin
     Func37_var_86 := 0;
@@ -1638,18 +1614,11 @@ var
     Func37_var_6[2].field_2 := 7;
     Func37_var_6[2].field_4 := 64;
     Func37_var_6[2].field_6 := 16;
-    Func37_var_87 := Func17(Func37_var_6, 102);
+    Func37_var_87 := ShowOptions(Func37_var_6, 102);
     case Func37_var_87 of
       1:   begin
           if (Money <= 0) then
-          begin
-            ShowMessage(
-              87,
-              ' ',
-              ('! דיקפהל ףסכ ךל ןיא' + ''),
-              ' '
-            );
-          end
+            ShowMessage(87, ' ', '! דיקפהל ףסכ ךל ןיא' + '', ' ')
           else
           begin
             repeat
@@ -1657,85 +1626,53 @@ var
               PutPic(DepositSign^, 11, 139);
               GotoXY(5, 17);
               Func37_var_0 := Func18(0, 0, 8);
-              if (Func37_var_0 <= 0) then
-              begin
-                Func37_var_86 := 1;
-              end
+              if Func37_var_0 <= 0 then
+                Func37_var_86 := 1
               else
               begin
-                if (Func37_var_0 <= Money) then
+                if Func37_var_0 <= Money then
                 begin
                   BankBalance := (BankBalance + Func37_var_0);
                   Money := (Money - Func37_var_0);
-                  ShowMessage(
-                    87,
-                    ' ',
-                    'ףסכה תא לביק קנבה דיקפ',
-                    ' '
-                  );
+                  ShowMessage(87, ' ', 'ףסכה תא לביק קנבה דיקפ', ' ');
                   Func37_var_86 := 1;
                 end
                 else
-                begin
-                  ShowMessage(
-                    87,
-                    ' ',
-                    ('! ףסכ הברה ךכ לכ ךל ןיא' + ''),
-                    ' '
-                  );
-                end;
+                  ShowMessage(87, ' ', '! ףסכ הברה ךכ לכ ךל ןיא' + '', ' ');
               end;
             end
-            until (Func37_var_86 = 1);
+            until Func37_var_86 = 1;
           end;
         end;
       2:   begin
-          if (BankBalance > 0) then
+          if BankBalance > 0 then
           begin
             repeat
             begin
               PutPic(WithdrawSign^, 11, 139);
               GotoXY(5, 17);
               Func37_var_0 := Func18(0, 0, 8);
-              if (Func37_var_0 < 0) then
-              begin
-                Func37_var_86 := 1;
-              end
+              if Func37_var_0 < 0 then
+                Func37_var_86 := 1
               else
               begin
-                if (Func37_var_0 <= BankBalance) then
+                if Func37_var_0 <= BankBalance then
                 begin
                   GotoXY(1, 1);
                   BankBalance := (BankBalance - Func37_var_0);
                   Money := (Money + Func37_var_0);
-                  if (not (Func37_var_0 = 0)) then
-                  begin
+                  if not (Func37_var_0 = 0) then
                     ShowMessage(87, ' ', 'ףסכה תא תלביק', ' ');
-                  end;
                   Func37_var_86 := 1;
                 end
                 else
-                begin
-                  ShowMessage(
-                    87,
-                    ' ',
-                    ('! קנבב הזכ ףסכ םוכס ךל ןיא' + ''),
-                    ' '
-                  );
-                end;
+                  ShowMessage(87, ' ', '! קנבב הזכ ףסכ םוכס ךל ןיא' + '', ' ');
               end;
             end
-            until (Func37_var_86 = 1);
+            until Func37_var_86 = 1;
           end
           else
-          begin
-            ShowMessage(
-              87,
-              ' ',
-              ('! קנבב ףסכ ךל ןיא' + ''),
-              ' '
-            );
-          end;
+            ShowMessage(87, ' ', '! קנבב ףסכ ךל ןיא' + '', ' ');
         end;
     end;
   end;
@@ -1744,23 +1681,17 @@ var
   var
     Func38_unused_0: array[1..3] of byte;
   begin
-    if (Func38_arg_0 > ShipCapacity) then
+    if Func38_arg_0 > ShipCapacity then
     begin
       PutPic(OverweightWindow^, 0, 142);
       GotoXY(53, 16);
       if InputYesNo then
-      begin
-        Func38 := False;
-      end
+        Func38 := False
       else
-      begin
         Func38 := True;
-      end;
     end
     else
-    begin
       Func38 := False;
-    end;
   end;
 
   procedure Func39(CountryName: TCountryName);
@@ -1802,8 +1733,8 @@ var
     Func40_var_170: integer;
     Func40_var_168: integer;
     Func40_unused_167: byte;
-    Func40_var_87: arr_record_1479674575002027080_10;
-    Func40_var_7: arr_record_1479674575002027080_10;
+    Func40_var_87: TRectArray;
+    Func40_var_7: TRectArray;
     Func40_var_5: integer;
     Func40_var_3: integer;
     Func40_var_1: integer;
@@ -1912,7 +1843,7 @@ var
         Func43_var_100: integer;
         Func43_var_98: integer;
         Func43_var_92: string[5];
-        Func43_var_12: arr_record_1479674575002027080_10;
+        Func43_var_12: TRectArray;
         Func43_var_6: real;
         Func43_var_0: real;
 
@@ -1921,7 +1852,7 @@ var
           if (Random(Func44_arg_0) = 0) then
           begin
             Func43_var_0 := (10 * Trunc(
-              (((Random(15) + 5) / 1000.0) * (Money + Func8))
+              (((Random(15) + 5) / 1000.0) * (Money + GetTotalCargoValue))
             ));
             Str(Func43_var_0:1:0, Func43_var_92);
             ShipDamage := (ShipDamage + Func43_var_0);
@@ -1975,8 +1906,8 @@ var
             else
             begin
               Func43_arg_2 := (Func43_arg_2 + Func43_var_98);
-              Func43_var_6 := ((Int((((Money + Func8) + BankBalance) / 100)) * (Random(15) + 5)) + ((Func43_arg_2 *
-        ((Money + Func8) + BankBalance)) / 10));
+              Func43_var_6 := ((Int((((Money + GetTotalCargoValue) + BankBalance) / 100)) * (Random(15) + 5)) + ((Func43_arg_2 *
+        ((Money + GetTotalCargoValue) + BankBalance)) / 10));
               if (Func43_var_6 < 100) then
               begin
                 Func43_var_6 := 100;
@@ -2081,7 +2012,7 @@ var
               else
               begin
                 Func43_var_0 := (Int(
-                  ((((Random(15) + 35) - (10 * Func43_arg_2)) / 1000) * ((Func8 + Money) + BankBalance))
+                  ((((Random(15) + 35) - (10 * Func43_arg_2)) / 1000) * ((GetTotalCargoValue + Money) + BankBalance))
                 ) * 10);
                 if (Func43_var_0 < 100) then
                 begin
@@ -2119,7 +2050,7 @@ var
         Func43_var_12[3].field_2 := 117;
         Func43_var_12[3].field_4 := 58;
         Func43_var_12[3].field_6 := 123;
-        Func43_var_104 := Func17(Func43_var_12, 3);
+        Func43_var_104 := ShowOptions(Func43_var_12, 3);
         case Func43_var_104 of
           1:   begin
               Func43_var_98 := 0;
@@ -2316,7 +2247,7 @@ var
           begin
             PutPic(StormWindow^, 0, 142);
             WaitForKey;
-            if Func8 > 10000 then
+            if GetTotalCargoValue > 10000 then
             begin
               Func28(142, Func42_var_36, Func42_var_24);
               ShowMessage(
@@ -2438,7 +2369,7 @@ var
               begin
                 Func42_var_36 := (Func42_var_36 + 1);
                 Func42_var_32 := Trunc(
-                  ((((Random(25) + 11) / 100.0) * (Money + Func8)) / BaseWarePrice[Func42_var_36])
+                  ((((Random(25) + 11) / 100.0) * (Money + GetTotalCargoValue)) / BaseWarePrice[Func42_var_36])
                 );
                 if (Func42_var_32 > 0) then
                 begin
@@ -2479,7 +2410,7 @@ var
         Func50_var_0: str_7;
       begin
         PutPic(GuardsWindow^, 0, 142);
-        Func50_var_116 := (5 * Trunc(((Func8 + Money) / (200 + Random(100)))));
+        Func50_var_116 := (5 * Trunc(((GetTotalCargoValue + Money) / (200 + Random(100)))));
         if (Func50_var_116 < 75) then
           Func50_var_116 := 75;
         if (Func50_arg_0 > 0) then
@@ -2509,7 +2440,7 @@ var
             GotoXY(4, 17);
             Func40_var_1 := Trunc(Func18(0, 0, 3));
           end
-          until (not Func24(((1.0 * Func50_var_116) * Func40_var_1)));
+          until (not CannotAfford(((1.0 * Func50_var_116) * Func40_var_1)));
         end
         else
         begin
@@ -2547,7 +2478,7 @@ var
         Func49_var_3 := Func49_var_1;
         Func42(
           ShipDamage,
-          Func9,
+          GetTotalCargoWeight,
           Func40_var_170,
           global_var_103
         );
@@ -2611,9 +2542,9 @@ var
       end;
     end;
     case CountryNameToIndex(CurrentCountryName) of
-      Turkey: Func40_var_168 := Func17(Func40_var_7, 2) + 1;
-      Israel: Func40_var_168 := Func17(Func40_var_7, 2) * 2 - 1;
-      Egypt: Func40_var_168 := Func17(Func40_var_7, 2);
+      Turkey: Func40_var_168 := ShowOptions(Func40_var_7, 2) + 1;
+      Israel: Func40_var_168 := ShowOptions(Func40_var_7, 2) * 2 - 1;
+      Egypt: Func40_var_168 := ShowOptions(Func40_var_7, 2);
     end;
     if Func40_var_168 > 0 then
     begin
@@ -2747,7 +2678,7 @@ var
 
   function Func53: boolean;
   begin
-    Func53 := (ShipDamage > ((Money + BankBalance) + Func8));
+    Func53 := (ShipDamage > ((Money + BankBalance) + GetTotalCargoValue));
   end;
 
 begin
@@ -2772,7 +2703,7 @@ begin
     );
   end;
   UpdateStorm(StormCountryName);
-  Func13;
+  ShowStormScreen;
   GotoXY(1, 10);
   if (Day > 1) then
   begin
@@ -2819,7 +2750,7 @@ begin
         PutPic(RepairOptionPic^, 35, 123);
         Func21_var_91 := 6;
       end;
-      Func21_var_89 := Func17(Func21_var_8, Func21_var_91);
+      Func21_var_89 := ShowOptions(Func21_var_8, Func21_var_91);
       case Func21_var_89 of
         1:   begin
             if CurrentCountryName = 'לארשי' then
@@ -2842,7 +2773,7 @@ begin
               ShowMessage(87, 'עוסנל ןתינ אל', 'תרחואמ הכ העשב', '')
             else if (ShipDamage > 1000) then
               ShowMessage(87, 'וניא ךתניפסל םרגנש קזנה', '.גילפהל ךל רשפאמ', '' )
-            else if not Func38(Func9) then
+            else if not Func38(GetTotalCargoWeight) then
               Func40(StormCountryName);
           end;
         4:   begin

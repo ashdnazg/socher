@@ -26,13 +26,13 @@ type
   str_30 = string[30];
   str_15 = string[15];
   arr_byte_800 = array[1..800] of byte;
-  record_1479674575002027080 = record
+  TRect = record
     field_0: integer;
     field_2: integer;
     field_4: integer;
     field_6: integer;
   end;
-  arr_record_1479674575002027080_10 = array[1..10] of record_1479674575002027080;
+  TRectArray = array[1..10] of TRect;
   str_7 = string[7];
   arr_byte_129 = array[1..129] of byte;
   record_13866380471399314824 = record
