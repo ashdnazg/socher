@@ -27,10 +27,10 @@ type
   str_15 = string[15];
   arr_byte_800 = array[1..800] of byte;
   TRect = record
-    field_0: integer;
-    field_2: integer;
-    field_4: integer;
-    field_6: integer;
+    X1: integer;
+    Y1: integer;
+    X2: integer;
+    Y2: integer;
   end;
   TRectArray = array[1..10] of TRect;
   str_7 = string[7];

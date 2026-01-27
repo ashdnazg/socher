@@ -288,16 +288,16 @@ begin
   repeat
     with OptionRects[SelectedOption] do
     begin
-      GetPic(SelectedOptionPic, field_0, field_2, field_4, field_6);
+      GetPic(SelectedOptionPic, X1, Y1, X2, Y2);
       ColorTable(3, 2, 1, 0);
-      PutPic(SelectedOptionPic, field_0, field_6);
+      PutPic(SelectedOptionPic, X1, Y2);
       repeat
         PressedKey := GetPressedKey;
       until PressedKey in [#72, #75, #80, #77, ' ', #13, #27];
       ColorTable(0, 1, 2, 3);
 
       if (PressedKey <> #13) or Func17_var_0 then
-        PutPic(SelectedOptionPic, field_0, field_6);
+        PutPic(SelectedOptionPic, X1, Y2);
 
       case PressedKey of
         #72, #75: SelectedOption := SelectedOption - 1;
@@ -1081,14 +1081,14 @@ var
               Write(Cargo[Wheat]:5);
               GotoXY(7, 6);
               Write(Money:5:0);
-              Func31_var_23[1].field_0 := 54;
-              Func31_var_23[1].field_2 := 177;
-              Func31_var_23[1].field_4 := 198;
-              Func31_var_23[1].field_6 := 183;
-              Func31_var_23[2].field_0 := 78;
-              Func31_var_23[2].field_2 := 186;
-              Func31_var_23[2].field_4 := 198;
-              Func31_var_23[2].field_6 := 192;
+              Func31_var_23[1].X1 := 54;
+              Func31_var_23[1].Y1 := 177;
+              Func31_var_23[1].X2 := 198;
+              Func31_var_23[1].Y2 := 183;
+              Func31_var_23[2].X1 := 78;
+              Func31_var_23[2].Y1 := 186;
+              Func31_var_23[2].X2 := 198;
+              Func31_var_23[2].Y2 := 192;
               repeat
               Func31_var_165 := ShowOptions(Func31_var_23, 2);
               until (Func31_var_165 > 0);
@@ -1309,17 +1309,11 @@ var
               GotoXY(3, WhereY);
               if InputYesNo then
               begin
-                Money := (Money - (Func31_var_177 * Func31_var_171));
+                Money := Money - Func31_var_177 * Func31_var_171;
                 case Func31_var_169 of
-                  1:   begin
-                      Cargo[Copper] := (Cargo[Copper] + Func31_var_171);
-                    end;
-                  2:   begin
-                      Cargo[Olives] := (Cargo[Olives] + Func31_var_171);
-                    end;
-                  3:   begin
-                      Cargo[Wheat] := (Cargo[Wheat] + Func31_var_171);
-                    end;
+                  1: Cargo[Copper] := Cargo[Copper] + Func31_var_171;
+                  2: Cargo[Olives] := Cargo[Olives] + Func31_var_171;
+                  3: Cargo[Wheat] := Cargo[Wheat] + Func31_var_171;
                 end;
                 Writeln;
                 Writeln('            !!! תינק':25);
@@ -1327,24 +1321,20 @@ var
               end;
             end
             else
-            begin
               Func31_var_22 := False;
-            end;
           end;
         29..30:   begin
-            Func31_var_167 := (10 * Trunc(((GetTotalCargoValue + Money) / (Random(80) + 150))));
-            if (Func31_var_167 > 0) then
+            Func31_var_167 := 10 * Trunc((GetTotalCargoValue + Money) / (Random(80) + 150));
+            if Func31_var_167 > 0 then
             begin
-              ShowScrFile((BasePath + 'fishing.scr'));
-              ShipDamage := (ShipDamage + Func31_var_167);
+              ShowScrFile(BasePath + 'fishing.scr');
+              ShipDamage := ShipDamage + Func31_var_167;
               GotoXY(20, 3);
               Write(Func31_var_167:4);
               WaitForKey;
             end
             else
-            begin
               Func31_var_22 := False;
-            end;
           end;
       end;
     end
@@ -1352,16 +1342,16 @@ var
     LastNightEvent := Func31_var_183;
   end;
 
-  procedure Func33;
+  procedure ShowNewDayScreen;
   var
-    Func33_var_8: PSgnBuffer;
-    Func33_var_0: str_7;
+    DaySignBuffer: PSgnBuffer;
+    DayString: string[7];
   begin
-    Str(Day, Func33_var_0);
-    Func33_var_8 := LoadSgnFile(('day' + Func33_var_0));
-    ShowScrFile((BasePath + 'newday.scr'));
-    PutPic(Func33_var_8^, 165, 89);
-    Dispose(Func33_var_8);
+    Str(Day, DayString);
+    DaySignBuffer := LoadSgnFile('day' + DayString);
+    ShowScrFile(BasePath + 'newday.scr');
+    PutPic(DaySignBuffer^, 165, 89);
+    Dispose(DaySignBuffer);
     WaitForKey;
   end;
 
@@ -1371,7 +1361,7 @@ var
     Func34_arg_0: integer
   );
   var
-    Func34_unused_96: array[1..2] of byte;
+    Unused: integer;
     Func34_var_94: integer;
     Func34_var_92: integer;
     Func34_var_86: real;
@@ -1379,104 +1369,84 @@ var
     Func34_var_0: TRectArray;
   begin
     Func34_var_80 := 0;
-    if (Money < Func34_arg_0) then
-    begin
-      ShowMessage(
-        87,
-        'ךל רשפאמ וניא ךפסכ',
-        'תורוחס תינק',
-        ''
-      );
-    end
+    if Money < Func34_arg_0 then
+      ShowMessage(87, 'ךל רשפאמ וניא ךפסכ', 'תורוחס תינק', '')
     else
     begin
       case CountryNameToIndex(CurrentCountryName) of
         Turkey:   begin
             PutPic(BuyTurkeyWindow^, 1, 142);
-            Func34_var_0[1].field_0 := 177;
-            Func34_var_0[1].field_2 := 2;
-            Func34_var_0[1].field_4 := 236;
-            Func34_var_0[1].field_6 := 18;
-            Func34_var_0[2].field_0 := 72;
-            Func34_var_0[2].field_2 := 2;
-            Func34_var_0[2].field_4 := 131;
-            Func34_var_0[2].field_6 := 18;
-            Func34_var_0[3].field_0 := 180;
-            Func34_var_0[3].field_2 := 65;
-            Func34_var_0[3].field_4 := 237;
-            Func34_var_0[3].field_6 := 80;
+            Func34_var_0[1].X1 := 177;
+            Func34_var_0[1].Y1 := 2;
+            Func34_var_0[1].X2 := 236;
+            Func34_var_0[1].Y2 := 18;
+            Func34_var_0[2].X1 := 72;
+            Func34_var_0[2].Y1 := 2;
+            Func34_var_0[2].X2 := 131;
+            Func34_var_0[2].Y2 := 18;
+            Func34_var_0[3].X1 := 180;
+            Func34_var_0[3].Y1 := 65;
+            Func34_var_0[3].X2 := 237;
+            Func34_var_0[3].Y2 := 80;
           end;
         Israel:   begin
             PutPic(BuyIsraelWindow^, 1, 142);
-            Func34_var_0[1].field_0 := 177;
-            Func34_var_0[1].field_2 := 2;
-            Func34_var_0[1].field_4 := 236;
-            Func34_var_0[1].field_6 := 18;
-            Func34_var_0[2].field_0 := 8;
-            Func34_var_0[2].field_2 := 2;
-            Func34_var_0[2].field_4 := 67;
-            Func34_var_0[2].field_6 := 18;
-            Func34_var_0[3].field_0 := 179;
-            Func34_var_0[3].field_2 := 86;
-            Func34_var_0[3].field_4 := 236;
-            Func34_var_0[3].field_6 := 101;
+            Func34_var_0[1].X1 := 177;
+            Func34_var_0[1].Y1 := 2;
+            Func34_var_0[1].X2 := 236;
+            Func34_var_0[1].Y2 := 18;
+            Func34_var_0[2].X1 := 8;
+            Func34_var_0[2].Y1 := 2;
+            Func34_var_0[2].X2 := 67;
+            Func34_var_0[2].Y2 := 18;
+            Func34_var_0[3].X1 := 179;
+            Func34_var_0[3].Y1 := 86;
+            Func34_var_0[3].X2 := 236;
+            Func34_var_0[3].Y2 := 101;
           end;
         Egypt:   begin
             PutPic(BuyEgyptWindow^, 1, 142);
-            Func34_var_0[1].field_0 := 177;
-            Func34_var_0[1].field_2 := 2;
-            Func34_var_0[1].field_4 := 236;
-            Func34_var_0[1].field_6 := 18;
-            Func34_var_0[2].field_0 := 177;
-            Func34_var_0[2].field_2 := 33;
-            Func34_var_0[2].field_4 := 236;
-            Func34_var_0[2].field_6 := 49;
-            Func34_var_0[3].field_0 := 179;
-            Func34_var_0[3].field_2 := 86;
-            Func34_var_0[3].field_4 := 236;
-            Func34_var_0[3].field_6 := 101;
+            Func34_var_0[1].X1 := 177;
+            Func34_var_0[1].Y1 := 2;
+            Func34_var_0[1].X2 := 236;
+            Func34_var_0[1].Y2 := 18;
+            Func34_var_0[2].X1 := 177;
+            Func34_var_0[2].Y1 := 33;
+            Func34_var_0[2].X2 := 236;
+            Func34_var_0[2].Y2 := 49;
+            Func34_var_0[3].X1 := 179;
+            Func34_var_0[3].Y1 := 86;
+            Func34_var_0[3].X2 := 236;
+            Func34_var_0[3].Y2 := 101;
           end;
       end;
       Func34_var_92 := ShowOptions(Func34_var_0, 103);
-      if (Func34_var_92 > 0) then
+      if Func34_var_92 > 0 then
       begin
         case Func34_var_92 of
-          1:   begin
-              Func34_var_94 := Func34_arg_4;
-            end;
-          2:   begin
-              Func34_var_94 := Func34_arg_2;
-            end;
-          3:   begin
-              Func34_var_94 := Func34_arg_0;
-            end;
+          Copper: Func34_var_94 := Func34_arg_4;
+          Olives: Func34_var_94 := Func34_arg_2;
+          Wheat: Func34_var_94 := Func34_arg_0;
         end;
-        if (Money < Func34_var_94) then
-        begin
-          ShowMessage(
-            87,
-            'ךל רשפאמ וניא ךפסכ',
-            (WareName[Func34_var_92] + 'תונקל'),
-            ''
-          );
-        end
+        if Money < Func34_var_94 then
+          ShowMessage(87, 'ךל רשפאמ וניא ךפסכ', WareName[Func34_var_92] + 'תונקל', '')
         else
         begin
           repeat
           begin
             PutPic(BuySign^, 22, 138);
             GotoXY(6, 15);
-            Write(Trunc((Money / Func34_var_94)));
+            Write(Trunc(Money / Func34_var_94));
             GotoXY(6, 17);
             Func34_var_80 := Func18(0, 0, 8);
-            Func34_var_86 := ((1.0 * Func34_var_80) * Func34_var_94);
+            Func34_var_86 := 1.0 * Func34_var_80 * Func34_var_94;
           end
-          until (not CannotAfford(Func34_var_86));
+          until not CannotAfford(Func34_var_86);
         end;
-        if (Func34_var_80 > 0) then
+        if Func34_var_80 > 0 then
         begin
-          Money := (Money - Func34_var_86);
-          Cargo[Func34_var_92] := (Cargo[Func34_var_92] + Trunc(Func34_var_80));
+          Money := Money - Func34_var_86;
+          Cargo[Func34_var_92] := Cargo[Func34_var_92] + Trunc(Func34_var_80);
         end;
       end;
     end;
@@ -1488,7 +1458,7 @@ var
     Func35_arg_0: integer
   );
   var
-    Func35_unused_94: array[1..2] of byte;
+    Unused: integer;
     Func35_var_92: integer;
     Func35_var_86: real;
     Func35_var_80: real;
@@ -1496,32 +1466,18 @@ var
 
     function Func36(Func36_arg_2: real; Func36_arg_0: integer): boolean;
     begin
-      if (Func36_arg_2 > Cargo[Func36_arg_0]) then
+      if Func36_arg_2 > Cargo[Func36_arg_0] then
       begin
-        ShowMessage(
-          87,
-          'הברה ךכ-לכ ךל ןיא',
-          ('רוכמל' + WareName[Func36_arg_0]),
-          #7
-        );
+        ShowMessage(87, 'הברה ךכ-לכ ךל ןיא', 'רוכמל' + WareName[Func36_arg_0], #7);
         Func36 := True;
       end
       else
-      begin
         Func36 := False;
-      end;
     end;
 
   begin
-    if (((Cargo[Copper] = 0) and (Cargo[Olives] = 0)) and (Cargo[Wheat] = 0)) then
-    begin
-      ShowMessage(
-        87,
-        ' ',
-        'רוכמל  הרוחס  ךל  ןיא',
-        ' '
-      );
-    end
+    if (Cargo[Copper] = 0) and (Cargo[Olives] = 0) and (Cargo[Wheat] = 0) then
+      ShowMessage(87, ' ', 'רוכמל  הרוחס  ךל  ןיא', ' ')
     else
     begin
       case CountryNameToIndex(CurrentCountryName) of
@@ -1529,34 +1485,34 @@ var
         Israel: PutPic(SellIsraelWindow^, 0, 142);
         Egypt: PutPic(SellEgyptWindow^, 0, 142);
       end;
-      Func35_var_0[1].field_0 := 19;
-      Func35_var_0[1].field_2 := 26;
-      Func35_var_0[2].field_0 := 19;
-      Func35_var_0[2].field_2 := 42;
-      Func35_var_0[3].field_0 := 19;
-      Func35_var_0[3].field_2 := 58;
-      if (CurrentCountryName = 'םירצמ') then
+      Func35_var_0[1].X1 := 19;
+      Func35_var_0[1].Y1 := 26;
+      Func35_var_0[2].X1 := 19;
+      Func35_var_0[2].Y1 := 42;
+      Func35_var_0[3].X1 := 19;
+      Func35_var_0[3].Y1 := 58;
+      if CurrentCountryName = 'םירצמ' then
       begin
-        Func35_var_0[1].field_4 := 58;
-        Func35_var_0[1].field_6 := 34;
-        Func35_var_0[2].field_4 := 57;
-        Func35_var_0[2].field_6 := 50;
-        Func35_var_0[3].field_4 := 57;
-        Func35_var_0[3].field_6 := 66;
+        Func35_var_0[1].X2 := 58;
+        Func35_var_0[1].Y2 := 34;
+        Func35_var_0[2].X2 := 57;
+        Func35_var_0[2].Y2 := 50;
+        Func35_var_0[3].X2 := 57;
+        Func35_var_0[3].Y2 := 66;
       end
       else
       begin
-        Func35_var_0[1].field_4 := 59;
-        Func35_var_0[1].field_6 := 35;
-        Func35_var_0[2].field_4 := 59;
-        Func35_var_0[2].field_6 := 51;
-        Func35_var_0[3].field_4 := 59;
-        Func35_var_0[3].field_6 := 67;
+        Func35_var_0[1].X2 := 59;
+        Func35_var_0[1].Y2 := 35;
+        Func35_var_0[2].X2 := 59;
+        Func35_var_0[2].Y2 := 51;
+        Func35_var_0[3].X2 := 59;
+        Func35_var_0[3].Y2 := 67;
       end;
       Func35_var_92 := ShowOptions(Func35_var_0, 103);
-      if (Func35_var_92 > 0) then
+      if Func35_var_92 > 0 then
       begin
-        if (Cargo[Func35_var_92] > 0) then
+        if Cargo[Func35_var_92] > 0 then
         begin
           repeat
           begin
@@ -1564,35 +1520,23 @@ var
             GotoXY(21, 7);
             Func35_var_80 := Func18(0, 0, 8);
           end
-          until (not Func36(Func35_var_80, Func35_var_92));
+          until not Func36(Func35_var_80, Func35_var_92);
         end
         else
         begin
-          ShowMessage(
-            87,
-            (('רוכמל' + WareName[Func35_var_92]) + 'ךל ןיא'),
-            #7,
-            ''
-          );
+          ShowMessage(87, 'רוכמל' + WareName[Func35_var_92] + 'ךל ןיא', #7, '');
           Func35_var_80 := 0;
         end;
-        if (Func35_var_80 = -1) then
-        begin
+        if Func35_var_80 = -1 then
           Func35_var_80 := 0;
-        end;
+
         case Func35_var_92 of
-          1:   begin
-              Func35_var_86 := ((1.0 * Func35_var_80) * Func35_arg_4);
-            end;
-          2:   begin
-              Func35_var_86 := ((1.0 * Func35_var_80) * Func35_arg_2);
-            end;
-          3:   begin
-              Func35_var_86 := ((1.0 * Func35_var_80) * Func35_arg_0);
-            end;
+          Copper: Func35_var_86 := 1.0 * Func35_var_80 * Func35_arg_4;
+          Olives: Func35_var_86 := 1.0 * Func35_var_80 * Func35_arg_2;
+          Wheat: Func35_var_86 := 1.0 * Func35_var_80 * Func35_arg_0;
         end;
-        Money := (Money + Func35_var_86);
-        Cargo[Func35_var_92] := (Cargo[Func35_var_92] - Trunc(Func35_var_80));
+        Money := Money + Func35_var_86;
+        Cargo[Func35_var_92] := Cargo[Func35_var_92] - Trunc(Func35_var_80);
       end;
     end;
   end;
@@ -1606,74 +1550,74 @@ var
   begin
     Func37_var_86 := 0;
     PutPic(BankWindow^, 0, 142);
-    Func37_var_6[1].field_0 := 97;
-    Func37_var_6[1].field_2 := 7;
-    Func37_var_6[1].field_4 := 149;
-    Func37_var_6[1].field_6 := 16;
-    Func37_var_6[2].field_0 := 16;
-    Func37_var_6[2].field_2 := 7;
-    Func37_var_6[2].field_4 := 64;
-    Func37_var_6[2].field_6 := 16;
+    Func37_var_6[1].X1 := 97;
+    Func37_var_6[1].Y1 := 7;
+    Func37_var_6[1].X2 := 149;
+    Func37_var_6[1].Y2 := 16;
+    Func37_var_6[2].X1 := 16;
+    Func37_var_6[2].Y1 := 7;
+    Func37_var_6[2].X2 := 64;
+    Func37_var_6[2].Y2 := 16;
     Func37_var_87 := ShowOptions(Func37_var_6, 102);
     case Func37_var_87 of
-      1:   begin
-          if (Money <= 0) then
-            ShowMessage(87, ' ', '! דיקפהל ףסכ ךל ןיא' + '', ' ')
-          else
+      1: begin
+        if (Money <= 0) then
+          ShowMessage(87, ' ', '! דיקפהל ףסכ ךל ןיא' + '', ' ')
+        else
+        begin
+          repeat
           begin
-            repeat
+            PutPic(DepositSign^, 11, 139);
+            GotoXY(5, 17);
+            Func37_var_0 := Func18(0, 0, 8);
+            if Func37_var_0 <= 0 then
+              Func37_var_86 := 1
+            else
             begin
-              PutPic(DepositSign^, 11, 139);
-              GotoXY(5, 17);
-              Func37_var_0 := Func18(0, 0, 8);
-              if Func37_var_0 <= 0 then
-                Func37_var_86 := 1
-              else
+              if Func37_var_0 <= Money then
               begin
-                if Func37_var_0 <= Money then
-                begin
-                  BankBalance := (BankBalance + Func37_var_0);
-                  Money := (Money - Func37_var_0);
-                  ShowMessage(87, ' ', 'ףסכה תא לביק קנבה דיקפ', ' ');
-                  Func37_var_86 := 1;
-                end
-                else
-                  ShowMessage(87, ' ', '! ףסכ הברה ךכ לכ ךל ןיא' + '', ' ');
-              end;
-            end
-            until Func37_var_86 = 1;
-          end;
-        end;
-      2:   begin
-          if BankBalance > 0 then
-          begin
-            repeat
-            begin
-              PutPic(WithdrawSign^, 11, 139);
-              GotoXY(5, 17);
-              Func37_var_0 := Func18(0, 0, 8);
-              if Func37_var_0 < 0 then
-                Func37_var_86 := 1
+                BankBalance := (BankBalance + Func37_var_0);
+                Money := (Money - Func37_var_0);
+                ShowMessage(87, ' ', 'ףסכה תא לביק קנבה דיקפ', ' ');
+                Func37_var_86 := 1;
+              end
               else
-              begin
-                if Func37_var_0 <= BankBalance then
-                begin
-                  GotoXY(1, 1);
-                  BankBalance := (BankBalance - Func37_var_0);
-                  Money := (Money + Func37_var_0);
-                  if not (Func37_var_0 = 0) then
-                    ShowMessage(87, ' ', 'ףסכה תא תלביק', ' ');
-                  Func37_var_86 := 1;
-                end
-                else
-                  ShowMessage(87, ' ', '! קנבב הזכ ףסכ םוכס ךל ןיא' + '', ' ');
-              end;
-            end
-            until Func37_var_86 = 1;
+                ShowMessage(87, ' ', '! ףסכ הברה ךכ לכ ךל ןיא' + '', ' ');
+            end;
           end
-          else
-            ShowMessage(87, ' ', '! קנבב ףסכ ךל ןיא' + '', ' ');
+          until Func37_var_86 = 1;
         end;
+      end;
+      2: begin
+        if BankBalance > 0 then
+        begin
+          repeat
+          begin
+            PutPic(WithdrawSign^, 11, 139);
+            GotoXY(5, 17);
+            Func37_var_0 := Func18(0, 0, 8);
+            if Func37_var_0 < 0 then
+              Func37_var_86 := 1
+            else
+            begin
+              if Func37_var_0 <= BankBalance then
+              begin
+                GotoXY(1, 1);
+                BankBalance := BankBalance - Func37_var_0;
+                Money := Money + Func37_var_0;
+                if not (Func37_var_0 = 0) then
+                  ShowMessage(87, ' ', 'ףסכה תא תלביק', ' ');
+                Func37_var_86 := 1;
+              end
+              else
+                ShowMessage(87, ' ', '! קנבב הזכ ףסכ םוכס ךל ןיא' + '', ' ');
+            end;
+          end
+          until Func37_var_86 = 1;
+        end
+        else
+          ShowMessage(87, ' ', '! קנבב ףסכ ךל ןיא' + '', ' ');
+      end;
     end;
   end;
 
@@ -1699,27 +1643,21 @@ var
     Func39_var_0: PWinBuffer;
   begin
     case CountryNameToIndex(CountryName) of
-      Turkey:   begin
-          Func21_var_6 := 256;
-          Func21_var_4 := 303;
-        end;
-      Israel:   begin
-          Func21_var_6 := 147;
-          Func21_var_4 := 190;
-        end;
-      Egypt:   begin
-          Func21_var_6 := 44;
-          Func21_var_4 := 86;
-        end;
+      Turkey: begin
+        Func21_var_6 := 256;
+        Func21_var_4 := 303;
+      end;
+      Israel: begin
+        Func21_var_6 := 147;
+        Func21_var_4 := 190;
+      end;
+      Egypt: begin
+        Func21_var_6 := 44;
+        Func21_var_4 := 86;
+      end;
     end;
     New(Func39_var_0);
-    GetPic(
-      Func39_var_0^,
-      Func21_var_6,
-      146,
-      Func21_var_4,
-      155
-    );
+    GetPic(Func39_var_0^, Func21_var_6, 146, Func21_var_4, 155);
     ColorTable(3, 2, 1, 0);
     PutPic(Func39_var_0^, Func21_var_6, 155);
     ColorTable(0, 1, 2, 3);
@@ -1757,60 +1695,48 @@ var
       Func41_var_0: integer;
     begin
       GotoXY(34, 17);
-      if (Money > 10000.0) then
-      begin
+      if Money > 10000.0 then
         GotoXY(33, 17);
-      end;
-      if (Money > 100000.0) then
-      begin
+
+      if Money > 100000.0 then
         GotoXY(32, 17);
-      end;
+
       Write(ToStrWithCommas(Money):5);
       PutPic(MapWindow^, 0, 142);
-      GetPic(
-        Func41_var_135,
-        Func41_arg_8,
-        Func41_arg_6,
-        (Func41_arg_8 + 18),
-        (Func41_arg_6 + 14)
-      );
+      GetPic(Func41_var_135, Func41_arg_8, Func41_arg_6, Func41_arg_8 + 18, Func41_arg_6 + 14);
       Func41_var_0 := 0;
-      Func41_var_2 := ((Func40_var_0 - Ord(global_var_81)) * 60);
+      Func41_var_2 := (Func40_var_0 - global_var_81) * 60;
       Func41_var_266 := Func41_arg_8;
-      Func41_var_264 := (Func41_arg_6 + 14);
+      Func41_var_264 := Func41_arg_6 + 14;
       for Func41_var_4 := 1 to Func41_var_2 do
       begin
-        Func41_var_0 := (Func41_var_0 + 1);
-        if (Func41_var_0 < 60) then
+        Func41_var_0 := Func41_var_0 + 1;
+        if Func41_var_0 < 60 then
         begin
           GotoXY(35, 5);
-          if (Func41_var_0 < 10) then
-          begin
+          if Func41_var_0 < 10 then
             Write(0);
-          end;
-          if ((Func41_var_0 mod 15) = 0) then
-          begin
+          if Func41_var_0 mod 15 = 0 then
             Write(Func41_var_0);
-          end;
         end
         else
         begin
           Func41_var_0 := 0;
-          global_var_81 := (global_var_81 + 1);
+          global_var_81 := global_var_81 + 1;
           GotoXY(32, 5);
           Write(global_var_81:2, ':00');
         end;
         Func40_var_5 := Round(
-          ((0.0 + Func41_arg_8) + ((Func41_var_4 / Func41_var_2) * (Func41_arg_4 - Func41_arg_8)))
+          0.0 + Func41_arg_8 + Func41_var_4 / Func41_var_2 * (Func41_arg_4 - Func41_arg_8)
         );
         Func40_var_3 := Round(
-          (((0.0 + Func41_arg_6) + ((Func41_var_4 / Func41_var_2) * (Func41_arg_2 - Func41_arg_6))) + 14)
+          0.0 + Func41_arg_6 + Func41_var_4 / Func41_var_2 * (Func41_arg_2 - Func41_arg_6) + 14
         );
         PutPic(Func41_var_135, Func40_var_5, Func40_var_3);
         Delay(15);
         Func41_var_266 := Func40_var_5;
         Func41_var_264 := Func40_var_3;
-        Func40_var_3 := (Func40_var_3 - 14);
+        Func40_var_3 := Func40_var_3 - 14;
       end;
       GetPic(MapWindow^, 0, 0, 240, 142);
     end;
@@ -1849,31 +1775,17 @@ var
 
         procedure Func44(Func44_arg_0: integer);
         begin
-          if (Random(Func44_arg_0) = 0) then
+          if Random(Func44_arg_0) = 0 then
           begin
-            Func43_var_0 := (10 * Trunc(
-              (((Random(15) + 5) / 1000.0) * (Money + GetTotalCargoValue))
-            ));
+            Func43_var_0 := 10 * Trunc(
+              ((Random(15) + 5) / 1000.0) * (Money + GetTotalCargoValue)
+            );
             Str(Func43_var_0:1:0, Func43_var_92);
-            ShipDamage := (ShipDamage + Func43_var_0);
-            if (Func44_arg_0 = 2) then
-            begin
-              ShowMessage(
-                87,
-                'םרגנ ,ףסונב',
-                'יוושב קזנ הניפסל',
-                ('.םילקש ' + Func43_var_92)
-              );
-            end
+            ShipDamage := ShipDamage + Func43_var_0;
+            if Func44_arg_0 = 2 then
+              ShowMessage(87, 'םרגנ ,ףסונב', 'יוושב קזנ הניפסל', '.םילקש ' + Func43_var_92)
             else
-            begin
-              ShowMessage(
-                87,
-                'ךתניפס ,ךלזמ עורל',
-                '.ברקה ידכ ךות העגפנ',
-                (('.ח"ש ' + Func43_var_92) + ' קזנה יווש')
-              );
-            end;
+              ShowMessage(87, 'ךתניפס ,ךלזמ עורל', '.ברקה ידכ ךות העגפנ', '.ח"ש ' + Func43_var_92 + ' קזנה יווש');
           end;
         end;
 
@@ -1885,98 +1797,48 @@ var
         begin
           PutPic(ConfrontWindow^, 0, 142);
           Func45_var_7 := Random(4);
-          if ((Func45_var_7 < (Func43_arg_2 - Func43_var_98)) or (((Func43_arg_2 - Func43_var_98) <= 0) and (Random(6) = 1))) then
+          if (Func45_var_7 < (Func43_arg_2 - Func43_var_98)) or (((Func43_arg_2 - Func43_var_98) <= 0) and (Random(6) = 1)) then
           begin
-            ShowMessage(
-              87,
-              '- ךשוממ ברק רחאל',
-              '! םיטריפה תא תסבה',
-              ''
-            );
+            ShowMessage(87, '- ךשוממ ברק רחאל', '! םיטריפה תא תסבה', '');
             if (Random(3) = 1) then
             begin
               ShipCapacity := (ShipCapacity + 50);
-              ShowMessage(
-                87,
-                'תניפס תא יבשב תחקל',
-                'הניפסה תלוביקו ,םיה ידדוש',
-                '.ןוט 50-ב הלדג ךלש'
-              );
+              ShowMessage(87, 'תניפס תא יבשב תחקל', 'הניפסה תלוביקו ,םיה ידדוש', '.ןוט 50-ב הלדג ךלש');
             end
             else
             begin
-              Func43_arg_2 := (Func43_arg_2 + Func43_var_98);
-              Func43_var_6 := ((Int((((Money + GetTotalCargoValue) + BankBalance) / 100)) * (Random(15) + 5)) + ((Func43_arg_2 *
-        ((Money + GetTotalCargoValue) + BankBalance)) / 10));
-              if (Func43_var_6 < 100) then
-              begin
+              Func43_arg_2 := Func43_arg_2 + Func43_var_98;
+              Func43_var_6 := Int((Money + GetTotalCargoValue + BankBalance) / 100) * (Random(15) + 5) +
+                  Func43_arg_2 * (Money + GetTotalCargoValue + BankBalance) / 10;
+              if Func43_var_6 < 100 then
                 Func43_var_6 := 100;
-              end;
-              Func43_var_6 := (5 * Int((Func43_var_6 / 5)));
+              Func43_var_6 := 5 * Int(Func43_var_6 / 5);
               Str(Func43_var_6:1:0, Func43_var_92);
-              ShowMessage(
-                87,
-                ' לש ןומטמ תאצמ',
-                ('םתניפס לע לקש ' + Func43_var_92),
-                ''
-              );
-              Money := (Money + Func43_var_6);
+              ShowMessage(87, ' לש ןומטמ תאצמ', 'םתניפס לע לקש ' + Func43_var_92, '');
+              Money := Money + Func43_var_6;
             end;
             Func44(4);
           end
           else
           begin
             Str(Func43_arg_2, Func43_var_92);
-            if (Func43_arg_2 = 0) then
-            begin
-              ShowMessage(
-                87,
-                ',רמשמ תוניפס תנגה אלל',
-                'םיטריפה ידי לע תסבוה התא',
-                ''
-              );
-            end
-            else
-            begin
-              if (Func43_arg_2 = 1) then
-              begin
-                ShowMessage(
-                  87,
-                  'תניפס לע ורבגתה םיטריפה',
-                  'ךלש רמשמה',
-                  ''
-                );
-              end
-              else
-              begin
-                if (Func43_arg_2 > 1) then
-                begin
-                  ShowMessage(
-                    87,
-                    'תא וחצינ םיטריפה',
-                    ('ךלש רמשמה תוניפס ' + Func43_var_92),
-                    ''
-                  );
-                end;
-              end;
-            end;
-            Func43_arg_2 := (Func43_arg_2 + Func43_var_98);
-            if (Func43_arg_2 > 3) then
-            begin
+            if Func43_arg_2 = 0 then
+              ShowMessage(87, ',רמשמ תוניפס תנגה אלל', 'םיטריפה ידי לע תסבוה התא', '')
+            else if Func43_arg_2 = 1 then
+              ShowMessage(87, 'תניפס לע ורבגתה םיטריפה', 'ךלש רמשמה', '')
+            else if Func43_arg_2 > 1 then
+              ShowMessage(87, 'תא וחצינ םיטריפה', 'ךלש רמשמה תוניפס ' + Func43_var_92, '');
+            Func43_arg_2 := Func43_arg_2 + Func43_var_98;
+            if Func43_arg_2 > 3 then
               Func43_arg_2 := 3;
-            end;
             Func12(5, Func42_var_36, Func45_var_1);
-            if (Func45_var_1 > Money) then
+            if Func45_var_1 > Money then
             begin
               Func43_var_0 := (((1.0 * (Random(15) + 5)) * Cargo[Func42_var_36]) / 100);
-              if (Func43_arg_2 < 3) then
-              begin
-                Func43_var_0 := (Func43_var_0 + (((3 - Func43_arg_2) * Cargo[Func42_var_36]) div 10));
-              end;
-              if (Func43_var_0 < 1) then
-              begin
+              if Func43_arg_2 < 3 then
+                Func43_var_0 := Func43_var_0 + ((3 - Func43_arg_2) * Cargo[Func42_var_36]) div 10;
+              if Func43_var_0 < 1 then
                 Func43_var_0 := 1;
-              end;
               Cargo[Func42_var_36] := (Cargo[Func42_var_36] - Trunc(Func43_var_0));
               Str(Trunc(Func43_var_0):1, Func42_var_24);
               ShowMessage(
@@ -2038,18 +1900,18 @@ var
         PutPic(PiratesSign^, 4, 139);
         GotoXY(18, 17);
         Write(Func40_var_1:2);
-        Func43_var_12[1].field_0 := 108;
-        Func43_var_12[1].field_2 := 117;
-        Func43_var_12[1].field_4 := 133;
-        Func43_var_12[1].field_6 := 123;
-        Func43_var_12[2].field_0 := 72;
-        Func43_var_12[2].field_2 := 117;
-        Func43_var_12[2].field_4 := 96;
-        Func43_var_12[2].field_6 := 123;
-        Func43_var_12[3].field_0 := 7;
-        Func43_var_12[3].field_2 := 117;
-        Func43_var_12[3].field_4 := 58;
-        Func43_var_12[3].field_6 := 123;
+        Func43_var_12[1].X1 := 108;
+        Func43_var_12[1].Y1 := 117;
+        Func43_var_12[1].X2 := 133;
+        Func43_var_12[1].Y2 := 123;
+        Func43_var_12[2].X1 := 72;
+        Func43_var_12[2].Y1 := 117;
+        Func43_var_12[2].X2 := 96;
+        Func43_var_12[2].Y2 := 123;
+        Func43_var_12[3].X1 := 7;
+        Func43_var_12[3].Y1 := 117;
+        Func43_var_12[3].X2 := 58;
+        Func43_var_12[3].Y2 := 123;
         Func43_var_104 := ShowOptions(Func43_var_12, 3);
         case Func43_var_104 of
           1:   begin
@@ -2520,18 +2382,18 @@ var
     Func40_var_173 := False;
     global_var_103 := 0;
     PutPic(MapWindow^, 0, 142);
-    Func40_var_87[1].field_0 := 144;
-    Func40_var_87[1].field_2 := 2;
-    Func40_var_87[1].field_4 := 182;
-    Func40_var_87[1].field_6 := 9;
-    Func40_var_87[2].field_0 := 228;
-    Func40_var_87[2].field_2 := 106;
-    Func40_var_87[2].field_4 := 237;
-    Func40_var_87[2].field_6 := 137;
-    Func40_var_87[3].field_0 := 75;
-    Func40_var_87[3].field_2 := 134;
-    Func40_var_87[3].field_4 := 111;
-    Func40_var_87[3].field_6 := 141;
+    Func40_var_87[1].X1 := 144;
+    Func40_var_87[1].Y1 := 2;
+    Func40_var_87[1].X2 := 182;
+    Func40_var_87[1].Y2 := 9;
+    Func40_var_87[2].X1 := 228;
+    Func40_var_87[2].Y1 := 106;
+    Func40_var_87[2].X2 := 237;
+    Func40_var_87[2].Y2 := 137;
+    Func40_var_87[3].X1 := 75;
+    Func40_var_87[3].Y1 := 134;
+    Func40_var_87[3].X2 := 111;
+    Func40_var_87[3].Y2 := 141;
     global_var_21 := 1;
     for global_var_23 := 1 to 3 do
     begin
@@ -2686,7 +2548,7 @@ begin
   global_var_81 := 8;
   Func21_var_88 := False;
   GenerateNewPrices;
-  Func33;
+  ShowNewDayScreen;
   if (Day = 7) then
   begin
     ShowMessage(
@@ -2719,30 +2581,30 @@ begin
       PutPic(global_var_2060^, 0, 142);
       ShowHUD;
       TextColor(3);
-      Func21_var_8[1].field_0 := 131;
-      Func21_var_8[1].field_2 := 36;
-      Func21_var_8[1].field_4 := 177;
-      Func21_var_8[1].field_6 := 45;
-      Func21_var_8[2].field_0 := 126;
-      Func21_var_8[2].field_2 := 51;
-      Func21_var_8[2].field_4 := 174;
-      Func21_var_8[2].field_6 := 60;
-      Func21_var_8[3].field_0 := 125;
-      Func21_var_8[3].field_2 := 67;
-      Func21_var_8[3].field_4 := 171;
-      Func21_var_8[3].field_6 := 76;
-      Func21_var_8[4].field_0 := 81;
-      Func21_var_8[4].field_2 := 83;
-      Func21_var_8[4].field_4 := 167;
-      Func21_var_8[4].field_6 := 92;
-      Func21_var_8[5].field_0 := 42;
-      Func21_var_8[5].field_2 := 99;
-      Func21_var_8[5].field_4 := 162;
-      Func21_var_8[5].field_6 := 108;
-      Func21_var_8[6].field_0 := 33;
-      Func21_var_8[6].field_2 := 114;
-      Func21_var_8[6].field_4 := 160;
-      Func21_var_8[6].field_6 := 123;
+      Func21_var_8[1].X1 := 131;
+      Func21_var_8[1].Y1 := 36;
+      Func21_var_8[1].X2 := 177;
+      Func21_var_8[1].Y2 := 45;
+      Func21_var_8[2].X1 := 126;
+      Func21_var_8[2].Y1 := 51;
+      Func21_var_8[2].X2 := 174;
+      Func21_var_8[2].Y2 := 60;
+      Func21_var_8[3].X1 := 125;
+      Func21_var_8[3].Y1 := 67;
+      Func21_var_8[3].X2 := 171;
+      Func21_var_8[3].Y2 := 76;
+      Func21_var_8[4].X1 := 81;
+      Func21_var_8[4].Y1 := 83;
+      Func21_var_8[4].X2 := 167;
+      Func21_var_8[4].Y2 := 92;
+      Func21_var_8[5].X1 := 42;
+      Func21_var_8[5].Y1 := 99;
+      Func21_var_8[5].X2 := 162;
+      Func21_var_8[5].Y2 := 108;
+      Func21_var_8[6].X1 := 33;
+      Func21_var_8[6].Y1 := 114;
+      Func21_var_8[6].X2 := 160;
+      Func21_var_8[6].Y2 := 123;
       if (ShipDamage = 0) then
         Func21_var_91 := 5
       else
