@@ -1695,7 +1695,7 @@ var
       CurrentShipX: integer;
       CurrentShipY: integer;
       Unused2: real;
-      IsBadLuck: boolean;
+      ForceHighRiskEvent: boolean;
       IsShipDamaged: boolean;
 
       procedure PiratesFlow(Func43_arg_2: integer; Func43_arg_0: integer);
@@ -2000,9 +2000,12 @@ var
         if CurrentShipDamage > 0 then
           IsShipDamaged := True
         else
-          IsBadLuck := Random(3) = 1;
-        { IsShipDamaged might be uninitalized here }
-        if IsShipDamaged or IsBadLuck then
+          ForceHighRiskEvent := Random(3) = 1;
+        { IsShipDamaged might be uninitalized here. If it's a day travel, the value comes from
+          TravelOptionRects and is either 182 if you're in Egypt/Israel or 237 if you're in turkey.
+          If it's a night travel, the value is 0, due to reading the input in the Night yes/no
+          screen, at least on DOSBox }
+        if IsShipDamaged or ForceHighRiskEvent then
         begin
           ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
           if (StormCountryName = CurrentCountryName) or (StormCountryName = TravelDestination) then
