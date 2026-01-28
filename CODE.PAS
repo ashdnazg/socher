@@ -162,23 +162,23 @@ begin
   end;
 end;
 
-procedure Func12(
-  Func12_arg_8: integer;
-  var Func12_arg_4: integer;
-  var Func12_arg_0: real
+procedure GetMostValuableCargo(
+  MinCargo: integer;
+  var OutWare: integer;
+  var OutValue: real
 );
 var
-  Func12_var_0: integer;
+  Ware: integer;
 begin
-  Func12_arg_4 := 0;
-  Func12_arg_0 := 0;
-  for Func12_var_0 := 1 to 3 do
+  OutWare := 0;
+  OutValue := 0;
+  for Ware := Copper to Wheat do
   begin
-    if ((((1.0 * Cargo[Func12_var_0]) * BaseWarePrice[Func12_var_0]) > Func12_arg_0) and
- (Cargo[Func12_var_0] >= Func12_arg_8)) then
+    if (1.0 * Cargo[Ware] * BaseWarePrice[Ware] > OutValue) and
+        (Cargo[Ware] >= MinCargo) then
     begin
-      Func12_arg_4 := Func12_var_0;
-      Func12_arg_0 := ((1.0 * Cargo[Func12_var_0]) * BaseWarePrice[Func12_var_0]);
+      OutWare := Ware;
+      OutValue := 1.0 * Cargo[Ware] * BaseWarePrice[Ware];
     end;
   end;
 end;
@@ -488,7 +488,7 @@ var
   WheatPriceTurkey: integer;
   WheatPriceEgypt: integer;
   MainMenuOptionCount: integer;
-  Func21_var_89: integer;
+  ChosenMainMenuOption: integer;
   Func21_var_88: boolean;
   MainMenuOptionRects: TRectArray;
   CountryNameX1: integer;
@@ -559,114 +559,114 @@ var
       CannotAfford := False;
   end;
 
-  function Func25(
-    var Func25_arg_12: integer;
-    var Func25_arg_8: integer;
-    var Func25_arg_4: integer;
-    var Func25_arg_0: real
+  function OfferFlow(
+    var InOutCopper: integer;
+    var InOutOlives: integer;
+    var InOutWheat: integer;
+    var InOutMoney: real
   ): boolean;
   var
-    Func25_var_28: integer;
-    Func25_var_26: integer;
-    Func25_var_24: integer;
-    Func25_var_18: real;
-    Func25_var_12: real;
-    Func25_var_6: real;
-    Func25_unused_0: array[1..6] of byte;
+    OfferedCopper: integer;
+    OfferedOlives: integer;
+    OfferedWheat: integer;
+    OfferedAmount: real;
+    TotalOfferValue: real;
+    AcceptThreshold: real;
+    Unused: real;
 
-    function Func26(Func26_arg_6: real; Func26_arg_0: real): boolean;
+    function CanAffordMoney(OfferedAmount: real; AvailableMoney: real): boolean;
     begin
-      if Func26_arg_6 < 0 then
-        Func26_arg_6 := 0;
-      if Func26_arg_6 <= Func26_arg_0 then
-        Func26 := True
+      if OfferedAmount < 0 then
+        OfferedAmount := 0;
+      if OfferedAmount <= AvailableMoney then
+        CanAffordMoney := True
       else
       begin
         ShowMessage(87, '', '!הז םוכס ךתושרב ןיא', #7);
-        Func26 := False;
+        CanAffordMoney := False;
       end;
     end;
 
-    function Func27(var Func27_arg_6: integer; Func27_arg_0: real): boolean;
+    function CanAffordWare(var OfferedAmount: integer; AvailableCargo: real): boolean;
     begin
-      if Func27_arg_6 < 0 then
-        Func27_arg_6 := 0;
+      if OfferedAmount < 0 then
+        OfferedAmount := 0;
 
-      if Func27_arg_6 <= Func27_arg_0 then
-        Func27 := True
+      if OfferedAmount <= AvailableCargo then
+        CanAffordWare := True
       else
       begin
         ShowMessage(87, '', '!הז םוכס ךתושרב ןיא', #7);
-        Func27 := False;
+        CanAffordWare := False;
       end;
     end;
 
   begin
-    Func25_var_28 := 0;
-    Func25_var_26 := 0;
-    Func25_var_24 := 0;
-    Func25_var_18 := 0;
-    if Func25_arg_12 > 0 then
+    OfferedCopper := 0;
+    OfferedOlives := 0;
+    OfferedWheat := 0;
+    OfferedAmount := 0;
+    if InOutCopper > 0 then
     begin
       repeat
       begin
         ShowMessage(78,'?תתל ןכומ התא' + WareName[Copper] + 'ןוט המכ', '', '');
         GotoXY(20, 16);
         repeat
-          Func25_var_28 := Trunc(InputReal(0, 0, 8));
-        until Func25_var_28 >= 0;
+          OfferedCopper := Trunc(InputReal(0, 0, 8));
+        until OfferedCopper >= 0;
       end
-      until (Func25_var_28 >= 0) and Func27(Func25_var_28, Func25_arg_12);
+      until (OfferedCopper >= 0) and CanAffordWare(OfferedCopper, InOutCopper);
     end;
-    if Func25_arg_8 > 0 then
+    if InOutOlives > 0 then
     begin
       repeat
       begin
         ShowMessage(78,'?תתל ןכומ התא' + WareName[Olives] + 'ןוט המכ', '', '');
         GotoXY(20, 16);
         repeat
-          Func25_var_26 := Trunc(InputReal(0, 0, 8));
-        until Func25_var_26 >= 0;
+          OfferedOlives := Trunc(InputReal(0, 0, 8));
+        until OfferedOlives >= 0;
       end
-      until Func27(Func25_var_26, Func25_arg_8);
+      until CanAffordWare(OfferedOlives, InOutOlives);
     end;
-    if Func25_arg_4 > 0 then
+    if InOutWheat > 0 then
     begin
       repeat
       begin
         ShowMessage(78, (('?תתל ןכומ התא' + WareName[Wheat]) + 'ןוט המכ'), '', '');
         GotoXY(20, 16);
         repeat
-          Func25_var_24 := Trunc(InputReal(0, 0, 8));
-        until Func25_var_24 >= 0;
+          OfferedWheat := Trunc(InputReal(0, 0, 8));
+        until OfferedWheat >= 0;
       end
-      until Func27(Func25_var_24, Func25_arg_4);
+      until CanAffordWare(OfferedWheat, InOutWheat);
     end;
-    if Func25_arg_0 > (GetTotalCargoValue / 10) then
+    if InOutMoney > (GetTotalCargoValue / 10) then
     begin
       repeat
       begin
         ShowMessage(78, '?תתל ןכומ התא ףסכ המכ', '', '');
         GotoXY(20, 16);
         repeat
-          Func25_var_18 := Trunc(InputReal(0, 0, 8));
-        until Func25_var_18 >= 0;
+          OfferedAmount := Trunc(InputReal(0, 0, 8));
+        until OfferedAmount >= 0;
       end
-      until Func26(Func25_var_18, Func25_arg_0);
+      until CanAffordMoney(OfferedAmount, InOutMoney);
     end;
-    Func25_var_12 := Func25_var_28 * BaseWarePrice[Copper] + Func25_var_26 * BaseWarePrice[Olives] +
-        Func25_var_24 * BaseWarePrice[Wheat] + Func25_var_18;
-    Func25_var_6 := (GetTotalCargoValue + Func25_arg_0) / (Random(6) + 4);
-    if Func25_var_12 > Func25_var_6 then
+    TotalOfferValue := OfferedCopper * BaseWarePrice[Copper] + OfferedOlives * BaseWarePrice[Olives] +
+        OfferedWheat * BaseWarePrice[Wheat] + OfferedAmount;
+    AcceptThreshold := (GetTotalCargoValue + InOutMoney) / (Random(6) + 4);
+    if TotalOfferValue > AcceptThreshold then
     begin
-      Func25_arg_0 := Func25_arg_0 - Func25_var_18;
-      Func25_arg_12 := Func25_arg_12 - Func25_var_28;
-      Func25_arg_8 := Func25_arg_8 - Func25_var_26;
-      Func25_arg_4 := Func25_arg_4 - Func25_var_24;
-      Func25 := True;
+      InOutMoney := InOutMoney - OfferedAmount;
+      InOutCopper := InOutCopper - OfferedCopper;
+      InOutOlives := InOutOlives - OfferedOlives;
+      InOutWheat := InOutWheat - OfferedWheat;
+      OfferFlow := True;
     end
     else
-      Func25 := False;
+      OfferFlow := False;
   end;
 
   { Outcome types for ApplyBadOutcome }
@@ -948,7 +948,7 @@ var
                   end
                   else
                   begin
-                    Func12(1, Func31_var_169, Func31_var_10);
+                    GetMostValuableCargo(1, Func31_var_169, Func31_var_10);
                     if (Func31_var_10 >= Func31_var_175) then
                     begin
                       Func31_var_163 := Round(
@@ -1058,7 +1058,7 @@ var
               end
               else
               begin
-                if Func25(Cargo[Copper], Cargo[Olives], Cargo[Wheat], Money) then
+                if OfferFlow(Cargo[Copper], Cargo[Olives], Cargo[Wheat], Money) then
                   ShowMessage(87, '.ךתעצה תא לביק תווצה', '', '')
                 else
                 begin
@@ -1698,138 +1698,123 @@ var
       IsHighRiskEventForced: boolean;
       IsShipDamaged: boolean;
 
-      procedure PiratesFlow(Func43_arg_2: integer; Func43_arg_0: integer);
+      procedure PiratesFlow(CurrentGuardShipCount: integer; CurrentCargoWeight2: integer);
       var
-        Func43_var_106: integer;
-        Func43_var_104: integer;
-        Func43_var_102: integer;
-        Func43_var_100: integer;
-        Func43_var_98: integer;
-        Func43_var_92: string[5];
-        Func43_var_12: TRectArray;
-        Func43_var_6: real;
-        Func43_var_0: real;
+        RunAwayChance: integer;
+        ChosenPiratesOption: integer;
+        { Running away succeeds if this equals 0 }
+        RunAwayControl: integer;
+        { Running away fails if this is bigger than 0 }
+        DamagedRunAwayControl: integer;
+        GuardShipCountAdjustment: integer;
+        StringBuffer: string[5];
+        PiratesOptionRects: TRectArray;
+        Booty: real;
+        LostAmount: real;
 
-        procedure Func44(Func44_arg_0: integer);
+        procedure ApplyConfrontDamage(DamageChance: integer);
         begin
-          if Random(Func44_arg_0) = 0 then
+          if Random(DamageChance) = 0 then
           begin
-            Func43_var_0 := 10 * Trunc(
-              ((Random(15) + 5) / 1000.0) * (Money + GetTotalCargoValue)
-            );
-            Str(Func43_var_0:1:0, Func43_var_92);
-            ShipDamage := ShipDamage + Func43_var_0;
-            if Func44_arg_0 = 2 then
-              ShowMessage(87, 'םרגנ ,ףסונב', 'יוושב קזנ הניפסל', '.םילקש ' + Func43_var_92)
+            LostAmount := 10 * Trunc((Random(15) + 5) / 1000.0 * (Money + GetTotalCargoValue));
+            Str(LostAmount:1:0, StringBuffer);
+            ShipDamage := ShipDamage + LostAmount;
+            if DamageChance = 2 then
+              ShowMessage(87, 'םרגנ ,ףסונב', 'יוושב קזנ הניפסל', '.םילקש ' + StringBuffer)
             else
-              ShowMessage(87, 'ךתניפס ,ךלזמ עורל', '.ברקה ידכ ךות העגפנ', '.ח"ש ' + Func43_var_92 + ' קזנה יווש');
+              ShowMessage(87, 'ךתניפס ,ךלזמ עורל', '.ברקה ידכ ךות העגפנ', '.ח"ש ' + StringBuffer + ' קזנה יווש');
           end;
         end;
 
-        procedure Func45;
+        procedure ConfrontPirates;
         var
-          Func45_var_7: integer;
-          Func45_var_1: real;
-          Func45_unused_0: byte;
+          WinningDifficulty: integer;
+          MostValuableCargoValue: real;
+          Unused: byte;
         begin
           PutPic(ConfrontWindow^, 0, 142);
-          Func45_var_7 := Random(4);
-          if (Func45_var_7 < (Func43_arg_2 - Func43_var_98)) or (((Func43_arg_2 - Func43_var_98) <= 0) and (Random(6) = 1)) then
+          WinningDifficulty := Random(4);
+          if (WinningDifficulty < CurrentGuardShipCount - GuardShipCountAdjustment) or
+              ((CurrentGuardShipCount - GuardShipCountAdjustment <= 0) and (Random(6) = 1)) then
           begin
             ShowMessage(87, '- ךשוממ ברק רחאל', '! םיטריפה תא תסבה', '');
-            if (Random(3) = 1) then
+            if Random(3) = 1 then
             begin
-              ShipCapacity := (ShipCapacity + 50);
+              ShipCapacity := ShipCapacity + 50;
               ShowMessage(87, 'תניפס תא יבשב תחקל', 'הניפסה תלוביקו ,םיה ידדוש', '.ןוט 50-ב הלדג ךלש');
             end
             else
             begin
-              Func43_arg_2 := Func43_arg_2 + Func43_var_98;
-              Func43_var_6 := Int((Money + GetTotalCargoValue + BankBalance) / 100) * (Random(15) + 5) +
-                  Func43_arg_2 * (Money + GetTotalCargoValue + BankBalance) / 10;
-              if Func43_var_6 < 100 then
-                Func43_var_6 := 100;
-              Func43_var_6 := 5 * Int(Func43_var_6 / 5);
-              Str(Func43_var_6:1:0, Func43_var_92);
-              ShowMessage(87, ' לש ןומטמ תאצמ', 'םתניפס לע לקש ' + Func43_var_92, '');
-              Money := Money + Func43_var_6;
+              CurrentGuardShipCount := CurrentGuardShipCount + GuardShipCountAdjustment;
+              Booty := Int((Money + GetTotalCargoValue + BankBalance) / 100) * (Random(15) + 5) +
+                  CurrentGuardShipCount * (Money + GetTotalCargoValue + BankBalance) / 10;
+              if Booty < 100 then
+                Booty := 100;
+              Booty := 5 * Int(Booty / 5);
+              Str(Booty:1:0, StringBuffer);
+              ShowMessage(87, ' לש ןומטמ תאצמ', 'םתניפס לע לקש ' + StringBuffer, '');
+              Money := Money + Booty;
             end;
-            Func44(4);
+            ApplyConfrontDamage(4);
           end
           else
           begin
-            Str(Func43_arg_2, Func43_var_92);
-            if Func43_arg_2 = 0 then
+            Str(CurrentGuardShipCount, StringBuffer);
+            if CurrentGuardShipCount = 0 then
               ShowMessage(87, ',רמשמ תוניפס תנגה אלל', 'םיטריפה ידי לע תסבוה התא', '')
-            else if Func43_arg_2 = 1 then
+            else if CurrentGuardShipCount = 1 then
               ShowMessage(87, 'תניפס לע ורבגתה םיטריפה', 'ךלש רמשמה', '')
-            else if Func43_arg_2 > 1 then
-              ShowMessage(87, 'תא וחצינ םיטריפה', 'ךלש רמשמה תוניפס ' + Func43_var_92, '');
-            Func43_arg_2 := Func43_arg_2 + Func43_var_98;
-            if Func43_arg_2 > 3 then
-              Func43_arg_2 := 3;
-            Func12(5, Ware, Func45_var_1);
-            if Func45_var_1 > Money then
+            else if CurrentGuardShipCount > 1 then
+              ShowMessage(87, 'תא וחצינ םיטריפה', 'ךלש רמשמה תוניפס ' + StringBuffer, '');
+            CurrentGuardShipCount := CurrentGuardShipCount + GuardShipCountAdjustment;
+            if CurrentGuardShipCount > 3 then
+              CurrentGuardShipCount := 3;
+            GetMostValuableCargo(5, Ware, MostValuableCargoValue);
+            if MostValuableCargoValue > Money then
             begin
-              Func43_var_0 := (((1.0 * (Random(15) + 5)) * Cargo[Ware]) / 100);
-              if Func43_arg_2 < 3 then
-                Func43_var_0 := Func43_var_0 + ((3 - Func43_arg_2) * Cargo[Ware]) div 10;
-              if Func43_var_0 < 1 then
-                Func43_var_0 := 1;
-              Cargo[Ware] := (Cargo[Ware] - Trunc(Func43_var_0));
-              Str(Trunc(Func43_var_0):1, LostAmountString);
-              ShowMessage(
-                87,
-                '     השק ברק ירחא',
-                ' םיה ידדוש ךממ ובנג',
-                WareName[Ware] + 'ןוט ' + LostAmountString
-              );
-              Func44(2);
+              LostAmount := 1.0 * (Random(15) + 5) * Cargo[Ware] / 100;
+              if CurrentGuardShipCount < 3 then
+                LostAmount := LostAmount + (3 - CurrentGuardShipCount) * Cargo[Ware] div 10;
+              if LostAmount < 1 then
+                LostAmount := 1;
+              Cargo[Ware] := Cargo[Ware] - Trunc(LostAmount);
+              Str(Trunc(LostAmount):1, LostAmountString);
+              ShowMessage(87, '     השק ברק ירחא', ' םיה ידדוש ךממ ובנג',
+                  WareName[Ware] + 'ןוט ' + LostAmountString);
+              ApplyConfrontDamage(2);
             end
             else
             begin
-              if (Money > 500) then
+              if Money > 500 then
               begin
-                Func43_var_0 := (10 * Trunc(
-                  (Random(Trunc((0.015 * Money))) + (Money / 200))
-                ));
-                if (Func43_arg_2 < 3) then
-                begin
-                  Func43_var_0 := (Func43_var_0 + ((3 - Func43_arg_2) * Trunc((Money / 10))));
-                end;
-                Func43_var_0 := Trunc(Func43_var_0);
-                Money := (Money - Func43_var_0);
-                Str(Func43_var_0:1:0, LostAmountString);
-                ShowMessage(
-                  87,
-                  (('םילקש ' + LostAmountString) + ' ךממ ובנג םה'),
-                  '',
-                  ''
-                );
-                Func44(2);
+                LostAmount := 10 * Trunc(Random(Trunc(0.015 * Money)) + Money / 200);
+                if CurrentGuardShipCount < 3 then
+                  LostAmount := LostAmount + (3 - CurrentGuardShipCount) * Trunc(Money / 10);
+                LostAmount := Trunc(LostAmount);
+                Money := Money - LostAmount;
+                Str(LostAmount:1:0, LostAmountString);
+                ShowMessage(87, 'םילקש ' + LostAmountString + ' ךממ ובנג םה', '', '');
+                ApplyConfrontDamage(2);
               end
               else
               begin
-                Func43_var_0 := (Int(
-                  ((((Random(15) + 35) - (10 * Func43_arg_2)) / 1000) * ((GetTotalCargoValue + Money) + BankBalance))
-                ) * 10);
-                if (Func43_var_0 < 100) then
-                begin
-                  Func43_var_0 := 100;
-                end;
-                Str(Func43_var_0:1:0, Func43_var_92);
-                ShipDamage := (ShipDamage + Func43_var_0);
-                ShowMessage(
-                  87,
-                  'ךתניפס ,ךלזמ עורל',
-                  '.ברקה ידכ ךות העגפנ',
-                  (('ח"ש ' + Func43_var_92) + ' קזנה יווש')
-                );
+                LostAmount := Int((Random(15) + 35 - 10 * CurrentGuardShipCount) / 1000 *
+                    (GetTotalCargoValue + Money + BankBalance)) * 10;
+                if LostAmount < 100 then
+                  LostAmount := 100;
+                Str(LostAmount:1:0, StringBuffer);
+                ShipDamage := ShipDamage + LostAmount;
+                ShowMessage(87, 'ךתניפס ,ךלזמ עורל', '.ברקה ידכ ךות העגפנ', 'ח"ש ' + StringBuffer + ' קזנה יווש');
               end;
             end;
           end;
           ShowHUD;
         end;
+
+      const
+        Confront = 1;
+        RunAway = 2;
+        Offer = 3;
 
       begin
         PutPic(PiratesWindow^, 0, 142);
@@ -1837,117 +1822,68 @@ var
         PutPic(PiratesSign^, 4, 139);
         GotoXY(18, 17);
         Write(GuardShipCount:2);
-        Func43_var_12[1].X1 := 108;
-        Func43_var_12[1].Y1 := 117;
-        Func43_var_12[1].X2 := 133;
-        Func43_var_12[1].Y2 := 123;
-        Func43_var_12[2].X1 := 72;
-        Func43_var_12[2].Y1 := 117;
-        Func43_var_12[2].X2 := 96;
-        Func43_var_12[2].Y2 := 123;
-        Func43_var_12[3].X1 := 7;
-        Func43_var_12[3].Y1 := 117;
-        Func43_var_12[3].X2 := 58;
-        Func43_var_12[3].Y2 := 123;
-        Func43_var_104 := ShowOptions(Func43_var_12, 3);
-        case Func43_var_104 of
-          1:   begin
-              Func43_var_98 := 0;
-              Func45;
+        PiratesOptionRects[Confront].X1 := 108;
+        PiratesOptionRects[Confront].Y1 := 117;
+        PiratesOptionRects[Confront].X2 := 133;
+        PiratesOptionRects[Confront].Y2 := 123;
+        PiratesOptionRects[RunAway].X1 := 72;
+        PiratesOptionRects[RunAway].Y1 := 117;
+        PiratesOptionRects[RunAway].X2 := 96;
+        PiratesOptionRects[RunAway].Y2 := 123;
+        PiratesOptionRects[Offer].X1 := 7;
+        PiratesOptionRects[Offer].Y1 := 117;
+        PiratesOptionRects[Offer].X2 := 58;
+        PiratesOptionRects[Offer].Y2 := 123;
+        ChosenPiratesOption := ShowOptions(PiratesOptionRects, 3);
+        case ChosenPiratesOption of
+          Confront: begin
+            GuardShipCountAdjustment := 0;
+            ConfrontPirates;
+          end;
+          RunAway: begin
+            DamagedRunAwayControl := 0;
+            GuardShipCountAdjustment := 1;
+            PutPic(RunAwayWindow^, 0, 142);
+            if CurrentCargoWeight2 > 0.81 * ShipCapacity then
+              RunAwayControl := 0
+            else
+            begin
+              RunAwayChance := ShipCapacity div 30 - CurrentCargoWeight2 div 30 + 1;
+              if RunAwayChance < 1 then
+                RunAwayChance := 1;
+              RunAwayControl := Random(RunAwayChance);
             end;
-          2:   begin
-              Func43_var_100 := 0;
-              Func43_var_98 := 1;
-              PutPic(RunAwayWindow^, 0, 142);
-              if (Func43_arg_0 > (0.81 * ShipCapacity)) then
-              begin
-                Func43_var_102 := 0;
-              end
+            if RunAwayControl > 0 then
+              DamagedRunAwayControl := Random(Trunc(ShipDamage) div 30 + 1);
+            if DamagedRunAwayControl > 0 then
+              RunAwayControl := 0;
+            if RunAwayControl = 0 then
+            begin
+              if CurrentCargoWeight2 > 0.5 * ShipCapacity then
+                ShowMessage(87, 'אלו ,ידמ הדבכ ךתניפס', 'חורבל החילצה', '')
+              else if ShipDamage > 0 then
+                ShowMessage(87, 'בקע חורבל תחלצה אל', 'ךתניפסבש קזנה', '')
               else
-              begin
-                Func43_var_106 := (((ShipCapacity div 30) - (Func43_arg_0 div 30)) + 1);
-                if (Func43_var_106 < 1) then
-                begin
-                  Func43_var_106 := 1;
-                end;
-                Func43_var_102 := Random(Func43_var_106);
-              end;
-              if (Func43_var_102 > 0) then
-              begin
-                Func43_var_100 := Random(((Trunc(ShipDamage) div 30) + 1));
-              end;
-              if (Func43_var_100 > 0) then
-              begin
-                Func43_var_102 := 0;
-              end;
-              if (Func43_var_102 = 0) then
-              begin
-                if (Func43_arg_0 > (0.5 * ShipCapacity)) then
-                begin
-                  ShowMessage(
-                    87,
-                    'אלו ,ידמ הדבכ ךתניפס',
-                    'חורבל החילצה',
-                    ''
-                  );
-                end
-                else
-                begin
-                  if (ShipDamage > 0) then
-                  begin
-                    ShowMessage(
-                      87,
-                      'בקע חורבל תחלצה אל',
-                      'ךתניפסבש קזנה',
-                      ''
-                    );
-                  end
-                  else
-                  begin
-                    ShowMessage(
-                      87,
-                      'החילצה הריהמה םיטריפה תניפס',
-                      'ךתניפס תא גישהל',
-                      ''
-                    );
-                  end;
-                end;
-                Func45;
-              end
-              else
-              begin
-                ShowMessage(87, '', '! !  םהמ  טלמהל  תחלצה', '');
-              end;
+                ShowMessage(87, 'החילצה הריהמה םיטריפה תניפס', 'ךתניפס תא גישהל', '');
+              ConfrontPirates;
+            end
+            else
+              ShowMessage(87, '', '! !  םהמ  טלמהל  תחלצה', '');
+          end;
+          Offer: begin
+            GuardShipCountAdjustment := 1;
+            PutPic(OfferWindow^, 0, 142);
+            if OfferFlow(Cargo[Copper], Cargo[Olives], Cargo[Wheat], Money) then
+            begin
+              ShowMessage(87, 'לבקל וטילחה םיה ידדוש', 'ךתעצה תא', '');
+              ShowHUD;
+            end
+            else
+            begin
+              ShowMessage(87, 'תא םיחוד םיה ידדוש', '! ךתוא םיפקותו ךתעצה', '');
+              ConfrontPirates;
             end;
-          3:   begin
-              Func43_var_98 := 1;
-              PutPic(OfferWindow^, 0, 142);
-              if Func25(
-                Cargo[Copper],
-                Cargo[Olives],
-                Cargo[Wheat],
-                Money
-              ) then
-              begin
-                ShowMessage(
-                  87,
-                  'לבקל וטילחה םיה ידדוש',
-                  'ךתעצה תא',
-                  ''
-                );
-                ShowHUD;
-              end
-              else
-              begin
-                ShowMessage(
-                  87,
-                  'תא םיחוד םיה ידדוש',
-                  '! ךתוא םיפקותו ךתעצה',
-                  ''
-                );
-                Func45;
-              end;
-            end;
+          end;
         end;
       end;
 
@@ -2453,8 +2389,8 @@ begin
         PutPic(RepairOptionPic^, 35, 123);
         MainMenuOptionCount := 6;
       end;
-      Func21_var_89 := ShowOptions(MainMenuOptionRects, MainMenuOptionCount);
-      case Func21_var_89 of
+      ChosenMainMenuOption := ShowOptions(MainMenuOptionRects, MainMenuOptionCount);
+      case ChosenMainMenuOption of
         Buy: begin
           if CurrentCountryName = IsraelName then
             ShowBuyScreen(CopperPriceIsrael, OlivesPriceIsrael, WheatPriceIsrael)
@@ -2501,7 +2437,7 @@ begin
         end;
       end;
     end
-    until (Func21_var_89 = 5) and (LastPressedKey <> #27);
+    until (ChosenMainMenuOption = 5) and (LastPressedKey <> #27);
     if (Day < 7) and Func53 then
     begin
       Day := 7;
