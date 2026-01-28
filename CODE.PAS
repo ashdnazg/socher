@@ -10,7 +10,7 @@ begin
 end;
 
 procedure ShowMessage(
-  Func3_arg_108: byte;
+  WaitForKeyFlag: byte;
   Line1: TMessageLine;
   Line2: TMessageLine;
   Line3: TMessageLine
@@ -24,14 +24,14 @@ begin
   Write(Line2);
   GotoXY(29 - Length(Line3), 17);
   Write(Line3);
-  if (Func3_arg_108 = 87) or (Func3_arg_108 = 82) then
+  if (WaitForKeyFlag = 87) or (WaitForKeyFlag = 82) then
   begin
     WaitForKey;
     PutPic(PreMessageBackground, 10, 138);
   end;
 end;
 
-procedure ShowScrFile(Path: str_30);
+procedure ShowScrFile(Path: TPath);
 var
   ScrFile: file;
   Contents: PScrBuffer;
@@ -50,7 +50,7 @@ begin
   end;
 end;
 
-function LoadWinFile(FileName: str_30): PWinBuffer;
+function LoadWinFile(FileName: TPath): PWinBuffer;
 var
   WinFile: file;
   Contents: PWinBuffer;
@@ -71,7 +71,7 @@ begin
   LoadWinFile := Contents;
 end;
 
-function LoadSgnFile(FileName: str_30): PSgnBuffer;
+function LoadSgnFile(FileName: TPath): PSgnBuffer;
 var
   SgnFile: file;
   Contents: PSgnBuffer;
@@ -95,15 +95,15 @@ begin
   LoadSgnFile := Contents;
 end;
 
-function LoadScrFile(Func7_arg_0: str_30): PScrBuffer;
+function LoadScrFile(FileName: TPath): PScrBuffer;
 var
   ScrFile: file;
   Contents: PScrBuffer;
 begin
-  Assign(ScrFile, BasePath + Func7_arg_0 + '.scr');
+  Assign(ScrFile, BasePath + FileName + '.scr');
   {$I-} Reset(ScrFile); {$I+}
   if IOResult <> 0 then
-    Writeln('םיק וניא ', BasePath, Func7_arg_0, '.scr ץבק')
+    Writeln('םיק וניא ', BasePath, FileName, '.scr ץבק')
   else
   begin
     New(Contents);
@@ -136,29 +136,29 @@ begin
   GetTotalCargoWeight := Total;
 end;
 
-function ToStrWithCommas(Func10_arg_0: real): str_15;
+function ToStrWithCommas(Number: real): TMoneyString;
 var
-  Func10_var_2: str_15;
-  Func10_var_0: integer;
+  NumberString: TMoneyString;
+  I: integer;
 
-  function ZeroPad3(Func11_arg_0: real): str_15;
+  function ZeroPad3(NumberSegment: real): TMoneyString;
   begin
-    Str(Func11_arg_0:1:0, Func10_var_2);
-    for Func10_var_0 := 1 to 2 do
-      if Length(Func10_var_2) < 3 then
-        Func10_var_2 := '0' + Func10_var_2;
-    ZeroPad3 := Func10_var_2;
+    Str(NumberSegment:1:0, NumberString);
+    for I := 1 to 2 do
+      if Length(NumberString) < 3 then
+        NumberString := '0' + NumberString;
+    ZeroPad3 := NumberString;
   end;
 
 begin
-  if Func10_arg_0 <= 999 then
+  if Number <= 999 then
   begin
-    Str(Func10_arg_0:1:0, Func10_var_2);
-    ToStrWithCommas := Func10_var_2;
+    Str(Number:1:0, NumberString);
+    ToStrWithCommas := NumberString;
   end
   else
   begin
-    ToStrWithCommas := ToStrWithCommas(Int(Func10_arg_0 / 1000)) + ',' + ZeroPad3(1000 * Frac(Func10_arg_0 / 1000));
+    ToStrWithCommas := ToStrWithCommas(Int(Number / 1000)) + ',' + ZeroPad3(1000 * Frac(Number / 1000));
   end;
 end;
 
@@ -276,7 +276,7 @@ function ShowOptions(
 ): integer;
 var
   SelectedOption: integer;
-  SelectedOptionOriginalPic: arr_byte_800;
+  SelectedOptionOriginalPic: array[1..800] of byte;
   PressedKey: char;
   NeedsRestoreOnEnter: boolean;
 begin
@@ -425,55 +425,53 @@ end;
 
 function InputYesNo: boolean;
 var
-  Func20_var_9: boolean;
-  Func20_var_8: char;
-  Func20_var_6: integer;
-  Func20_var_4: integer;
+  Ret: boolean;
+  PressedKey: char;
+  I: integer;
+  InputLength: integer;
   X: integer;
   Y: integer;
 begin
   X := WhereX;
   Y := WhereY;
-  Func20_var_4 := 0;
+  InputLength := 0;
   repeat
   begin
     GotoXY(X, Y);
-    Func20_var_8 := GetPressedKey;
-    case Func20_var_8 of
-      #139, #102, #70:   begin
-          Func20_var_9 := True;
-          Func20_var_4 := (Func20_var_4 + 1);
-        end;
-      #140, #107, #75:   begin
-          Func20_var_9 := False;
-          Func20_var_4 := (Func20_var_4 + 1);
-        end;
-      #27, ' ':   begin
-          Func20_var_9 := (not Func20_var_9);
-        end;
-      else   begin
-          if (Func20_var_8 <> #13) then
+    PressedKey := GetPressedKey;
+    case PressedKey of
+      'כ', 'f', 'F': begin
+        Ret := True;
+        InputLength := InputLength + 1;
+      end;
+      'ל', 'k', 'K': begin
+        Ret := False;
+        InputLength := InputLength + 1;
+      end;
+      #27, ' ': Ret := not Ret;
+      else begin
+        if PressedKey <> #13 then
+        begin
+          for I := 1 to 2 do
           begin
-            for Func20_var_6 := 1 to 2 do
-            begin
-              Sound(700);
-              Delay(50);
-              NoSound;
-              Delay(80);
-            end;
+            Sound(700);
+            Delay(50);
+            NoSound;
+            Delay(80);
           end;
-        end
+        end;
+      end
     end;
-    if (Func20_var_4 > 0) then
+    if InputLength > 0 then
     begin
-      if Func20_var_9 then
+      if Ret then
         Write('ןכ')
       else
         Write('אל');
     end;
   end
-  until ((Func20_var_8 = #13) and (Func20_var_4 > 0));
-  InputYesNo := Func20_var_9;
+  until (PressedKey = #13) and (InputLength > 0);
+  InputYesNo := Ret;
 end;
 
 procedure PlayDay;
@@ -489,7 +487,7 @@ var
   WheatPriceEgypt: integer;
   MainMenuOptionCount: integer;
   ChosenMainMenuOption: integer;
-  Func21_var_88: boolean;
+  ShouldSkipDay: boolean;
   MainMenuOptionRects: TRectArray;
   CountryNameX1: integer;
   CountryNameX2: integer;
@@ -775,33 +773,36 @@ var
       OutStormCountryName := ' ';
   end;
 
-  procedure Func31;
+  procedure DoDayStartEvent;
   var
-    Func31_var_183: integer;
-    Func31_var_181: integer;
-    Func31_var_179: integer;
-    Func31_var_177: integer;
-    Func31_var_175: integer;
-    Func31_var_173: integer;
-    Func31_var_171: integer;
-    Func31_var_169: integer;
-    Func31_var_167: integer;
-    Func31_var_165: integer;
-    Func31_var_163: integer;
-    Func31_var_155: str_7;
-    Func31_var_147: str_7;
-    Func31_var_139: str_7;
-    Func31_var_103: TMessageLine;
-    Func31_var_23: TRectArray;
-    Func31_var_22: boolean;
-    Func31_var_16: real;
-    Func31_var_10: real;
-    Func31_var_4: array[1..3] of integer;
-    Func31_var_2: integer;
-    Func31_var_0: integer;
+    RandomEvent: integer;
+    SpecialPriceCountry: integer;
+    SpecialPrice: integer;
+    MerchantPrice: integer;
+    ExpandPrice: integer;
+    ExpandAmount: integer;
+    MerchantSupply: integer;
+    Ware: integer;
+    FishingBoatDamage: integer;
+    ChosenCrewOption: integer;
+    ExpandWareCost: integer;
+    LostAmountString: str_7;
+    MerchantPriceString: str_7;
+    StringBuffer: str_7;
+    ExpandWareCostString: TMessageLine;
+    CrewOptionRects: TRectArray;
+    DidEventHappen: boolean;
+    MerchantSupplyBaseValue: real;
+    MostValuableCargoValue: real;
+    ExpandWareCosts: array[1..3] of integer;
+    ExpandMoneyCost: integer;
+    ExpandBankBalanceCost: integer;
+
+    const
+      PriceUp = 1;
+      PriceDown = 2;
 
     procedure UpdateSpecialPrices(
-      { 1 = Up, 2 = Down }
       UpDownFlag: integer;
       Country: integer;
       NewPrice: integer;
@@ -811,7 +812,7 @@ var
       UpDownString: string[6];
       NewPriceString: str_7;
     begin
-      if UpDownFlag = 1 then
+      if UpDownFlag = PriceUp then
         UpDownString := '-ל ץפק'
       else
         UpDownString := '-ל דרי';
@@ -857,429 +858,361 @@ var
   begin
     repeat
     begin
-      Func31_var_22 := True;
+      DidEventHappen := True;
       repeat
-      Func31_var_183 := (Random(30) + 1);
-      until (((((((((((((Func31_var_183 <> LastNightEvent) and (not ((Func31_var_183 in [1..2]) and (LastNightEvent in [1..2]))))
-  and (not ((Func31_var_183 in [3..4]) and (LastNightEvent in [3..4])))) and (not ((Func31_var_183 in [5..6]) and
-  (LastNightEvent in [5..6])))) and (not ((Func31_var_183 in [7..8]) and (LastNightEvent in [7..8])))) and (not ((Func31_var_183
-  in [9..10]) and (LastNightEvent in [9..10])))) and (not ((Func31_var_183 in [11..12]) and (LastNightEvent in [11..12])))) and
-  (not ((Func31_var_183 in [13..18]) and (LastNightEvent in [13..18])))) and (not ((Func31_var_183 in [19..20]) and
-  (LastNightEvent in [19..20])))) and (not ((Func31_var_183 in [21..22]) and (LastNightEvent in [21..22])))) and (not
-  ((Func31_var_183 in [23..26]) and (LastNightEvent in [23..26])))) and (not ((Func31_var_183 in [27..28]) and (LastNightEvent
-  in [27..28])))) and (not ((Func31_var_183 in [29..30]) and (LastNightEvent in [29..30]))));
-      if ((Money > 20000.0) and (Random(6) = 1)) then
-      begin
-        Func31_var_183 := 15;
-      end;
-      if ((Money > 45000.0) and (Random(6) = 1)) then
-      begin
-        Func31_var_183 := 15;
-      end;
-      case Func31_var_183 of
-        1..2:   begin
-            PutPic(CopperUpScreen^, 0, 199);
-            Func31_var_181 := (Random(3) + 1);
-            Func31_var_179 := ((BaseWarePrice[1] + 1100) + (100 * Random(5)));
-            UpdateSpecialPrices(1, Func31_var_181, Func31_var_179, 1);
+        RandomEvent := (Random(30) + 1);
+      until (RandomEvent <> LastNightEvent) and (not ((RandomEvent in [1..2]) and (LastNightEvent in [1..2])))
+          and (not ((RandomEvent in [3..4]) and (LastNightEvent in [3..4])))
+          and (not ((RandomEvent in [5..6]) and (LastNightEvent in [5..6])))
+          and (not ((RandomEvent in [7..8]) and (LastNightEvent in [7..8])))
+          and (not ((RandomEvent in [9..10]) and (LastNightEvent in [9..10])))
+          and (not ((RandomEvent in [11..12]) and (LastNightEvent in [11..12])))
+          and (not ((RandomEvent in [13..18]) and (LastNightEvent in [13..18])))
+          and (not ((RandomEvent in [19..20]) and (LastNightEvent in [19..20])))
+          and (not ((RandomEvent in [21..22]) and (LastNightEvent in [21..22])))
+          and (not ((RandomEvent in [23..26]) and (LastNightEvent in [23..26])))
+          and (not ((RandomEvent in [27..28]) and (LastNightEvent in [27..28])))
+          and (not ((RandomEvent in [29..30]) and (LastNightEvent in [29..30])));
+      if (Money > 20000.0) and (Random(6) = 1) then
+        RandomEvent := 15;
+
+      if (Money > 45000.0) and (Random(6) = 1) then
+        RandomEvent := 15;
+
+      case RandomEvent of
+        1..2: begin
+          PutPic(CopperUpScreen^, 0, 199);
+          SpecialPriceCountry := Random(3) + 1;
+          SpecialPrice := BaseWarePrice[Copper] + 1100 + 100 * Random(5);
+          UpdateSpecialPrices(PriceUp, SpecialPriceCountry, SpecialPrice, Copper);
+        end;
+        3..4: begin
+          PutPic(OlivesUpScreen^, 0, 199);
+          SpecialPriceCountry := Random(3) + 1;
+          SpecialPrice := BaseWarePrice[Olives] + 200 + 50 * Random(4);
+          UpdateSpecialPrices(PriceUp, SpecialPriceCountry, SpecialPrice, Olives);
+        end;
+        5..6: begin
+          PutPic(WheatUpScreen^, 0, 199);
+          SpecialPriceCountry := Random(3) + 1;
+          SpecialPrice := BaseWarePrice[Wheat] + 20 + Random(5) * 5;
+          UpdateSpecialPrices(PriceUp, SpecialPriceCountry, SpecialPrice, Wheat);
+        end;
+        7..8: begin
+          PutPic(CopperDownScreen^, 0, 199);
+          SpecialPriceCountry := Random(3) + 1;
+          SpecialPrice := BaseWarePrice[Copper] - 1100 - 100 * Random(5);
+          UpdateSpecialPrices(PriceDown, SpecialPriceCountry, SpecialPrice, Copper);
+        end;
+        9..10: begin
+          PutPic(OlivesDownScreen^, 0, 199);
+          SpecialPriceCountry := Random(3) + 1;
+          SpecialPrice := BaseWarePrice[Olives] - 150 - Random(3) * 50;
+          UpdateSpecialPrices(PriceDown, SpecialPriceCountry, SpecialPrice, Olives);
+        end;
+        11..12: begin
+          PutPic(WheatDownScreen^, 0, 199);
+          SpecialPriceCountry := Random(3) + 1;
+          SpecialPrice := BaseWarePrice[Wheat] - 15 - Random(3) * 5;
+          UpdateSpecialPrices(PriceDown, SpecialPriceCountry, SpecialPrice, Wheat);
+        end;
+        13..18: begin
+          ExpandMoneyCost := 0;
+          ExpandBankBalanceCost := 0;
+          Ware := 0;
+          for Iter := Copper to Wheat do
+          begin
+            ExpandWareCosts[Iter] := 0;
           end;
-        3..4:   begin
-            PutPic(OlivesUpScreen^, 0, 199);
-            Func31_var_181 := (Random(3) + 1);
-            Func31_var_179 := ((BaseWarePrice[2] + 200) + (50 * Random(4)));
-            UpdateSpecialPrices(1, Func31_var_181, Func31_var_179, 2);
-          end;
-        5..6:   begin
-            PutPic(WheatUpScreen^, 0, 199);
-            Func31_var_181 := (Random(3) + 1);
-            Func31_var_179 := ((BaseWarePrice[3] + 20) + (Random(5) * 5));
-            UpdateSpecialPrices(1, Func31_var_181, Func31_var_179, 3);
-          end;
-        7..8:   begin
-            PutPic(CopperDownScreen^, 0, 199);
-            Func31_var_181 := (Random(3) + 1);
-            Func31_var_179 := ((BaseWarePrice[1] - 1100) - (100 * Random(5)));
-            UpdateSpecialPrices(2, Func31_var_181, Func31_var_179, 1);
-          end;
-        9..10:   begin
-            PutPic(OlivesDownScreen^, 0, 199);
-            Func31_var_181 := (Random(3) + 1);
-            Func31_var_179 := ((BaseWarePrice[2] - 150) - (Random(3) * 50));
-            UpdateSpecialPrices(2, Func31_var_181, Func31_var_179, 2);
-          end;
-        11..12:   begin
-            PutPic(WheatDownScreen^, 0, 199);
-            Func31_var_181 := (Random(3) + 1);
-            Func31_var_179 := ((BaseWarePrice[3] - 15) - (Random(3) * 5));
-            UpdateSpecialPrices(2, Func31_var_181, Func31_var_179, 3);
-          end;
-        13..18:   begin
-            Func31_var_2 := 0;
-            Func31_var_0 := 0;
-            Func31_var_169 := 0;
-            for global_var_21 := Copper to Wheat do
+          ExpandAmount := 50 * (Random(2) + 1);
+          ExpandPrice := 10 * (Random(ExpandAmount) + 2 * ExpandAmount);
+          if ExpandPrice <= Money + BankBalance + GetTotalCargoValue then
+          begin
+            PutPic(ExpandScreen^, 0, 199);
+            GotoXY(29, 14);
+            Write(ExpandAmount:3);
+            if Money > ExpandPrice then
+              ExpandMoneyCost := ExpandPrice
+            else if BankBalance > ExpandPrice then
+              ExpandBankBalanceCost := ExpandPrice
+            else if Money + BankBalance > ExpandPrice then
             begin
-              Func31_var_4[global_var_21] := 0;
-            end;
-            Func31_var_173 := 50 * (Random(2) + 1);
-            Func31_var_175 := 10 * (Random(Func31_var_173) + 2 * Func31_var_173);
-            if Func31_var_175 <= Money + BankBalance + GetTotalCargoValue then
+              ExpandMoneyCost := Trunc(Money);
+              ExpandBankBalanceCost := ExpandPrice - ExpandMoneyCost;
+              Str(ExpandBankBalanceCost, StringBuffer);
+            end
+            else
             begin
-              PutPic(ExpandScreen^, 0, 199);
-              GotoXY(29, 14);
-              Write(Func31_var_173:3);
-              if (Money > Func31_var_175) then
+              GetMostValuableCargo(1, Ware, MostValuableCargoValue);
+              if MostValuableCargoValue >= ExpandPrice then
               begin
-                Func31_var_2 := Func31_var_175;
+                ExpandWareCost := Round((1.0 * ExpandPrice / BaseWarePrice[Ware]));
+                ExpandWareCosts[Ware] := ExpandWareCost;
+                Str(ExpandWareCost, StringBuffer);
               end
               else
               begin
-                if (BankBalance > Func31_var_175) then
+                Str(Cargo[Ware], StringBuffer);
+                ExpandWareCosts[Ware] := Cargo[Ware];
+                if (Money > BankBalance) or (Money >= ExpandMoneyCost) then
                 begin
-                  Func31_var_0 := Func31_var_175;
+                  ExpandMoneyCost := ExpandPrice - Trunc(MostValuableCargoValue);
+                  if ExpandMoneyCost > Money then
+                    ExpandMoneyCost := Trunc(Money);
+                  Str(ExpandMoneyCost, StringBuffer);
                 end
                 else
                 begin
-                  if ((Money + BankBalance) > Func31_var_175) then
-                  begin
-                    Func31_var_2 := Trunc(Money);
-                    Func31_var_0 := (Func31_var_175 - Func31_var_2);
-                    Str(Func31_var_0, Func31_var_139);
-                  end
-                  else
-                  begin
-                    GetMostValuableCargo(1, Func31_var_169, Func31_var_10);
-                    if (Func31_var_10 >= Func31_var_175) then
-                    begin
-                      Func31_var_163 := Round(
-                        ((1.0 * Func31_var_175) / BaseWarePrice[Func31_var_169])
-                      );
-                      Func31_var_4[Func31_var_169] := Func31_var_163;
-                      Str(Func31_var_163, Func31_var_139);
-                    end
-                    else
-                    begin
-                      Str(Cargo[Func31_var_169], Func31_var_139);
-                      Func31_var_4[Func31_var_169] := Cargo[Func31_var_169];
-                      if ((Money > BankBalance) or (Money >= Func31_var_2)) then
-                      begin
-                        Func31_var_2 := (Func31_var_175 - Trunc(Func31_var_10));
-                        if (Func31_var_2 > Money) then
-                        begin
-                          Func31_var_2 := Trunc(Money);
-                        end;
-                        Str(Func31_var_2, Func31_var_139);
-                      end
-                      else
-                      begin
-                        Func31_var_0 := (Func31_var_175 - Trunc(Func31_var_10));
-                        if (Func31_var_0 > BankBalance) then
-                        begin
-                          Func31_var_0 := Trunc(BankBalance);
-                        end;
-                        Str(Func31_var_0, Func31_var_139);
-                      end;
-                    end;
-                  end;
+                  ExpandBankBalanceCost := ExpandPrice - Trunc(MostValuableCargoValue);
+                  if ExpandBankBalanceCost > BankBalance then
+                    ExpandBankBalanceCost := Trunc(BankBalance);
+                  Str(ExpandBankBalanceCost, StringBuffer);
                 end;
               end;
-              GotoXY(18, 15);
-              if ((Func31_var_2 + Func31_var_0) > 0) then
+            end;
+            GotoXY(18, 15);
+            if ExpandMoneyCost + ExpandBankBalanceCost > 0 then
+              Write('ח"ש ', ExpandMoneyCost + ExpandBankBalanceCost);
+            GotoXY(15, 16);
+            if (Ware > 0) and (ExpandWareCosts[Ware] > 0) then
+            begin
+              Str(ExpandWareCosts[Ware], StringBuffer);
+              ExpandWareCostString := '.' + WareName[Ware] + 'ןוט ' + StringBuffer;
+              if ExpandMoneyCost + ExpandBankBalanceCost > 0 then
+                ExpandWareCostString := ExpandWareCostString + ' ףסונבו';
+              Write(ExpandWareCostString:22);
+            end;
+            GotoXY(18, 18);
+            if InputYesNo then
+            begin
+              ShipCapacity := ShipCapacity + ExpandAmount;
+              Money := Money - ExpandMoneyCost;
+              BankBalance := BankBalance - ExpandBankBalanceCost;
+              for Iter := Copper to Wheat do
               begin
-                Write('ח"ש ', (Func31_var_2 + Func31_var_0));
+                Cargo[Iter] := (Cargo[Iter] - ExpandWareCosts[Iter]);
               end;
-              GotoXY(15, 16);
-              if ((Func31_var_169 > 0) and (Func31_var_4[Func31_var_169] > 0)) then
+              PutPic(MessageSign^, 90, 194);
+              GotoXY(18, 23);
+              Write('.העצוב  הבחרהה');
+              WaitForKey;
+              Str(ExpandBankBalanceCost, StringBuffer);
+              if ExpandBankBalanceCost > 0 then
               begin
-                Str(Func31_var_4[Func31_var_169], Func31_var_139);
-                Func31_var_103 := '.' + WareName[Func31_var_169] + 'ןוט ' + Func31_var_139;
-                if ((Func31_var_2 + Func31_var_0) > 0) then
-                begin
-                  Func31_var_103 := (Func31_var_103 + ' ףסונבו');
-                end;
-                Write(Func31_var_103:22);
+                if ExpandMoneyCost > 0 then
+                  ShowMessage(87, 'ךנובשחמ וחקלנ לקש ' + StringBuffer, '.קנבב', '')
+                else
+                  ShowMessage(87, '.קנבב ךנובשחמ חקלנ ףסכה', '', '');
               end;
-              GotoXY(18, 18);
-              if InputYesNo then
-              begin
-                ShipCapacity := (ShipCapacity + Func31_var_173);
-                Money := (Money - Func31_var_2);
-                BankBalance := (BankBalance - Func31_var_0);
-                for global_var_21 := Copper to Wheat do
-                begin
-                  Cargo[global_var_21] := (Cargo[global_var_21] - Func31_var_4[global_var_21]);
-                end;
-                PutPic(MessageSign^, 90, 194);
-                GotoXY(18, 23);
-                Write('.העצוב  הבחרהה');
-                WaitForKey;
-                Str(Func31_var_0, Func31_var_139);
-                if Func31_var_0 > 0 then
-                begin
-                  if Func31_var_2 > 0 then
-                    ShowMessage(87, 'ךנובשחמ וחקלנ לקש ' + Func31_var_139, '.קנבב', '')
-                  else
-                    ShowMessage(87, '.קנבב ךנובשחמ חקלנ ףסכה', '', '');
-                end;
-              end;
+            end;
+          end
+          else
+            DidEventHappen := False;
+        end;
+        19..20: begin
+          if Day < 6 then
+          begin
+            PutPic(CrewScreen^, 0, 199);
+            GotoXY(7, 3);
+            Write(Cargo[Copper]:5);
+            GotoXY(7, 4);
+            Write(Cargo[Olives]:5);
+            GotoXY(7, 5);
+            Write(Cargo[Wheat]:5);
+            GotoXY(7, 6);
+            Write(Money:5:0);
+            CrewOptionRects[1].X1 := 54;
+            CrewOptionRects[1].Y1 := 177;
+            CrewOptionRects[1].X2 := 198;
+            CrewOptionRects[1].Y2 := 183;
+            CrewOptionRects[2].X1 := 78;
+            CrewOptionRects[2].Y1 := 186;
+            CrewOptionRects[2].X2 := 198;
+            CrewOptionRects[2].Y2 := 192;
+            repeat
+              ChosenCrewOption := ShowOptions(CrewOptionRects, 2);
+            until ChosenCrewOption > 0;
+            if ChosenCrewOption = 1 then
+            begin
+              ShouldSkipDay := True;
+              ShowMessage(87, '...תרחמל', '.שדח תווצ םע דבוע התא', '');
             end
             else
             begin
-              Func31_var_22 := False;
-            end;
-          end;
-        19..20:   begin
-            if (Day < 6) then
-            begin
-              PutPic(CrewScreen^, 0, 199);
-              GotoXY(7, 3);
-              Write(Cargo[Copper]:5);
-              GotoXY(7, 4);
-              Write(Cargo[Olives]:5);
-              GotoXY(7, 5);
-              Write(Cargo[Wheat]:5);
-              GotoXY(7, 6);
-              Write(Money:5:0);
-              Func31_var_23[1].X1 := 54;
-              Func31_var_23[1].Y1 := 177;
-              Func31_var_23[1].X2 := 198;
-              Func31_var_23[1].Y2 := 183;
-              Func31_var_23[2].X1 := 78;
-              Func31_var_23[2].Y1 := 186;
-              Func31_var_23[2].X2 := 198;
-              Func31_var_23[2].Y2 := 192;
-              repeat
-                Func31_var_165 := ShowOptions(Func31_var_23, 2);
-              until Func31_var_165 > 0;
-              if Func31_var_165 = 1 then
-              begin
-                Func21_var_88 := True;
-                ShowMessage(87, '...תרחמל', '.שדח תווצ םע דבוע התא', '');
-              end
+              if OfferFlow(Cargo[Copper], Cargo[Olives], Cargo[Wheat], Money) then
+                ShowMessage(87, '.ךתעצה תא לביק תווצה', '', '')
               else
               begin
-                if OfferFlow(Cargo[Copper], Cargo[Olives], Cargo[Wheat], Money) then
-                  ShowMessage(87, '.ךתעצה תא לביק תווצה', '', '')
-                else
-                begin
-                  ShowMessage(87, '.העצהל ברס תווצה', 'אצומ התאו םיימוי ורבע', 'שדח תווצ');
-                  Day := Day + 1;
-                  Func21_var_88 := True;
-                end;
+                ShowMessage(87, '.העצהל ברס תווצה', 'אצומ התאו םיימוי ורבע', 'שדח תווצ');
+                Day := Day + 1;
+                ShouldSkipDay := True;
               end;
-            end
-            else
-            begin
-              Func31_var_22 := False;
             end;
-          end;
-        21..22:   begin
-            ApplyBadOutcome(LoseMoney, Func31_var_169, Func31_var_155);
-            GotoXY(14, 24);
-            if (Func31_var_155 > '0') then
+          end
+          else
+            DidEventHappen := False;
+        end;
+        21..22: begin
+          ApplyBadOutcome(LoseMoney, Ware, LostAmountString);
+          GotoXY(14, 24);
+          if LostAmountString > '0' then
+          begin
+            PutPic(ThievesScreen^, 0, 199);
+            Write('.לקש ' + LostAmountString:15);
+          end
+          else
+          begin
+            ApplyBadOutcome(LoseCargo, Ware, LostAmountString);
+            if LostAmountString > '0' then
             begin
               PutPic(ThievesScreen^, 0, 199);
-              Write(('.לקש ' + Func31_var_155):15);
+              Write('.' + WareName[Ware] + ' ןוט ' + LostAmountString:15);
             end
             else
+              DidEventHappen := False;
+          end;
+          if DidEventHappen then
+            WaitForKey;
+        end;
+        23..26: begin
+          if Cargo[Copper] > 1 then
+          begin
+            PutPic(SocherScreen^, 0, 199);
+            MerchantPrice := CopperPriceIsrael + 50 * Random(30) - 600;
+            Str(MerchantPrice, MerchantPriceString);
+            Str(Cargo[Copper], StringBuffer);
+            GotoXY(3, 2);
+            Writeln('.הרוחסל תופיחדב קוקז רחוס':34);
+            GotoXY(3, WhereY);
+            Writeln('ח"ש ' + MerchantPriceString + ' ךל עיצהל ןכומ אוה':34);
+            GotoXY(3, WhereY);
+            Writeln('ול רוכמת םא ,' + WareName[Copper] + 'לש ןוט לכל':34);
+            GotoXY(3, WhereY);
+            Writeln('.ךלש ןוטה ' + StringBuffer + ' תא':34);
+            Writeln;
+            GotoXY(3, WhereY);
+            Write('(ל/כ) ? ול רוכמל ןינועמ התא םאה':34);
+            GotoXY(3, WhereY);
+            if InputYesNo then
             begin
-              ApplyBadOutcome(LoseCargo, Func31_var_169, Func31_var_155);
-              if (Func31_var_155 > '0') then
-              begin
-                PutPic(ThievesScreen^, 0, 199);
-                Write('.' + WareName[Func31_var_169] + ' ןוט ' + Func31_var_155:15);
-              end
-              else
-              begin
-                Func31_var_22 := False;
-              end;
-            end;
-            if Func31_var_22 then
-            begin
+              Money := Money + 1.0 * MerchantPrice * Cargo[Copper];
+              Cargo[Copper] := 0;
+              GotoXY(3, WhereY + 2);
+              Write('!!! רכמנ':25);
               WaitForKey;
             end;
-          end;
-        23..26:   begin
-            if (Cargo[Copper] > 1) then
+          end
+          else if Cargo[Olives] > 1 then
+          begin
+            PutPic(SocherScreen^, 0, 199);
+            MerchantPrice := OlivesPriceIsrael + 10 * Random(70) - 300;
+            Str(MerchantPrice, MerchantPriceString);
+            Str(Cargo[Olives], StringBuffer);
+            GotoXY(3, 2);
+            Writeln('.הרוחסל תופיחדב קוקז רחוס':34);
+            GotoXY(3, WhereY);
+            Writeln('ח"ש ' + MerchantPriceString + ' ךל עיצהל ןכומ אוה':34);
+            GotoXY(3, WhereY);
+            Writeln('ול רוכמת םא ,' + WareName[Olives] + 'לש ןוט לכל':34);
+            GotoXY(3, WhereY);
+            Writeln('.ךלש ןוטה ' + StringBuffer + ' תא':34);
+            Writeln;
+            GotoXY(3, WhereY);
+            Write('(ל/כ) ? ול רוכמל ןינועמ התא םאה':34);
+            GotoXY(3, WhereY);
+            if InputYesNo then
             begin
-              PutPic(SocherScreen^, 0, 199);
-              Func31_var_177 := ((CopperPriceIsrael + (50 * Random(30))) - 600);
-              Str(Func31_var_177, Func31_var_147);
-              Str(Cargo[Copper], Func31_var_139);
-              GotoXY(3, 2);
-              Writeln(
-                '.הרוחסל תופיחדב קוקז רחוס':34
-              );
-              GotoXY(3, WhereY);
-              Writeln(
-                'ח"ש ' + Func31_var_147 + ' ךל עיצהל ןכומ אוה':34
-              );
-              GotoXY(3, WhereY);
-              Writeln(
-                'ול רוכמת םא ,' + WareName[1] + 'לש ןוט לכל':34
-              );
-              GotoXY(3, WhereY);
-              Writeln('.ךלש ןוטה ' + Func31_var_139 + ' תא':34);
-              Writeln;
-              GotoXY(3, WhereY);
-              Write(
-                '(ל/כ) ? ול רוכמל ןינועמ התא םאה':34
-              );
-              GotoXY(3, WhereY);
-              if InputYesNo then
-              begin
-                Money := (Money + ((1.0 * Func31_var_177) * Cargo[Copper]));
-                Cargo[Copper] := 0;
-                GotoXY(3, (WhereY + 2));
-                Write('!!! רכמנ':25);
-                WaitForKey;
-              end;
-            end
-            else
-            begin
-              if (Cargo[Olives] > 1) then
-              begin
-                PutPic(SocherScreen^, 0, 199);
-                Func31_var_177 := ((OlivesPriceIsrael + (10 * Random(70))) - 300);
-                Str(Func31_var_177, Func31_var_147);
-                Str(Cargo[Olives], Func31_var_139);
-                GotoXY(3, 2);
-                Writeln(
-                  '.הרוחסל תופיחדב קוקז רחוס':34
-                );
-                GotoXY(3, WhereY);
-                Writeln(
-                  'ח"ש ' + Func31_var_147 + ' ךל עיצהל ןכומ אוה':34
-                );
-                GotoXY(3, WhereY);
-                Writeln(
-                  'ול רוכמת םא ,' + WareName[2] + 'לש ןוט לכל':34
-                );
-                GotoXY(3, WhereY);
-                Writeln('.ךלש ןוטה ' + Func31_var_139 + ' תא':34);
-                Writeln;
-                GotoXY(3, WhereY);
-                Write(
-                  '(ל/כ) ? ול רוכמל ןינועמ התא םאה':34
-                );
-                GotoXY(3, WhereY);
-                if InputYesNo then
-                begin
-                  Money := (Money + ((1.0 * Func31_var_177) * Cargo[Olives]));
-                  Cargo[Olives] := 0;
-                  GotoXY(3, (WhereY + 2));
-                  Write('!!! רכמנ':25);
-                  WaitForKey;
-                end;
-              end
-              else
-              begin
-                if (Cargo[Wheat] > 1) then
-                begin
-                  PutPic(SocherScreen^, 0, 199);
-                  Func31_var_177 := ((WheatPriceIsrael + (5 * Random(14))) - 40);
-                  Str(Func31_var_177, Func31_var_147);
-                  Str(Cargo[Wheat], Func31_var_139);
-                  GotoXY(3, 2);
-                  Writeln(
-                    '.הרוחסל תופיחדב קוקז רחוס':34
-                  );
-                  GotoXY(3, WhereY);
-                  Writeln(
-                    'ח"ש ' + Func31_var_147 + ' ךל עיצהל ןכומ אוה':34
-                  );
-                  GotoXY(3, WhereY);
-                  Writeln(
-                    'ול רוכמת םא ,' + WareName[3] + 'לש ןוט לכל':34
-                  );
-                  GotoXY(3, WhereY);
-                  Writeln('.ךלש ןוטה ' + Func31_var_139 + ' תא':34);
-                  Writeln;
-                  GotoXY(3, WhereY);
-                  Write(
-                    '(ל/כ) ? ול רוכמל ןינועמ התא םאה':34
-                  );
-                  GotoXY(3, WhereY);
-                  if InputYesNo then
-                  begin
-                    Money := (Money + ((1.0 * Func31_var_177) * Cargo[Wheat]));
-                    Cargo[Wheat] := 0;
-                    GotoXY(3, (WhereY + 2));
-                    Write('!!! רכמנ':25);
-                    WaitForKey;
-                  end;
-                end
-                else
-                begin
-                  Func31_var_22 := False;
-                end;
-              end;
-            end;
-          end;
-        27..28:   begin
-            Func31_var_169 := (Random(3) + 1);
-            Func31_var_177 := (5 * ((BaseWarePrice[Func31_var_169] div 10) + (Random(BaseWarePrice[Func31_var_169]) div 5)));
-            Func31_var_16 := (Random((Trunc((0.75 * Money)) + 1)) + (0.25 * Money));
-            Func31_var_171 := (5 * Trunc(
-              (((Func31_var_16 / BaseWarePrice[Func31_var_169]) / 5) + 1)
-            ));
-            if ((((1.0 * Func31_var_177) * Func31_var_171) <= Money) and (Money > 0)) then
-            begin
-              PutPic(SocherScreen^, 0, 199);
-              Str(Func31_var_177, Func31_var_147);
-              Str(Func31_var_171, Func31_var_139);
-              if (Func31_var_139 = '1') then
-              begin
-                Func31_var_139 := '';
-              end;
-              GotoXY(3, 2);
-              Writeln(
-                WareName[Func31_var_169] + ' ןוט ' + Func31_var_139 + ' ךל רוכמל ןינועמ רחוס':34
-              );
-              Writeln;
-              GotoXY(3, WhereY);
-              Writeln(
-                'ןוטל לקש ' + Func31_var_147 + ' ריחמב':34
-              );
-              Writeln;
-              GotoXY(3, WhereY);
-              Write(
-                '(ל/כ) ? תונקל ןינועמ התא םאה':34
-              );
-              GotoXY(3, WhereY);
-              if InputYesNo then
-              begin
-                Money := Money - Func31_var_177 * Func31_var_171;
-                case Func31_var_169 of
-                  1: Cargo[Copper] := Cargo[Copper] + Func31_var_171;
-                  2: Cargo[Olives] := Cargo[Olives] + Func31_var_171;
-                  3: Cargo[Wheat] := Cargo[Wheat] + Func31_var_171;
-                end;
-                Writeln;
-                Writeln('            !!! תינק':25);
-                WaitForKey;
-              end;
-            end
-            else
-              Func31_var_22 := False;
-          end;
-        29..30:   begin
-            Func31_var_167 := 10 * Trunc((GetTotalCargoValue + Money) / (Random(80) + 150));
-            if Func31_var_167 > 0 then
-            begin
-              ShowScrFile(BasePath + 'fishing.scr');
-              ShipDamage := ShipDamage + Func31_var_167;
-              GotoXY(20, 3);
-              Write(Func31_var_167:4);
+              Money := Money + 1.0 * MerchantPrice * Cargo[Olives];
+              Cargo[Olives] := 0;
+              GotoXY(3, WhereY + 2);
+              Write('!!! רכמנ':25);
               WaitForKey;
-            end
-            else
-              Func31_var_22 := False;
-          end;
+            end;
+          end
+          else if Cargo[Wheat] > 1 then
+          begin
+            PutPic(SocherScreen^, 0, 199);
+            MerchantPrice := WheatPriceIsrael + 5 * Random(14) - 40;
+            Str(MerchantPrice, MerchantPriceString);
+            Str(Cargo[Wheat], StringBuffer);
+            GotoXY(3, 2);
+            Writeln('.הרוחסל תופיחדב קוקז רחוס':34);
+            GotoXY(3, WhereY);
+            Writeln('ח"ש ' + MerchantPriceString + ' ךל עיצהל ןכומ אוה':34);
+            GotoXY(3, WhereY);
+            Writeln('ול רוכמת םא ,' + WareName[Wheat] + 'לש ןוט לכל':34);
+            GotoXY(3, WhereY);
+            Writeln('.ךלש ןוטה ' + StringBuffer + ' תא':34);
+            Writeln;
+            GotoXY(3, WhereY);
+            Write('(ל/כ) ? ול רוכמל ןינועמ התא םאה':34);
+            GotoXY(3, WhereY);
+            if InputYesNo then
+            begin
+              Money := Money + 1.0 * MerchantPrice * Cargo[Wheat];
+              Cargo[Wheat] := 0;
+              GotoXY(3, WhereY + 2);
+              Write('!!! רכמנ':25);
+              WaitForKey;
+            end;
+          end
+          else
+            DidEventHappen := False;
+        end;
+        27..28: begin
+          Ware := Random(3) + 1;
+          MerchantPrice := 5 * (BaseWarePrice[Ware] div 10 + Random(BaseWarePrice[Ware]) div 5);
+          MerchantSupplyBaseValue := Random(Trunc(0.75 * Money) + 1) + 0.25 * Money;
+          MerchantSupply := 5 * Trunc(MerchantSupplyBaseValue / BaseWarePrice[Ware] / 5 + 1);
+          if (1.0 * MerchantPrice * MerchantSupply <= Money) and (Money > 0) then
+          begin
+            PutPic(SocherScreen^, 0, 199);
+            Str(MerchantPrice, MerchantPriceString);
+            Str(MerchantSupply, StringBuffer);
+            if StringBuffer = '1' then
+              StringBuffer := '';
+            GotoXY(3, 2);
+            Writeln(WareName[Ware] + ' ןוט ' + StringBuffer + ' ךל רוכמל ןינועמ רחוס':34);
+            Writeln;
+            GotoXY(3, WhereY);
+            Writeln('ןוטל לקש ' + MerchantPriceString + ' ריחמב':34);
+            Writeln;
+            GotoXY(3, WhereY);
+            Write('(ל/כ) ? תונקל ןינועמ התא םאה':34);
+            GotoXY(3, WhereY);
+            if InputYesNo then
+            begin
+              Money := Money - MerchantPrice * MerchantSupply;
+              case Ware of
+                1: Cargo[Copper] := Cargo[Copper] + MerchantSupply;
+                2: Cargo[Olives] := Cargo[Olives] + MerchantSupply;
+                3: Cargo[Wheat] := Cargo[Wheat] + MerchantSupply;
+              end;
+              Writeln;
+              Writeln('            !!! תינק':25);
+              WaitForKey;
+            end;
+          end
+          else
+            DidEventHappen := False;
+        end;
+        29..30: begin
+          FishingBoatDamage := 10 * Trunc((GetTotalCargoValue + Money) / (Random(80) + 150));
+          if FishingBoatDamage > 0 then
+          begin
+            ShowScrFile(BasePath + 'fishing.scr');
+            ShipDamage := ShipDamage + FishingBoatDamage;
+            GotoXY(20, 3);
+            Write(FishingBoatDamage:4);
+            WaitForKey;
+          end
+          else
+            DidEventHappen := False;
+        end;
       end;
     end
-    until Func31_var_22;
-    LastNightEvent := Func31_var_183;
+    until DidEventHappen;
+    LastNightEvent := RandomEvent;
   end;
 
   procedure ShowNewDayScreen;
@@ -1629,8 +1562,8 @@ var
     var
       X: integer;
       Y: integer;
-      ShipPic: arr_byte_129;
-      Unused2: arr_byte_129;
+      ShipPic: array[1..129] of byte;
+      Unused2: array[1..129] of byte;
       I: integer;
       TotalMinutes: integer;
       Minute: integer;
@@ -2081,7 +2014,7 @@ var
       CurrentWaypoint: byte;
       DestinationIndex: byte;
       NextWaypoint: byte;
-      Func49_var_0: byte;
+      HalfTravelTime: byte;
 
       { Risk > 0 means 1/3 higher guard ship cost }
       procedure ShowGuardShipWindow(var CurrentRisk: integer);
@@ -2145,8 +2078,8 @@ var
         TravelDestination := TravelStart
       else
       begin
-        Func49_var_0 := (TravelEndTime - TimeOfDay) div 2;
-        TravelEndTime := TravelEndTime - Func49_var_0;
+        HalfTravelTime := (TravelEndTime - TimeOfDay) div 2;
+        TravelEndTime := TravelEndTime - HalfTravelTime;
         CurrentWaypoint := CountryNameToIndex(TravelStart);
         DestinationIndex := CountryNameToIndex(TravelDestination);
         NextWaypoint := MapWaypoints[CurrentWaypoint, DestinationIndex];
@@ -2157,15 +2090,15 @@ var
           MapCoordinates[NextWaypoint].Y,
           9
         );
-        TravelEndTime := TimeOfDay + Func49_var_0;
+        TravelEndTime := TimeOfDay + HalfTravelTime;
         CurrentWaypoint := NextWaypoint;
         DoTravelEvent(ShipDamage, GetTotalCargoWeight, TravelDuration, Risk);
         DestinationIndex := CountryNameToIndex(TravelDestination);
         NextWaypoint := MapWaypoints[CurrentWaypoint, DestinationIndex];
         if NextWaypoint > 0 then
         begin
-          Func49_var_0 := Func49_var_0 div 2;
-          TravelEndTime := TravelEndTime - Ord(Func49_var_0);
+          HalfTravelTime := HalfTravelTime div 2;
+          TravelEndTime := TravelEndTime - HalfTravelTime;
         end;
         while NextWaypoint > 0 do
         begin
@@ -2176,7 +2109,7 @@ var
             MapCoordinates[NextWaypoint].Y,
             9
           );
-          TravelEndTime := TimeOfDay + Func49_var_0;
+          TravelEndTime := TimeOfDay + HalfTravelTime;
           CurrentWaypoint := NextWaypoint;
           NextWaypoint := MapWaypoints[CurrentWaypoint, DestinationIndex];
         end;
@@ -2210,13 +2143,13 @@ var
     FullTravelOptionRects[Egypt].Y1 := 134;
     FullTravelOptionRects[Egypt].X2 := 111;
     FullTravelOptionRects[Egypt].Y2 := 141;
-    global_var_21 := Turkey;
+    Iter := Turkey;
     for global_var_23 := Turkey to Egypt do
     begin
       if global_var_23 <> CountryNameToIndex(TravelStart) then
       begin
-        TravelOptionRects[global_var_21] := FullTravelOptionRects[global_var_23];
-        global_var_21 := global_var_21 + 1;
+        TravelOptionRects[Iter] := FullTravelOptionRects[global_var_23];
+        Iter := Iter + 1;
       end;
     end;
     case CountryNameToIndex(CurrentCountryName) of
@@ -2335,7 +2268,7 @@ const
 begin
   GotoXY(1, 2);
   TimeOfDay := 8;
-  Func21_var_88 := False;
+  ShouldSkipDay := False;
   GenerateNewPrices;
   ShowNewDayScreen;
   if Day = 7 then
@@ -2347,8 +2280,8 @@ begin
   ShowStormScreen;
   GotoXY(1, 10);
   if Day > 1 then
-    Func31;
-  if not ((Day > 7) or Func21_var_88) then
+    DoDayStartEvent;
+  if not ((Day > 7) or ShouldSkipDay) then
   begin
     PutPic(MainScreen^, 0, 199);
     GetPic(global_var_2060^, 0, 0, 240, 142);
@@ -2450,7 +2383,7 @@ var
   I: byte;
   J: byte;
   Line6File: file;
-  CurrentDir: str_15;
+  CurrentDir: string[15];
 begin
   GraphColorMode;
   TextColor(3);
@@ -2601,11 +2534,9 @@ var
   Func57_var_21: boolean;
   Func57_var_0: str_20;
 const
-  Func57_const_50650: str_27 = 'tcdsvuzjyhlfkonibxg;p.mera,';
-const
-  Func57_const_50678: str_27 = 'TCDSVUZJYHLFKONIBXG:P>MERA<';
-const
-  Func57_const_50706: str_38 = 'אבגדהוזחטיךכלםמןנסעףפץצקרשת1234567890 ';
+  Func57_const_50650: string[27] = 'tcdsvuzjyhlfkonibxg;p.mera,';
+  Func57_const_50678: string[27] = 'TCDSVUZJYHLFKONIBXG:P>MERA<';
+  Func57_const_50706: string[38] = 'אבגדהוזחטיךכלםמןנסעףפץצקרשת1234567890 ';
 begin
   Func57_var_21 := False;
   Func57_var_0 := '';

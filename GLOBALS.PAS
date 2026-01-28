@@ -16,14 +16,12 @@ type
   PWinBuffer = ^TWinBuffer;
   TScrBuffer = array[1..16128] of byte;
   PScrBuffer = ^TScrBuffer;
-  arr_byte_384 = array[1..384] of byte;
-  ptr_arr_byte_384 = ^arr_byte_384;
+  TRepairOptionBuffer = array[1..384] of byte;
   TSgnBuffer = array[1..2176] of byte;
   PSgnBuffer = ^TSgnBuffer;
   TMessageLine = string[35];
-  str_30 = string[30];
-  str_15 = string[15];
-  arr_byte_800 = array[1..800] of byte;
+  TPath = string[30];
+  TMoneyString = string[15];
   TRect = record
     X1: integer;
     Y1: integer;
@@ -32,18 +30,15 @@ type
   end;
   TRectArray = array[1..10] of TRect;
   str_7 = string[7];
-  arr_byte_129 = array[1..129] of byte;
   record_13866380471399314824 = record
     field_0: str_20;
     field_21: real;
   end;
   arr_record_13866380471399314824_11 = array[1..11] of record_13866380471399314824;
   file_record_13866380471399314824 = file of record_13866380471399314824;
-  str_27 = string[27];
-  str_38 = string[38];
 var
   BasePath: str_20;
-  global_var_21: integer;
+  Iter: integer;
   global_var_23: integer;
   global_unused_25: array[1..8] of byte;
   CurrentCountryName: TCountryName;
@@ -120,7 +115,7 @@ var
   global_unused_2212: array[1..4] of byte;
   MainScreen: PScrBuffer;
   HelpScreen: PScrBuffer;
-  RepairOptionPic: ptr_arr_byte_384;
+  RepairOptionPic: ^TRepairOptionBuffer;
   BuySign: PSgnBuffer;
   SellSign: PSgnBuffer;
   WithdrawSign: PSgnBuffer;
