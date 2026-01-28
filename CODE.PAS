@@ -548,9 +548,9 @@ var
       Func23 := False;
   end;
 
-  function CannotAfford(Amount: real): boolean;
+  function CannotAfford(LostAmount: real): boolean;
   begin
-    if Amount > Money then
+    if LostAmount > Money then
     begin
       ShowMessage(87, '', '!ףסכ קיפסמ ךתושרב ןיא', #7);
       CannotAfford := True;
@@ -669,103 +669,87 @@ var
       Func25 := False;
   end;
 
-  procedure Func28(
-    Func28_arg_8: byte;
-    var Func28_arg_4: integer;
-    var Func28_arg_0: str_7
+  { Outcome types for ApplyBadOutcome }
+  const
+    LoseCargo = 'מ';
+    SinkingShip = 'ש';
+    AddDamage = 'נ';
+    LoseMoney = 'כ';
+
+  procedure ApplyBadOutcome(
+    OutcomeType: char;
+    var OutWare: integer;
+    var OutAmountString: str_7
   );
   var
-    Func28_var_8: boolean;
-    Func28_var_6: integer;
-    Func28_var_4: integer;
-    Func28_var_2: integer;
-    Func28_var_0: integer;
+    IsOutWareSet: boolean;
+    Ware: integer;
+    ExtraLostWare: integer;
+    ExtraLostAmount: integer;
+    LostAmount: integer;
   begin
-    Func28_var_0 := 0;
-    Func28_var_8 := False;
-    if (Func28_arg_8 = 142) then
+    LostAmount := 0;
+    IsOutWareSet := False;
+    if OutcomeType = LoseCargo then
     begin
-      for Func28_var_6 := 1 to 3 do
+      for Ware := Copper to Wheat do
       begin
-        if ((not Func28_var_8) and (Cargo[Func28_var_6] > 2)) then
+        if (not IsOutWareSet) and (Cargo[Ware] > 2) then
         begin
-          Func28_var_0 := Trunc(
-            (((20.0 + Random(21)) / 100) * Cargo[Func28_var_6])
-          );
-          if (Func28_var_0 < 1) then
-          begin
-            Func28_var_0 := 1;
-          end;
-          Cargo[Func28_var_6] := (Cargo[Func28_var_6] - Ord(Func28_var_0));
-          Func28_arg_4 := Func28_var_6;
-          Func28_var_8 := True;
+          LostAmount := Trunc((20.0 + Random(21)) / 100 * Cargo[Ware]);
+          if LostAmount < 1 then
+            LostAmount := 1;
+          Cargo[Ware] := Cargo[Ware] - Trunc(LostAmount);
+          OutWare := Ware;
+          IsOutWareSet := True;
         end;
       end;
     end
-    else
+    else if OutcomeType = SinkingShip then
     begin
-      if (Func28_arg_8 = 153) then
+      if GetTotalCargoWeight <= (3 * ShipCapacity) then
       begin
-        if (GetTotalCargoWeight <= (3 * ShipCapacity)) then
-        begin
-          Func28(142, Func28_arg_4, Func28_arg_0);
-          Val(Func28_arg_0, Func28_var_0, Func28_var_6);
-        end
-        else
-        begin
-          Func28_arg_4 := 1;
-          if (Cargo[Olives] > Cargo[Copper]) then
-          begin
-            Func28_arg_4 := 2;
-          end;
-          if (Cargo[Wheat] > Cargo[Func28_arg_4]) then
-          begin
-            Func28_arg_4 := 3;
-          end;
-          Func28_var_0 := (GetTotalCargoWeight - (3 * ShipCapacity));
-          if (Func28_var_0 >= Cargo[Func28_arg_4]) then
-          begin
-            Func28_var_0 := Cargo[Func28_arg_4];
-            Cargo[Func28_arg_4] := 0;
-          end
-          else
-          begin
-            Cargo[Func28_arg_4] := (Cargo[Func28_arg_4] - Ord(Func28_var_0));
-            Func28(142, Func28_var_4, Func28_arg_0);
-            Val(Func28_arg_0, Func28_var_2, Func28_var_6);
-            if (Func28_var_4 = Func28_arg_4) then
-            begin
-              Func28_var_0 := (Func28_var_0 + Func28_var_2);
-            end
-            else
-            begin
-              Cargo[Func28_var_4] := (Cargo[Func28_var_4] + Func28_var_2);
-            end;
-          end;
-        end;
+        ApplyBadOutcome(LoseCargo, OutWare, OutAmountString);
+        Val(OutAmountString, LostAmount, Ware);
       end
       else
       begin
-        if (Func28_arg_8 = 139) then
+        OutWare := Copper;
+        if Cargo[Olives] > Cargo[Copper] then
+          OutWare := Olives;
+        if Cargo[Wheat] > Cargo[OutWare] then
+          OutWare := Wheat;
+        LostAmount := GetTotalCargoWeight - 3 * ShipCapacity;
+        if LostAmount >= Cargo[OutWare] then
         begin
-          Func28_var_0 := (10 * Trunc((Money / (Random(40) + 40))));
-          Money := (Money - Func28_var_0);
+          LostAmount := Cargo[OutWare];
+          Cargo[OutWare] := 0;
         end
         else
         begin
-          if (Func28_arg_8 = 144) then
-          begin
-            Func28_var_0 := (10 * Trunc(((Money + GetTotalCargoValue) / (Random(30) + 50))));
-            if (Func28_var_0 < 100) then
-            begin
-              Func28_var_0 := 100;
-            end;
-            ShipDamage := (ShipDamage + Func28_var_0);
-          end;
+          Cargo[OutWare] := Cargo[OutWare] - Trunc(LostAmount);
+          ApplyBadOutcome(LoseCargo, ExtraLostWare, OutAmountString);
+          Val(OutAmountString, ExtraLostAmount, Ware);
+          if ExtraLostWare = OutWare then
+            LostAmount := LostAmount + ExtraLostAmount
+          else
+            Cargo[ExtraLostWare] := Cargo[ExtraLostWare] + ExtraLostAmount;
         end;
       end;
+    end
+    else if OutcomeType = LoseMoney then
+    begin
+      LostAmount := 10 * Trunc(Money / (Random(40) + 40));
+      Money := Money - LostAmount;
+    end
+    else if OutcomeType = AddDamage then
+    begin
+      LostAmount := 10 * Trunc((Money + GetTotalCargoValue) / (Random(30) + 50));
+      if LostAmount < 100 then
+        LostAmount := 100;
+      ShipDamage := ShipDamage + LostAmount;
     end;
-    Str(Func28_var_0, Func28_arg_0);
+    Str(LostAmount, OutAmountString);
   end;
 
   procedure GenerateNewPrices;
@@ -1008,7 +992,7 @@ var
               if ((Func31_var_169 > 0) and (Func31_var_4[Func31_var_169] > 0)) then
               begin
                 Str(Func31_var_4[Func31_var_169], Func31_var_139);
-                Func31_var_103 := (((#46 + WareName[Func31_var_169]) + 'ןוט ') + Func31_var_139);
+                Func31_var_103 := '.' + WareName[Func31_var_169] + 'ןוט ' + Func31_var_139;
                 if ((Func31_var_2 + Func31_var_0) > 0) then
                 begin
                   Func31_var_103 := (Func31_var_103 + ' ףסונבו');
@@ -1090,7 +1074,7 @@ var
             end;
           end;
         21..22:   begin
-            Func28(139, Func31_var_169, Func31_var_155);
+            ApplyBadOutcome(LoseMoney, Func31_var_169, Func31_var_155);
             GotoXY(14, 24);
             if (Func31_var_155 > '0') then
             begin
@@ -1099,13 +1083,11 @@ var
             end
             else
             begin
-              Func28(142, Func31_var_169, Func31_var_155);
+              ApplyBadOutcome(LoseCargo, Func31_var_169, Func31_var_155);
               if (Func31_var_155 > '0') then
               begin
                 PutPic(ThievesScreen^, 0, 199);
-                Write(
-                  (((#46 + WareName[Func31_var_169]) + ' ןוט ') + Func31_var_155):15
-                );
+                Write('.' + WareName[Func31_var_169] + ' ןוט ' + Func31_var_155:15);
               end
               else
               begin
@@ -1625,14 +1607,14 @@ var
   procedure TravelFlow(CurrentStormCountryName: TCountryName);
   var
     ShouldAbortTravel: boolean;
-    Func40_var_172: boolean;
+    DidArriveSafely: boolean;
     TravelDuration: integer;
     ChosenDestination: integer;
-    Func40_unused_167: byte;
+    Unused: byte;
     FullTravelOptionRects: TRectArray;
     TravelOptionRects: TRectArray;
-    Func40_var_5: integer;
-    Func40_var_3: integer;
+    ShipX: integer;
+    ShipY: integer;
     { Negative number means travel was aborted }
     GuardShipCount: integer;
     TravelEndTime: byte;
@@ -1645,13 +1627,13 @@ var
       Unused: integer
     );
     var
-      Func41_var_266: integer;
-      Func41_var_264: integer;
-      Func41_var_135: arr_byte_129;
+      X: integer;
+      Y: integer;
+      ShipPic: arr_byte_129;
       Unused2: arr_byte_129;
-      Func41_var_4: integer;
-      Func41_var_2: integer;
-      Func41_var_0: integer;
+      I: integer;
+      TotalMinutes: integer;
+      Minute: integer;
     begin
       GotoXY(34, 17);
       if Money > 10000.0 then
@@ -1662,61 +1644,61 @@ var
 
       Write(ToStrWithCommas(Money):5);
       PutPic(MapWindow^, 0, 142);
-      GetPic(Func41_var_135, FromX, FromY, FromX + 18, FromY + 14);
-      Func41_var_0 := 0;
-      Func41_var_2 := (TravelEndTime - TimeOfDay) * 60;
-      Func41_var_266 := FromX;
-      Func41_var_264 := FromY + 14;
-      for Func41_var_4 := 1 to Func41_var_2 do
+      GetPic(ShipPic, FromX, FromY, FromX + 18, FromY + 14);
+      Minute := 0;
+      TotalMinutes := (TravelEndTime - TimeOfDay) * 60;
+      X := FromX;
+      Y := FromY + 14;
+      for I := 1 to TotalMinutes do
       begin
-        Func41_var_0 := Func41_var_0 + 1;
-        if Func41_var_0 < 60 then
+        Minute := Minute + 1;
+        if Minute < 60 then
         begin
           GotoXY(35, 5);
-          if Func41_var_0 < 10 then
+          if Minute < 10 then
             Write(0);
-          if Func41_var_0 mod 15 = 0 then
-            Write(Func41_var_0);
+          if Minute mod 15 = 0 then
+            Write(Minute);
         end
         else
         begin
-          Func41_var_0 := 0;
+          Minute := 0;
           TimeOfDay := TimeOfDay + 1;
           GotoXY(32, 5);
           Write(TimeOfDay:2, ':00');
         end;
-        Func40_var_5 := Round(0.0 + FromX + Func41_var_4 / Func41_var_2 * (ToX - FromX));
-        Func40_var_3 := Round(0.0 + FromY + Func41_var_4 / Func41_var_2 * (ToY - FromY) + 14);
-        PutPic(Func41_var_135, Func40_var_5, Func40_var_3);
+        ShipX := Round(0.0 + FromX + I / TotalMinutes * (ToX - FromX));
+        ShipY := Round(0.0 + FromY + I / TotalMinutes * (ToY - FromY) + 14);
+        PutPic(ShipPic, ShipX, ShipY);
         Delay(15);
-        Func41_var_266 := Func40_var_5;
-        Func41_var_264 := Func40_var_3;
-        Func40_var_3 := Func40_var_3 - 14;
+        X := ShipX;
+        Y := ShipY;
+        ShipY := ShipY - 14;
       end;
       GetPic(MapWindow^, 0, 0, 240, 142);
     end;
 
-    procedure Func42(
-      Func42_arg_6: real;
-      Func42_arg_4: integer;
-      Func42_arg_2: integer;
-      Func42_arg_0: integer
+    procedure DoTravelEvent(
+      CurrentShipDamage: real;
+      CurrentCargoWeight: integer;
+      CurrentTravelDuration: integer;
+      CurrentRisk: integer
     );
     var
-      Func42_unused_38: array[1..4] of byte;
-      Func42_var_36: integer;
-      Func42_var_34: integer;
-      Func42_var_32: integer;
-      Func42_var_24: str_7;
+      Unused: array[1..4] of byte;
+      Ware: integer;
+      RandomEvent: integer;
+      FoundAmount: integer;
+      LostAmountString: string[7];
       OriginalDestination: TCountryName;
-      Func42_var_12: byte;
-      Func42_var_10: integer;
-      Func42_var_8: integer;
-      Func42_unused_2: array[1..6] of byte;
-      Func42_var_1: boolean;
-      Func42_var_0: boolean;
+      OriginalTravelDestination: byte;
+      CurrentShipX: integer;
+      CurrentShipY: integer;
+      Unused2: real;
+      IsBadLuck: boolean;
+      IsShipDamaged: boolean;
 
-      procedure Func43(Func43_arg_2: integer; Func43_arg_0: integer);
+      procedure PiratesFlow(Func43_arg_2: integer; Func43_arg_0: integer);
       var
         Func43_var_106: integer;
         Func43_var_104: integer;
@@ -1786,21 +1768,21 @@ var
             Func43_arg_2 := Func43_arg_2 + Func43_var_98;
             if Func43_arg_2 > 3 then
               Func43_arg_2 := 3;
-            Func12(5, Func42_var_36, Func45_var_1);
+            Func12(5, Ware, Func45_var_1);
             if Func45_var_1 > Money then
             begin
-              Func43_var_0 := (((1.0 * (Random(15) + 5)) * Cargo[Func42_var_36]) / 100);
+              Func43_var_0 := (((1.0 * (Random(15) + 5)) * Cargo[Ware]) / 100);
               if Func43_arg_2 < 3 then
-                Func43_var_0 := Func43_var_0 + ((3 - Func43_arg_2) * Cargo[Func42_var_36]) div 10;
+                Func43_var_0 := Func43_var_0 + ((3 - Func43_arg_2) * Cargo[Ware]) div 10;
               if Func43_var_0 < 1 then
                 Func43_var_0 := 1;
-              Cargo[Func42_var_36] := (Cargo[Func42_var_36] - Trunc(Func43_var_0));
-              Str(Trunc(Func43_var_0):1, Func42_var_24);
+              Cargo[Ware] := (Cargo[Ware] - Trunc(Func43_var_0));
+              Str(Trunc(Func43_var_0):1, LostAmountString);
               ShowMessage(
                 87,
                 '     השק ברק ירחא',
                 ' םיה ידדוש ךממ ובנג',
-                ((WareName[Func42_var_36] + 'ןוט ') + Func42_var_24)
+                WareName[Ware] + 'ןוט ' + LostAmountString
               );
               Func44(2);
             end
@@ -1817,10 +1799,10 @@ var
                 end;
                 Func43_var_0 := Trunc(Func43_var_0);
                 Money := (Money - Func43_var_0);
-                Str(Func43_var_0:1:0, Func42_var_24);
+                Str(Func43_var_0:1:0, LostAmountString);
                 ShowMessage(
                   87,
-                  (('םילקש ' + Func42_var_24) + ' ךממ ובנג םה'),
+                  (('םילקש ' + LostAmountString) + ' ךממ ובנג םה'),
                   '',
                   ''
                 );
@@ -1969,61 +1951,34 @@ var
         end;
       end;
 
-      function Func46(Func46_arg_0: integer): boolean;
+      function IsShipSinking(Func46_arg_0: integer): boolean;
       var
-        Func46_var_0: integer;
+        SinkingChance: integer;
       begin
-        Func46_var_0 := 30000;
-        if (Func46_arg_0 > (ShipCapacity + 70)) then
-        begin
-          Func46_var_0 := 1;
-        end
+        SinkingChance := 30000;
+        if Func46_arg_0 > ShipCapacity + 70 then
+          SinkingChance := 1
+        else if Func46_arg_0 > ShipCapacity + 60 then
+          SinkingChance := 2
+        else if Func46_arg_0 > ShipCapacity + 40 then
+          SinkingChance := 3
+        else if Func46_arg_0 > ShipCapacity + 20 then
+          SinkingChance := 4
+        else if Func46_arg_0 > ShipCapacity then
+          SinkingChance := 6;
+        if Random(SinkingChance) = 0 then
+          IsShipSinking := True
         else
-        begin
-          if (Func46_arg_0 > (ShipCapacity + 60)) then
-          begin
-            Func46_var_0 := 2;
-          end
-          else
-          begin
-            if (Func46_arg_0 > (ShipCapacity + 40)) then
-            begin
-              Func46_var_0 := 3;
-            end
-            else
-            begin
-              if (Func46_arg_0 > (ShipCapacity + 20)) then
-              begin
-                Func46_var_0 := 4;
-              end
-              else
-              begin
-                if (Func46_arg_0 > ShipCapacity) then
-                begin
-                  Func46_var_0 := 6;
-                end;
-              end;
-            end;
-          end;
-        end;
-        if (Random(Func46_var_0) = 0) then
-        begin
-          Func46 := True;
-        end
-        else
-        begin
-          Func46 := False;
-        end;
+          IsShipSinking := False;
       end;
 
-      function Func47(Func47_arg_2: real; Func47_arg_0: integer): boolean;
+      function ShouldDoHighRiskEvent(CurrentDamage: real; CurrentRisk: integer): boolean;
       begin
-        Func47 := ((Random(
-          ((1 + Trunc(((Func47_arg_2 + 399) / 400))) + (2 * Func47_arg_0))
-        ) > 0) and (Random(2) = 1));
+        ShouldDoHighRiskEvent := (Random(1 + Trunc((CurrentDamage + 399) / 400) + 2 * CurrentRisk) > 0)
+            and (Random(2) = 1);
       end;
 
-      procedure Func48;
+      procedure ChangeTravelDestination;
       begin
         PutPic(ChangeWindow^, 0, 142);
         OriginalDestination := TravelDestination;
@@ -2038,19 +1993,16 @@ var
       end;
 
     begin
-      global_var_109 := False;
-      Func40_var_172 := False;
-      if Func47(Func42_arg_6, Func42_arg_0) then
+      HadTravelEvent := False;
+      DidArriveSafely := False;
+      if ShouldDoHighRiskEvent(CurrentShipDamage, CurrentRisk) then
       begin
-        if (Func42_arg_6 > 0) then
-        begin
-          Func42_var_0 := True;
-        end
+        if CurrentShipDamage > 0 then
+          IsShipDamaged := True
         else
-        begin
-          Func42_var_1 := (Random(3) = 1);
-        end;
-        if Func42_var_0 or Func42_var_1 then
+          IsBadLuck := Random(3) = 1;
+        { IsShipDamaged might be uninitalized here }
+        if IsShipDamaged or IsBadLuck then
         begin
           ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
           if (StormCountryName = CurrentCountryName) or (StormCountryName = TravelDestination) then
@@ -2059,79 +2011,64 @@ var
             WaitForKey;
             if GetTotalCargoValue > 10000 then
             begin
-              Func28(142, Func42_var_36, Func42_var_24);
-              ShowMessage(
-                87,
-                'ךתניפסמ ופטש םיהובגה םילגה',
-                (((#46 + WareName[Func42_var_36]) + ' ןוט ') + Func42_var_24),
-                ''
-              );
+              ApplyBadOutcome(LoseCargo, Ware, LostAmountString);
+              ShowMessage(87, 'ךתניפסמ ופטש םיהובגה םילגה', '.' + WareName[Ware] + ' ןוט ' + LostAmountString, '');
               ShowHUD;
             end
             else
             begin
-              Func28(144, Func42_var_36, Func42_var_24);
-              ShowMessage(
-                87,
-                'ךתניפסל םרגנ הרעסה בקע',
-                (('.ח"ש ' + Func42_var_24) + ' יוושב קזנ'),
-                ''
-              );
+              ApplyBadOutcome(AddDamage, Ware, LostAmountString);
+              ShowMessage(87, 'ךתניפסל םרגנ הרעסה בקע', '.ח"ש ' + LostAmountString + ' יוושב קזנ', '');
             end;
           end
           else
           begin
-            Func28(144, Func42_var_36, Func42_var_24);
+            ApplyBadOutcome(AddDamage, Ware, LostAmountString);
             if TimeOfDay > 16 then
             begin
               PutPic(ShoalWindow^, 0, 142);
               ShowMessage(87, 'םיעורגה תוארה יאנת בקע', '.ןוטרש לע תילע - הלילב', '');
-              ShowMessage(87, 'קזנ ךתניפסל םרגנ', '.ח"ש ' + Func42_var_24 + ' יוושב', '');
+              ShowMessage(87, 'קזנ ךתניפסל םרגנ', '.ח"ש ' + LostAmountString + ' יוושב', '');
             end
             else
             begin
               PutPic(DamagedWindow^, 0, 142);
-              if Func42_var_0 then
-                ShowMessage(87, 'הקוזינה ךתניפסב העיסנה', Func42_var_24 + '-ב קזנה תא הרימחה', '.םיפסונ לקש')
+              if IsShipDamaged then
+                ShowMessage(87, 'הקוזינה ךתניפסב העיסנה', LostAmountString + '-ב קזנה תא הרימחה', '.םיפסונ לקש')
               else
-                ShowMessage(87, 'קזנ ךתניפסל םרגנ', '.ח"ש ' + Func42_var_24 + ' יוושב', '');
+                ShowMessage(87, 'קזנ ךתניפסל םרגנ', '.ח"ש ' + LostAmountString + ' יוושב', '');
             end;
           end;
         end
         else
-          Func48;
-        global_var_109 := True;
+          ChangeTravelDestination;
+        HadTravelEvent := True;
       end;
-      if ((not global_var_109) and (Func42_arg_4 > ShipCapacity)) then
+      if (not HadTravelEvent) and (CurrentCargoWeight > ShipCapacity) then
       begin
-        if Func46(Func42_arg_4) then
+        if IsShipSinking(CurrentCargoWeight) then
         begin
           ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
           PutPic(SinkingWindow^, 0, 142);
           WaitForKey;
-          Func28(153, Func42_var_36, Func42_var_24);
-          ShowMessage(
-            87,
-            'םיל ךילשהל תצלאנ',
-            ((WareName[Func42_var_36] + 'ןוט ') + Func42_var_24),
-            ''
-          );
+          ApplyBadOutcome(SinkingShip, Ware, LostAmountString);
+          ShowMessage(87, 'םיל ךילשהל תצלאנ', WareName[Ware] + 'ןוט ' + LostAmountString, '');
           ShowHUD;
-          global_var_109 := True;
+          HadTravelEvent := True;
         end;
       end;
-      if ((not global_var_109) and (((TimeOfDay + Func42_arg_2) + (Func42_arg_2 div 2)) <= 20)) then
+      if (not HadTravelEvent) and (((TimeOfDay + CurrentTravelDuration) + (CurrentTravelDuration div 2)) <= 20) then
       begin
         if Random(12) = 0 then
         begin
-          Func42_var_10 := Func40_var_5;
-          Func42_var_8 := Func40_var_3;
-          Func42_var_12 := CountryNameToIndex(TravelDestination);
+          CurrentShipX := ShipX;
+          CurrentShipY := ShipY;
+          OriginalTravelDestination := CountryNameToIndex(TravelDestination);
           AnimateTravel(
-            Func42_var_10,
-            Func42_var_8,
-            MapCoordinates[Func42_var_12].X,
-            MapCoordinates[Func42_var_12].Y,
+            CurrentShipX,
+            CurrentShipY,
+            MapCoordinates[OriginalTravelDestination].X,
+            MapCoordinates[OriginalTravelDestination].Y,
             9
           );
           if Random(2) = 1 then
@@ -2144,62 +2081,58 @@ var
           end;
           ShowMessage(87, '', (TravelStart + 'ל רוזחל ךילע'), '');
           TravelDestination := TravelStart;
-          TravelEndTime := (TimeOfDay + (Func42_arg_2 div 2));
+          TravelEndTime := (TimeOfDay + (CurrentTravelDuration div 2));
           AnimateTravel(
-            MapCoordinates[Func42_var_12].X,
-            MapCoordinates[Func42_var_12].Y,
-            Func42_var_10,
-            Func42_var_8,
+            MapCoordinates[OriginalTravelDestination].X,
+            MapCoordinates[OriginalTravelDestination].Y,
+            CurrentShipX,
+            CurrentShipY,
             9
           );
-          TravelEndTime := (TimeOfDay + (Func42_arg_2 div 2));
-          global_var_109 := True;
+          TravelEndTime := (TimeOfDay + (CurrentTravelDuration div 2));
+          HadTravelEvent := True;
         end;
       end;
-      Func42_var_34 := Random(20) + 1;
+      RandomEvent := Random(20) + 1;
       if TimeOfDay >= 16 then
-        if Func42_var_34 > 15 then
-          Func42_var_34 := 1;
-      if not global_var_109 then
+        if RandomEvent > 15 then
+          RandomEvent := 1;
+      if not HadTravelEvent then
       begin
-        case Func42_var_34 of
-          1..6:   begin
-              ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
-              global_var_109 := True;
-              Func43(GuardShipCount, Func42_arg_4);
-            end;
-          7:   begin
-              Func48;
-            end;
-          9, 10:   begin
-              ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
-              PutPic(DesertedWindow^, 0, 142);
-              Func42_var_36 := 0;
-              repeat
+        case RandomEvent of
+          1..6: begin
+            ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
+            HadTravelEvent := True;
+            PiratesFlow(GuardShipCount, CurrentCargoWeight);
+          end;
+          7: ChangeTravelDestination;
+          9, 10: begin
+            ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
+            PutPic(DesertedWindow^, 0, 142);
+            Ware := 0;
+            repeat
+            begin
+              Ware := Ware + 1;
+              FoundAmount := Trunc(
+                (Random(25) + 11) / 100.0 * (Money + GetTotalCargoValue) / BaseWarePrice[Ware]
+              );
+              if FoundAmount > 0 then
               begin
-                Func42_var_36 := (Func42_var_36 + 1);
-                Func42_var_32 := Trunc(
-                  ((((Random(25) + 11) / 100.0) * (Money + GetTotalCargoValue)) / BaseWarePrice[Func42_var_36])
-                );
-                if (Func42_var_32 > 0) then
-                begin
-                  GotoXY(45, 16);
-                  Write(WareName[Func42_var_36], ' ןוט ', Func42_var_32);
-                  case Func42_var_36 of
-                    Copper: Cargo[Copper] := Cargo[Copper] + Func42_var_32;
-                    Olives: Cargo[Olives] := Cargo[Olives] + Func42_var_32;
-                    Wheat: Cargo[Wheat] := Cargo[Wheat] + Func42_var_32;
-                  end;
-                  global_var_109 := True;
+                GotoXY(45, 16);
+                Write(WareName[Ware], ' ןוט ', FoundAmount);
+                case Ware of
+                  Copper: Cargo[Copper] := Cargo[Copper] + FoundAmount;
+                  Olives: Cargo[Olives] := Cargo[Olives] + FoundAmount;
+                  Wheat: Cargo[Wheat] := Cargo[Wheat] + FoundAmount;
                 end;
-              end
-              until (global_var_109 or (Func42_var_36 = 3));
-              WaitForKey;
-              ShowHUD;
-            end;
-          8, 11..20:   begin
-              Func40_var_172 := True;
-            end;
+                HadTravelEvent := True;
+              end;
+            end
+            until HadTravelEvent or (Ware = Wheat);
+            WaitForKey;
+            ShowHUD;
+          end;
+          8, 11..20: DidArriveSafely := True;
         end;
       end;
     end;
@@ -2287,7 +2220,7 @@ var
         );
         TravelEndTime := TimeOfDay + Func49_var_0;
         CurrentWaypoint := NextWaypoint;
-        Func42(ShipDamage, GetTotalCargoWeight, TravelDuration, Risk);
+        DoTravelEvent(ShipDamage, GetTotalCargoWeight, TravelDuration, Risk);
         DestinationIndex := CountryNameToIndex(TravelDestination);
         NextWaypoint := MapWaypoints[CurrentWaypoint, DestinationIndex];
         if NextWaypoint > 0 then
@@ -2315,7 +2248,7 @@ var
           MapCoordinates[DestinationIndex].Y,
           9
         );
-        if Func40_var_172 then
+        if DidArriveSafely then
           ShowMessage(78, '', '! !  ם ו ל ש ב   ת ע ג ה', '');
       end;
     end;
@@ -2409,11 +2342,11 @@ var
     DamageToRepair: integer;
     RemainingDamageString: string[10];
 
-    function CannotAfford(Amount: real): boolean;
+    function CannotAfford(LostAmount: real): boolean;
     begin
-      if Amount > 0 then
+      if LostAmount > 0 then
       begin
-        if Amount > Money then
+        if LostAmount > Money then
         begin
           ShowMessage(87, '', 'ףסכ הברה ךכ-לכ ךל ןיא', #7);
           CannotAfford := True;

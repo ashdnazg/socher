@@ -63,7 +63,7 @@ var
   LastNightEvent: integer;
   LastPressedKey: char;
   Unused1: byte;
-  global_var_109: boolean;
+  HadTravelEvent: boolean;
   ClosedRepairDay: integer;
   global_unused_112: array[1..4] of byte;
   BaseWarePrice: array[Copper..Wheat] of integer;
