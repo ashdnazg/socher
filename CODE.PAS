@@ -6,7 +6,7 @@ var
 begin
   repeat
     PressedKey := GetPressedKey;
-  until ((PressedKey = #13) or (PressedKey = #27)) and not KeyPressed;
+  until ((PressedKey = Enter) or (PressedKey = Escape)) and not KeyPressed;
 end;
 
 procedure ShowMessage(
@@ -239,9 +239,10 @@ var
   PressedKey: char;
 begin
   Read(KBD, PressedKey);
-  if (PressedKey = #27) and KeyPressed then
+  if (PressedKey = Escape) and KeyPressed then
     Read(KBD, PressedKey);
-  if PressedKey = #68 then
+  { F10 }
+  if PressedKey = 'D' then
   begin
     ShowHelpScreen;
     PressedKey := GetPressedKey;
@@ -295,16 +296,18 @@ begin
       PutPic(SelectedOptionOriginalPic, X1, Y2);
       repeat
         PressedKey := GetPressedKey;
-      until PressedKey in [#72, #75, #80, #77, ' ', #13, #27];
+      until PressedKey in ['H', 'K', 'P', 'M', ' ', Enter, Escape];
       ColorTable(0, 1, 2, 3);
 
-      if (PressedKey <> #13) or NeedsRestoreOnEnter then
+      if (PressedKey <> Enter) or NeedsRestoreOnEnter then
         PutPic(SelectedOptionOriginalPic, X1, Y2);
 
       case PressedKey of
-        #72, #75: SelectedOption := SelectedOption - 1;
-        ' ', #80, #77: SelectedOption := SelectedOption + 1;
-        #27: SelectedOption := -1;
+        { Up and left arrows }
+        'H', 'K': SelectedOption := SelectedOption - 1;
+        { Down and right arrows }
+        ' ', 'P', 'M': SelectedOption := SelectedOption + 1;
+        Escape: SelectedOption := -1;
       end;
 
       if SelectedOption = 0 then
@@ -312,7 +315,7 @@ begin
       else if SelectedOption = OptionCount + 1 then
         SelectedOption := 1;
     end;
-  until (PressedKey = #13) or (PressedKey = #27);
+  until (PressedKey = Enter) or (PressedKey = Escape);
   ShowOptions := SelectedOption;
 end;
 
@@ -350,7 +353,7 @@ begin
     begin
       PressedKey := GetPressedKey;
       case PressedKey of
-        { is also F10 }
+        { F10 }
         'D': ShowHelpScreen;
         '0': begin
           if DigitCount < MaxDigits then
@@ -370,19 +373,19 @@ begin
               DigitCount := DigitCount + 1;
           end;
         end;
-        #8: begin
+        Backspace: begin
           if DigitCount > 0 then
           begin
             CurrentNumber := Int(CurrentNumber / 10);
-            Write(#8, ' ', #8);
+            Write(Backspace, ' ', Backspace);
             DigitCount := DigitCount - 1;
           end;
         end;
-        #13: begin
+        Enter: begin
           if DigitCount > 0 then
             ShouldReturn := True;
         end;
-        #27: begin
+        Escape: begin
           CurrentNumber := -1;
           ShouldReturn := True;
         end;
@@ -403,7 +406,7 @@ begin
       GotoXY(2, 10);
       Str(MinNumber, MinNumberString);
       Str(MaxNumber, MaxNumberString);
-      ShowMessage('W', '', MaxNumberString + ' -ל ' + MinNumberString + ' ןיב רפסמ סנכה אנ', #7);
+      ShowMessage('W', '', MaxNumberString + ' -ל ' + MinNumberString + ' ןיב רפסמ סנכה אנ', Bell);
       GotoXY(CurrentX, CurrentY);
       ShouldReturn := False;
     end;
@@ -447,9 +450,9 @@ begin
         Ret := False;
         InputLength := InputLength + 1;
       end;
-      #27, ' ': Ret := not Ret;
+      Escape, ' ': Ret := not Ret;
       else begin
-        if PressedKey <> #13 then
+        if PressedKey <> Enter then
         begin
           for I := 1 to 2 do
           begin
@@ -469,7 +472,7 @@ begin
         Write('אל');
     end;
   end
-  until (PressedKey = #13) and (InputLength > 0);
+  until (PressedKey = Enter) and (InputLength > 0);
   InputYesNo := Ret;
 end;
 
@@ -550,7 +553,7 @@ var
   begin
     if LostAmount > Money then
     begin
-      ShowMessage('W', '', '!ףסכ קיפסמ ךתושרב ןיא', #7);
+      ShowMessage('W', '', '!ףסכ קיפסמ ךתושרב ןיא', Bell);
       CannotAfford := True;
     end
     else
@@ -580,7 +583,7 @@ var
         CanAffordMoney := True
       else
       begin
-        ShowMessage('W', '', '!הז םוכס ךתושרב ןיא', #7);
+        ShowMessage('W', '', '!הז םוכס ךתושרב ןיא', Bell);
         CanAffordMoney := False;
       end;
     end;
@@ -594,7 +597,7 @@ var
         CanAffordWare := True
       else
       begin
-        ShowMessage('W', '', '!הז םוכס ךתושרב ןיא', #7);
+        ShowMessage('W', '', '!הז םוכס ךתושרב ןיא', Bell);
         CanAffordWare := False;
       end;
     end;
@@ -652,8 +655,8 @@ var
       end
       until CanAffordMoney(OfferedAmount, InOutMoney);
     end;
-    TotalOfferValue := OfferedCopper * BaseWarePrice[Copper] + OfferedOlives * BaseWarePrice[Olives] +
-        OfferedWheat * BaseWarePrice[Wheat] + OfferedAmount;
+    TotalOfferValue := OfferedCopper * BaseWarePrice[Copper] +
+        OfferedOlives * BaseWarePrice[Olives] + OfferedWheat * BaseWarePrice[Wheat] + OfferedAmount;
     AcceptThreshold := (GetTotalCargoValue + InOutMoney) / (Random(6) + 4);
     if TotalOfferValue > AcceptThreshold then
     begin
@@ -826,7 +829,7 @@ var
             Wheat: WheatPriceTurkey := NewPrice;
           end;
           GotoXY(7, 2 + 21 * (UpDownFlag - 1));
-          Writeln('היכרותב' + WareName[Ware] + '' + 'ה ריחמ':27);
+          Writeln('היכרותב' + WareName[Ware] + Backspace + 'ה ריחמ':27);
           GotoXY(7, 3 + 21 * (UpDownFlag - 1));
           Writeln('!!םילקש ' + NewPriceString + UpDownString:25);
         end;
@@ -837,7 +840,7 @@ var
             Wheat: WheatPriceIsrael := NewPrice;
           end;
           GotoXY(7, 2 + 21 * (UpDownFlag - 1));
-          Writeln('לארשיב' + WareName[Ware] + '' + 'ה ריחמ':27);
+          Writeln('לארשיב' + WareName[Ware] + Backspace + 'ה ריחמ':27);
           GotoXY(7, 3 + 21 * (UpDownFlag - 1));
           Writeln('!!םילקש ' + NewPriceString + UpDownString:25);
         end;
@@ -848,7 +851,7 @@ var
             Wheat: WheatPriceEgypt := NewPrice;
           end;
           GotoXY(7, 2 + 21 * (UpDownFlag - 1));
-          Writeln('םירצמב' + WareName[Ware] + '' + 'ה ריחמ':27);
+          Writeln('םירצמב' + WareName[Ware] + Backspace + 'ה ריחמ':27);
           GotoXY(7, 3 + 21 * (UpDownFlag - 1));
           Writeln('!!םילקש ' + NewPriceString + UpDownString:25);
         end;
@@ -867,18 +870,19 @@ var
       DidEventHappen := True;
       repeat
         RandomEvent := Random(30) + 1;
-      until (RandomEvent <> LastNightEvent) and (not ((RandomEvent in [1..2]) and (LastNightEvent in [1..2])))
-          and (not ((RandomEvent in [3..4]) and (LastNightEvent in [3..4])))
-          and (not ((RandomEvent in [5..6]) and (LastNightEvent in [5..6])))
-          and (not ((RandomEvent in [7..8]) and (LastNightEvent in [7..8])))
-          and (not ((RandomEvent in [9..10]) and (LastNightEvent in [9..10])))
-          and (not ((RandomEvent in [11..12]) and (LastNightEvent in [11..12])))
-          and (not ((RandomEvent in [13..18]) and (LastNightEvent in [13..18])))
-          and (not ((RandomEvent in [19..20]) and (LastNightEvent in [19..20])))
-          and (not ((RandomEvent in [21..22]) and (LastNightEvent in [21..22])))
-          and (not ((RandomEvent in [23..26]) and (LastNightEvent in [23..26])))
-          and (not ((RandomEvent in [27..28]) and (LastNightEvent in [27..28])))
-          and (not ((RandomEvent in [29..30]) and (LastNightEvent in [29..30])));
+      until (RandomEvent <> LastNightEvent) and
+          (not ((RandomEvent in [1..2]) and (LastNightEvent in [1..2]))) and
+          (not ((RandomEvent in [3..4]) and (LastNightEvent in [3..4]))) and
+          (not ((RandomEvent in [5..6]) and (LastNightEvent in [5..6]))) and
+          (not ((RandomEvent in [7..8]) and (LastNightEvent in [7..8]))) and
+          (not ((RandomEvent in [9..10]) and (LastNightEvent in [9..10]))) and
+          (not ((RandomEvent in [11..12]) and (LastNightEvent in [11..12]))) and
+          (not ((RandomEvent in [13..18]) and (LastNightEvent in [13..18]))) and
+          (not ((RandomEvent in [19..20]) and (LastNightEvent in [19..20]))) and
+          (not ((RandomEvent in [21..22]) and (LastNightEvent in [21..22]))) and
+          (not ((RandomEvent in [23..26]) and (LastNightEvent in [23..26]))) and
+          (not ((RandomEvent in [27..28]) and (LastNightEvent in [27..28]))) and
+          (not ((RandomEvent in [29..30]) and (LastNightEvent in [29..30])));
       if (Money > 20000.0) and (Random(6) = 1) then
         RandomEvent := 15;
 
@@ -1340,7 +1344,7 @@ var
     begin
       if Amount > Cargo[Ware] then
       begin
-        ShowMessage('W', 'הברה ךכ-לכ ךל ןיא', 'רוכמל' + WareName[Ware], #7);
+        ShowMessage('W', 'הברה ךכ-לכ ךל ןיא', 'רוכמל' + WareName[Ware], Bell);
         HasInsufficientCargo := True;
       end
       else
@@ -1396,7 +1400,7 @@ var
         end
         else
         begin
-          ShowMessage('W', 'רוכמל' + WareName[ChosenWare] + 'ךל ןיא', #7, '');
+          ShowMessage('W', 'רוכמל' + WareName[ChosenWare] + 'ךל ןיא', Bell, '');
           AmountToSell := 0;
         end;
         if AmountToSell = -1 then
@@ -1440,7 +1444,7 @@ var
     case ChosenOption of
       Deposit: begin
         if Money <= 0 then
-          ShowMessage('W', ' ', '! דיקפהל ףסכ ךל ןיא' + '', ' ')
+          ShowMessage('W', ' ', '! דיקפהל ףסכ ךל ןיא' + Bell, ' ')
         else
         begin
           repeat
@@ -1458,7 +1462,7 @@ var
               DidFinishFlag := 1;
             end
             else
-              ShowMessage('W', ' ', '! ףסכ הברה ךכ לכ ךל ןיא' + '', ' ');
+              ShowMessage('W', ' ', '! ףסכ הברה ךכ לכ ךל ןיא' + Bell, ' ');
           end
           until DidFinishFlag = 1;
         end;
@@ -1483,12 +1487,12 @@ var
               DidFinishFlag := 1;
             end
             else
-              ShowMessage('W', ' ', '! קנבב הזכ ףסכ םוכס ךל ןיא' + '', ' ');
+              ShowMessage('W', ' ', '! קנבב הזכ ףסכ םוכס ךל ןיא' + Bell, ' ');
           end
           until DidFinishFlag = 1;
         end
         else
-          ShowMessage('W', ' ', '! קנבב ףסכ ךל ןיא' + '', ' ');
+          ShowMessage('W', ' ', '! קנבב ףסכ ךל ןיא' + Bell, ' ');
       end;
     end;
   end;
@@ -1654,7 +1658,8 @@ var
             if DamageChance = 2 then
               ShowMessage('W', 'םרגנ ,ףסונב', 'יוושב קזנ הניפסל', '.םילקש ' + StringBuffer)
             else
-              ShowMessage('W', 'ךתניפס ,ךלזמ עורל', '.ברקה ידכ ךות העגפנ', '.ח"ש ' + StringBuffer + ' קזנה יווש');
+              ShowMessage('W', 'ךתניפס ,ךלזמ עורל', '.ברקה ידכ ךות העגפנ',
+                  '.ח"ש ' + StringBuffer + ' קזנה יווש');
           end;
         end;
 
@@ -1673,7 +1678,8 @@ var
             if Random(3) = 1 then
             begin
               ShipCapacity := ShipCapacity + 50;
-              ShowMessage('W', 'תניפס תא יבשב תחקל', 'הניפסה תלוביקו ,םיה ידדוש', '.ןוט 50-ב הלדג ךלש');
+              ShowMessage('W', 'תניפס תא יבשב תחקל', 'הניפסה תלוביקו ,םיה ידדוש',
+                  '.ןוט 50-ב הלדג ךלש');
             end
             else
             begin
@@ -1734,7 +1740,8 @@ var
                 LostAmount := 100;
               Str(LostAmount:1:0, StringBuffer);
               ShipDamage := ShipDamage + LostAmount;
-              ShowMessage('W', 'ךתניפס ,ךלזמ עורל', '.ברקה ידכ ךות העגפנ', 'ח"ש ' + StringBuffer + ' קזנה יווש');
+              ShowMessage('W', 'ךתניפס ,ךלזמ עורל', '.ברקה ידכ ךות העגפנ',
+                  'ח"ש ' + StringBuffer + ' קזנה יווש');
             end;
           end;
           ShowHUD;
@@ -1840,8 +1847,9 @@ var
 
       function ShouldDoHighRiskEvent(CurrentDamage: real; CurrentRisk: integer): boolean;
       begin
-        ShouldDoHighRiskEvent := (Random(1 + Trunc((CurrentDamage + 399) / 400) + 2 * CurrentRisk) > 0)
-            and (Random(2) = 1);
+        ShouldDoHighRiskEvent :=
+            (Random(1 + Trunc((CurrentDamage + 399) / 400) + 2 * CurrentRisk) > 0) and
+            (Random(2) = 1);
       end;
 
       procedure ChangeTravelDestination;
@@ -1853,7 +1861,8 @@ var
         else
           TravelDestination := IsraelName;
         Delay(1500);
-        ShowMessage('W', 'תוקזח תוחורמ האצותכ', 'תעגה ,טוונב תועטו', OriginalDestination + 'ל םוקמב ' + TravelDestination + 'ל');
+        ShowMessage('W', 'תוקזח תוחורמ האצותכ', 'תעגה ,טוונב תועטו',
+            OriginalDestination + 'ל םוקמב ' + TravelDestination + 'ל');
         if (TravelStart = EgyptName) and (TravelDestination = TurkeyName) then
           TravelEndTime := TravelEndTime + 4;
       end;
@@ -1881,13 +1890,15 @@ var
             if GetTotalCargoValue > 10000 then
             begin
               ApplyBadOutcome(LoseCargo, Ware, LostAmountString);
-              ShowMessage('W', 'ךתניפסמ ופטש םיהובגה םילגה', '.' + WareName[Ware] + ' ןוט ' + LostAmountString, '');
+              ShowMessage('W', 'ךתניפסמ ופטש םיהובגה םילגה',
+                  '.' + WareName[Ware] + ' ןוט ' + LostAmountString, '');
               ShowHUD;
             end
             else
             begin
               ApplyBadOutcome(AddDamage, Ware, LostAmountString);
-              ShowMessage('W', 'ךתניפסל םרגנ הרעסה בקע', '.ח"ש ' + LostAmountString + ' יוושב קזנ', '');
+              ShowMessage('W', 'ךתניפסל םרגנ הרעסה בקע', '.ח"ש ' + LostAmountString + ' יוושב קזנ',
+                  '');
             end;
           end
           else
@@ -1903,7 +1914,8 @@ var
             begin
               PutPic(DamagedWindow^, 0, 142);
               if IsShipDamaged then
-                ShowMessage('W', 'הקוזינה ךתניפסב העיסנה', LostAmountString + '-ב קזנה תא הרימחה', '.םיפסונ לקש')
+                ShowMessage('W', 'הקוזינה ךתניפסב העיסנה', LostAmountString + '-ב קזנה תא הרימחה',
+                    '.םיפסונ לקש')
               else
                 ShowMessage('W', 'קזנ ךתניפסל םרגנ', '.ח"ש ' + LostAmountString + ' יוושב', '');
             end;
@@ -1926,7 +1938,8 @@ var
           HadTravelEvent := True;
         end;
       end;
-      if (not HadTravelEvent) and (TimeOfDay + CurrentTravelDuration + CurrentTravelDuration div 2 <= 20) then
+      if (not HadTravelEvent) and
+          (TimeOfDay + CurrentTravelDuration + CurrentTravelDuration div 2 <= 20) then
       begin
         if Random(12) = 0 then
         begin
@@ -2040,7 +2053,8 @@ var
           else
           begin
             Line1 := 'םישרוד רמשמה תוניפס ילעב';
-            if (StormCountryName = CurrentCountryName) or (StormCountryName = TravelDestination) then
+            if (StormCountryName = CurrentCountryName) or
+                (StormCountryName = TravelDestination) then
               Line2 := '.רעוסה םיה לשב ,' + Line2
             else
               Line2 := 'רבגומה ןוכיסה לשב ' + Line2;
@@ -2061,8 +2075,8 @@ var
           GuardShipCount := 0;
           repeat
             LastPressedKey := GetPressedKey;
-          until LastPressedKey in [#13, #27];
-          if LastPressedKey = #27 then
+          until LastPressedKey in [Enter, Escape];
+          if LastPressedKey = Escape then
             GuardShipCount := -1;
         end;
         if GuardShipCount > 0 then
@@ -2179,7 +2193,8 @@ var
           begin
             TravelEndTime := TimeOfDay + TravelDuration;
             Risk := 2;
-            if (CurrentStormCountryName = CurrentCountryName) or (CurrentStormCountryName = TravelDestination) then
+            if (CurrentStormCountryName = CurrentCountryName) or
+                (CurrentStormCountryName = TravelDestination) then
               Risk := 4;
             DoTravel;
           end;
@@ -2217,7 +2232,7 @@ var
       begin
         if LostAmount > Money then
         begin
-          ShowMessage('W', '', 'ףסכ הברה ךכ-לכ ךל ןיא', #7);
+          ShowMessage('W', '', 'ףסכ הברה ךכ-לכ ךל ןיא', Bell);
           CannotAfford := True;
         end
         else
@@ -2358,7 +2373,7 @@ begin
             ShowMessage('N', ',םיתסה רחסמה עובש', 'קחשמה םויסל  ───┘  שקה', '');
           repeat
             LastPressedKey := GetPressedKey;
-          until LastPressedKey in [#27, #13];
+          until LastPressedKey in [Escape, Enter];
         end;
         Repair: begin
           if ClosedRepairDay <> Day then
@@ -2368,7 +2383,7 @@ begin
         end;
       end;
     end
-    until (ChosenMainMenuOption = 5) and (LastPressedKey <> #27);
+    until (ChosenMainMenuOption = 5) and (LastPressedKey <> Escape);
     if (Day < 7) and IsUnableToRepair then
     begin
       Day := 7;
@@ -2547,20 +2562,21 @@ var
     repeat
     begin
       PressedKey := GetPressedKey;
-      HebrewIndex := Pos(PressedKey, LowerCaseLatin) + Pos(PressedKey, UpperCaseLatin) + Pos(PressedKey, Hebrew);
+      HebrewIndex := Pos(PressedKey, LowerCaseLatin) + Pos(PressedKey, UpperCaseLatin) +
+          Pos(PressedKey, Hebrew);
       if HebrewIndex > 0 then
       begin
-        Write(Hebrew[HebrewIndex], #8, #8);
+        Write(Hebrew[HebrewIndex], Backspace, Backspace);
         InputLength := InputLength + 1;
         CurrentString := Hebrew[HebrewIndex] + CurrentString;
       end
-      else if (PressedKey = #8) and (InputLength > 0) then
+      else if (PressedKey = Backspace) and (InputLength > 0) then
       begin
-        Write('  ', #8);
+        Write('  ', Backspace);
         CurrentString := Copy(CurrentString, 2, InputLength);
         InputLength := InputLength - 1;
       end
-      else if (PressedKey = #13) and (InputLength > 0) then
+      else if (PressedKey = Enter) and (InputLength > 0) then
         IsFinished := True;
       if InputLength = MaxLength then
         IsFinished := True;

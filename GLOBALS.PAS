@@ -9,6 +9,10 @@ const
   TurkeyName = 'היכרות';
   IsraelName = 'לארשי';
   EgyptName = 'םירצמ';
+  Escape = #27;
+  Enter = #13;
+  Backspace = #8;
+  Bell = #7;
 type
   TCountryName = string[10];
   TWinBuffer = array[1..8832] of byte;
