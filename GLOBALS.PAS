@@ -13,6 +13,11 @@ const
   Enter = #13;
   Backspace = #8;
   Bell = #7;
+  Up = #72;
+  Down = #80;
+  Left = #75;
+  Right = #77;
+  F10 = #68;
 type
   TCountryName = string[10];
   TWinBuffer = array[1..8832] of byte;

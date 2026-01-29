@@ -9,12 +9,7 @@ begin
   until ((PressedKey = Enter) or (PressedKey = Escape)) and not KeyPressed;
 end;
 
-procedure ShowMessage(
-  WaitForKeyFlag: char;
-  Line1: TMessageLine;
-  Line2: TMessageLine;
-  Line3: TMessageLine
-);
+procedure ShowMessage(WaitForKeyFlag: char; Line1, Line2, Line3: TMessageLine);
 begin
   GetPic(PreMessageBackground, 10, 138 - 29, 10 + 221, 138);
   PutPic(MessageSign^, 10, 138);
@@ -162,11 +157,7 @@ begin
   end;
 end;
 
-procedure GetMostValuableCargo(
-  MinCargo: integer;
-  var OutWare: integer;
-  var OutValue: real
-);
+procedure GetMostValuableCargo(MinCargo: integer; var OutWare: integer; var OutValue: real);
 var
   Ware: integer;
 begin
@@ -241,8 +232,7 @@ begin
   Read(KBD, PressedKey);
   if (PressedKey = Escape) and KeyPressed then
     Read(KBD, PressedKey);
-  { F10 }
-  if PressedKey = 'D' then
+  if PressedKey = F10 then
   begin
     ShowHelpScreen;
     PressedKey := GetPressedKey;
@@ -269,12 +259,9 @@ begin
   end;
 end;
 
-function ShowOptions(
-  OptionRects: TRectArray;
-  { Option count of 100 + N means that the option's unselected pic doesn't need to be restored
-    when Enter is pressed, e.g., when the screen is exited afterwards }
-  OptionCount: integer
-): integer;
+{ Option count of 100 + N means that the option's unselected pic doesn't need to be restored
+  when Enter is pressed, e.g., when the screen is exited afterwards }
+function ShowOptions(OptionRects: TRectArray; OptionCount: integer): integer;
 var
   SelectedOption: integer;
   SelectedOptionOriginalPic: array[1..800] of byte;
@@ -296,17 +283,15 @@ begin
       PutPic(SelectedOptionOriginalPic, X1, Y2);
       repeat
         PressedKey := GetPressedKey;
-      until PressedKey in ['H', 'K', 'P', 'M', ' ', Enter, Escape];
+      until PressedKey in [Up, Left, Down, Right, ' ', Enter, Escape];
       ColorTable(0, 1, 2, 3);
 
       if (PressedKey <> Enter) or NeedsRestoreOnEnter then
         PutPic(SelectedOptionOriginalPic, X1, Y2);
 
       case PressedKey of
-        { Up and left arrows }
-        'H', 'K': SelectedOption := SelectedOption - 1;
-        { Down and right arrows }
-        ' ', 'P', 'M': SelectedOption := SelectedOption + 1;
+        Up, Left: SelectedOption := SelectedOption - 1;
+        ' ', Down, Right: SelectedOption := SelectedOption + 1;
         Escape: SelectedOption := -1;
       end;
 
@@ -319,13 +304,8 @@ begin
   ShowOptions := SelectedOption;
 end;
 
-function InputReal(
-  { Ignored if 0 }
-  MinNumber: integer;
-  { Ignored if 0 }
-  MaxNumber: integer;
-  MaxDigits: integer
-): real;
+{ Min and max are ignored if 0 }
+function InputReal(MinNumber, MaxNumber, MaxDigits: integer): real;
 var
   PressedKey: char;
   CurrentNumber: real;
@@ -353,8 +333,7 @@ begin
     begin
       PressedKey := GetPressedKey;
       case PressedKey of
-        { F10 }
-        'D': ShowHelpScreen;
+        F10: ShowHelpScreen;
         '0': begin
           if DigitCount < MaxDigits then
           begin
@@ -416,11 +395,7 @@ begin
 end;
 
 { Unused }
-function InputInteger(
-  MinNumber: integer;
-  MaxNumber: integer;
-  MaxDigits: integer
-): integer;
+function InputInteger(MinNumber, MaxNumber, MaxDigits: integer): integer;
 begin
   InputInteger := Trunc(InputReal(MinNumber, MaxNumber, MaxDigits));
 end;
@@ -560,12 +535,8 @@ var
       CannotAfford := False;
   end;
 
-  function OfferFlow(
-    var InOutCopper: integer;
-    var InOutOlives: integer;
-    var InOutWheat: integer;
-    var InOutMoney: real
-  ): boolean;
+  function OfferFlow(var InOutCopper: integer; var InOutOlives: integer; var InOutWheat: integer;
+                     var InOutMoney: real): boolean;
   var
     OfferedCopper: integer;
     OfferedOlives: integer;
@@ -677,11 +648,8 @@ var
     AddDamage = 'נ';
     LoseMoney = 'כ';
 
-  procedure ApplyBadOutcome(
-    OutcomeType: char;
-    var OutWare: integer;
-    var OutAmountString: TNumberString
-  );
+  procedure ApplyBadOutcome(OutcomeType: char; var OutWare: integer;
+                            var OutAmountString: TNumberString);
   var
     IsOutWareSet: boolean;
     Ware: integer;
@@ -806,12 +774,8 @@ var
       PriceUp = 1;
       PriceDown = 2;
 
-    procedure UpdateSpecialPrices(
-      UpDownFlag: integer;
-      Country: integer;
-      NewPrice: integer;
-      Ware: integer
-    );
+    procedure UpdateSpecialPrices(UpDownFlag: integer; Country: integer; NewPrice: integer;
+                                  Ware: integer);
     var
       UpDownString: string[6];
       NewPriceString: TNumberString;
@@ -1231,11 +1195,7 @@ var
     WaitForKey;
   end;
 
-  procedure ShowBuyWindow(
-    CopperPrice: integer;
-    OlivesPrice: integer;
-    WheatPrice: integer
-  );
+  procedure ShowBuyWindow(CopperPrice, OlivesPrice, WheatPrice: integer);
   var
     Unused: integer;
     ChosenWarePrice: integer;
@@ -1328,11 +1288,7 @@ var
     end;
   end;
 
-  procedure ShowSellWindow(
-    CopperPrice: integer;
-    OlivesPrice: integer;
-    WheatPrice: integer
-  );
+  procedure ShowSellWindow(CopperPrice, OlivesPrice, WheatPrice: integer);
   var
     Unused: integer;
     ChosenWare: integer;
@@ -1540,7 +1496,7 @@ var
     Dispose(CountryNamePic);
   end;
 
-  procedure TravelFlow(CurrentStormCountryName: TCountryName);
+  procedure TravelFlow(StormCountryNameArg: TCountryName);
   var
     ShouldAbortTravel: boolean;
     DidArriveSafely: boolean;
@@ -1555,13 +1511,7 @@ var
     GuardShipCount: integer;
     TravelEndTime: byte;
 
-    procedure AnimateTravel(
-      FromX: integer;
-      FromY: integer;
-      ToX: integer;
-      ToY: integer;
-      Unused: integer
-    );
+    procedure AnimateTravel(FromX, FromY, ToX, ToY: integer; Unused: integer);
     var
       X: integer;
       Y: integer;
@@ -1614,12 +1564,8 @@ var
       GetPic(MapWindow^, 0, 0, 240, 142);
     end;
 
-    procedure DoTravelEvent(
-      CurrentShipDamage: real;
-      CurrentCargoWeight: integer;
-      CurrentTravelDuration: integer;
-      CurrentRisk: integer
-    );
+    procedure DoTravelEvent(ShipDamageArg: real; CargoWeightArg: integer;
+                            TravelDurationArg: integer; RiskArg: integer);
     var
       Unused: array[1..4] of byte;
       Ware: integer;
@@ -1634,7 +1580,7 @@ var
       IsHighRiskEventForced: boolean;
       IsShipDamaged: boolean;
 
-      procedure PiratesFlow(CurrentGuardShipCount: integer; CurrentCargoWeight2: integer);
+      procedure PiratesFlow(GuardShipCountArg: integer; CargoWeightNestedArg: integer);
       var
         RunAwayChance: integer;
         ChosenPiratesOption: integer;
@@ -1671,8 +1617,8 @@ var
         begin
           PutPic(ConfrontWindow^, 0, 142);
           WinningDifficulty := Random(4);
-          if (WinningDifficulty < CurrentGuardShipCount - GuardShipCountAdjustment) or
-              ((CurrentGuardShipCount - GuardShipCountAdjustment <= 0) and (Random(6) = 1)) then
+          if (WinningDifficulty < GuardShipCountArg - GuardShipCountAdjustment) or
+              ((GuardShipCountArg - GuardShipCountAdjustment <= 0) and (Random(6) = 1)) then
           begin
             ShowMessage('W', '- ךשוממ ברק רחאל', '! םיטריפה תא תסבה', '');
             if Random(3) = 1 then
@@ -1683,9 +1629,9 @@ var
             end
             else
             begin
-              CurrentGuardShipCount := CurrentGuardShipCount + GuardShipCountAdjustment;
+              GuardShipCountArg := GuardShipCountArg + GuardShipCountAdjustment;
               Booty := Int((Money + GetTotalCargoValue + BankBalance) / 100) * (Random(15) + 5) +
-                  CurrentGuardShipCount * (Money + GetTotalCargoValue + BankBalance) / 10;
+                  GuardShipCountArg * (Money + GetTotalCargoValue + BankBalance) / 10;
               if Booty < 100 then
                 Booty := 100;
               Booty := 5 * Int(Booty / 5);
@@ -1697,22 +1643,22 @@ var
           end
           else
           begin
-            Str(CurrentGuardShipCount, StringBuffer);
-            if CurrentGuardShipCount = 0 then
+            Str(GuardShipCountArg, StringBuffer);
+            if GuardShipCountArg = 0 then
               ShowMessage('W', ',רמשמ תוניפס תנגה אלל', 'םיטריפה ידי לע תסבוה התא', '')
-            else if CurrentGuardShipCount = 1 then
+            else if GuardShipCountArg = 1 then
               ShowMessage('W', 'תניפס לע ורבגתה םיטריפה', 'ךלש רמשמה', '')
-            else if CurrentGuardShipCount > 1 then
+            else if GuardShipCountArg > 1 then
               ShowMessage('W', 'תא וחצינ םיטריפה', 'ךלש רמשמה תוניפס ' + StringBuffer, '');
-            CurrentGuardShipCount := CurrentGuardShipCount + GuardShipCountAdjustment;
-            if CurrentGuardShipCount > 3 then
-              CurrentGuardShipCount := 3;
+            GuardShipCountArg := GuardShipCountArg + GuardShipCountAdjustment;
+            if GuardShipCountArg > 3 then
+              GuardShipCountArg := 3;
             GetMostValuableCargo(5, Ware, MostValuableCargoValue);
             if MostValuableCargoValue > Money then
             begin
               LostAmount := 1.0 * (Random(15) + 5) * Cargo[Ware] / 100;
-              if CurrentGuardShipCount < 3 then
-                LostAmount := LostAmount + (3 - CurrentGuardShipCount) * Cargo[Ware] div 10;
+              if GuardShipCountArg < 3 then
+                LostAmount := LostAmount + (3 - GuardShipCountArg) * Cargo[Ware] div 10;
               if LostAmount < 1 then
                 LostAmount := 1;
               Cargo[Ware] := Cargo[Ware] - Trunc(LostAmount);
@@ -1724,8 +1670,8 @@ var
             else if Money > 500 then
             begin
               LostAmount := 10 * Trunc(Random(Trunc(0.015 * Money)) + Money / 200);
-              if CurrentGuardShipCount < 3 then
-                LostAmount := LostAmount + (3 - CurrentGuardShipCount) * Trunc(Money / 10);
+              if GuardShipCountArg < 3 then
+                LostAmount := LostAmount + (3 - GuardShipCountArg) * Trunc(Money / 10);
               LostAmount := Trunc(LostAmount);
               Money := Money - LostAmount;
               Str(LostAmount:1:0, LostAmountString);
@@ -1734,7 +1680,7 @@ var
             end
             else
             begin
-              LostAmount := Int((Random(15) + 35 - 10 * CurrentGuardShipCount) / 1000 *
+              LostAmount := Int((Random(15) + 35 - 10 * GuardShipCountArg) / 1000 *
                   (GetTotalCargoValue + Money + BankBalance)) * 10;
               if LostAmount < 100 then
                 LostAmount := 100;
@@ -1781,11 +1727,11 @@ var
             DamagedRunAwayControl := 0;
             GuardShipCountAdjustment := 1;
             PutPic(RunAwayWindow^, 0, 142);
-            if CurrentCargoWeight2 > 0.81 * ShipCapacity then
+            if CargoWeightNestedArg > 0.81 * ShipCapacity then
               RunAwayControl := 0
             else
             begin
-              RunAwayChance := ShipCapacity div 30 - CurrentCargoWeight2 div 30 + 1;
+              RunAwayChance := ShipCapacity div 30 - CargoWeightNestedArg div 30 + 1;
               if RunAwayChance < 1 then
                 RunAwayChance := 1;
               RunAwayControl := Random(RunAwayChance);
@@ -1796,7 +1742,7 @@ var
               RunAwayControl := 0;
             if RunAwayControl = 0 then
             begin
-              if CurrentCargoWeight2 > 0.5 * ShipCapacity then
+              if CargoWeightNestedArg > 0.5 * ShipCapacity then
                 ShowMessage('W', 'אלו ,ידמ הדבכ ךתניפס', 'חורבל החילצה', '')
               else if ShipDamage > 0 then
                 ShowMessage('W', 'בקע חורבל תחלצה אל', 'ךתניפסבש קזנה', '')
@@ -1824,20 +1770,20 @@ var
         end;
       end;
 
-      function IsShipSinking(CurrentCargoWeight2: integer): boolean;
+      function IsShipSinking(CargoWeightNestedArg: integer): boolean;
       var
         SinkingChance: integer;
       begin
         SinkingChance := 30000;
-        if CurrentCargoWeight2 > ShipCapacity + 70 then
+        if CargoWeightNestedArg > ShipCapacity + 70 then
           SinkingChance := 1
-        else if CurrentCargoWeight2 > ShipCapacity + 60 then
+        else if CargoWeightNestedArg > ShipCapacity + 60 then
           SinkingChance := 2
-        else if CurrentCargoWeight2 > ShipCapacity + 40 then
+        else if CargoWeightNestedArg > ShipCapacity + 40 then
           SinkingChance := 3
-        else if CurrentCargoWeight2 > ShipCapacity + 20 then
+        else if CargoWeightNestedArg > ShipCapacity + 20 then
           SinkingChance := 4
-        else if CurrentCargoWeight2 > ShipCapacity then
+        else if CargoWeightNestedArg > ShipCapacity then
           SinkingChance := 6;
         if Random(SinkingChance) = 0 then
           IsShipSinking := True
@@ -1845,10 +1791,10 @@ var
           IsShipSinking := False;
       end;
 
-      function ShouldDoHighRiskEvent(CurrentDamage: real; CurrentRisk: integer): boolean;
+      function ShouldDoHighRiskEvent(ShipDamageNestedArg: real; RiskNestedArg: integer): boolean;
       begin
         ShouldDoHighRiskEvent :=
-            (Random(1 + Trunc((CurrentDamage + 399) / 400) + 2 * CurrentRisk) > 0) and
+            (Random(1 + Trunc((ShipDamageNestedArg + 399) / 400) + 2 * RiskNestedArg) > 0) and
             (Random(2) = 1);
       end;
 
@@ -1870,9 +1816,9 @@ var
     begin
       HadTravelEvent := False;
       DidArriveSafely := False;
-      if ShouldDoHighRiskEvent(CurrentShipDamage, CurrentRisk) then
+      if ShouldDoHighRiskEvent(ShipDamageArg, RiskArg) then
       begin
-        if CurrentShipDamage > 0 then
+        if ShipDamageArg > 0 then
           IsShipDamaged := True
         else
           IsHighRiskEventForced := Random(3) = 1;
@@ -1925,9 +1871,9 @@ var
           ChangeTravelDestination;
         HadTravelEvent := True;
       end;
-      if (not HadTravelEvent) and (CurrentCargoWeight > ShipCapacity) then
+      if (not HadTravelEvent) and (CargoWeightArg > ShipCapacity) then
       begin
-        if IsShipSinking(CurrentCargoWeight) then
+        if IsShipSinking(CargoWeightArg) then
         begin
           ShowMessage('W', '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
           PutPic(SinkingWindow^, 0, 142);
@@ -1939,20 +1885,15 @@ var
         end;
       end;
       if (not HadTravelEvent) and
-          (TimeOfDay + CurrentTravelDuration + CurrentTravelDuration div 2 <= 20) then
+          (TimeOfDay + TravelDurationArg + TravelDurationArg div 2 <= 20) then
       begin
         if Random(12) = 0 then
         begin
           CurrentShipX := ShipX;
           CurrentShipY := ShipY;
           OriginalTravelDestination := CountryNameToIndex(TravelDestination);
-          AnimateTravel(
-            CurrentShipX,
-            CurrentShipY,
-            MapCoordinates[OriginalTravelDestination].X,
-            MapCoordinates[OriginalTravelDestination].Y,
-            9
-          );
+          AnimateTravel(CurrentShipX, CurrentShipY, MapCoordinates[OriginalTravelDestination].X,
+              MapCoordinates[OriginalTravelDestination].Y, 9);
           if Random(2) = 1 then
             ShowMessage('W', 'תינמז רוגס ' + TravelDestination + ' למנ', 'דבכ לפרע בקע', '')
           else
@@ -1963,15 +1904,10 @@ var
           end;
           ShowMessage('W', '', (TravelStart + 'ל רוזחל ךילע'), '');
           TravelDestination := TravelStart;
-          TravelEndTime := TimeOfDay + CurrentTravelDuration div 2;
-          AnimateTravel(
-            MapCoordinates[OriginalTravelDestination].X,
-            MapCoordinates[OriginalTravelDestination].Y,
-            CurrentShipX,
-            CurrentShipY,
-            9
-          );
-          TravelEndTime := TimeOfDay + CurrentTravelDuration div 2;
+          TravelEndTime := TimeOfDay + TravelDurationArg div 2;
+          AnimateTravel(MapCoordinates[OriginalTravelDestination].X,
+              MapCoordinates[OriginalTravelDestination].Y, CurrentShipX, CurrentShipY, 9);
+          TravelEndTime := TimeOfDay + TravelDurationArg div 2;
           HadTravelEvent := True;
         end;
       end;
@@ -1985,7 +1921,7 @@ var
           1..6: begin
             ShowMessage('W', '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
             HadTravelEvent := True;
-            PiratesFlow(GuardShipCount, CurrentCargoWeight);
+            PiratesFlow(GuardShipCount, CargoWeightArg);
           end;
           7: ChangeTravelDestination;
           9, 10: begin
@@ -1995,9 +1931,8 @@ var
             repeat
             begin
               Ware := Ware + 1;
-              FoundAmount := Trunc(
-                (Random(25) + 11) / 100.0 * (Money + GetTotalCargoValue) / BaseWarePrice[Ware]
-              );
+              FoundAmount := Trunc((Random(25) + 11) / 100.0 * (Money + GetTotalCargoValue) /
+                  BaseWarePrice[Ware]);
               if FoundAmount > 0 then
               begin
                 GotoXY(45, 16);
@@ -2027,7 +1962,7 @@ var
       HalfTravelTime: byte;
 
       { Risk > 0 means 1/3 higher guard ship cost }
-      procedure ShowGuardShipWindow(var CurrentRisk: integer);
+      procedure ShowGuardShipWindow(var RiskArg: integer);
       var
         GuardShipPrice: real;
         Line1: TMessageLine;
@@ -2039,7 +1974,7 @@ var
         GuardShipPrice := 5 * Trunc((GetTotalCargoValue + Money) / (200 + Random(100)));
         if GuardShipPrice < 75 then
           GuardShipPrice := 75;
-        if CurrentRisk > 0 then
+        if RiskArg > 0 then
           GuardShipPrice := GuardShipPrice + GuardShipPrice / 3;
         GuardShipPrice := 5 * Int(GuardShipPrice / 5);
         Str(GuardShipPrice:1:0, PriceString);
@@ -2048,7 +1983,7 @@ var
         if GuardShipPrice <= Money then
         begin
           Line2 := 'ח"ש ' + PriceString;
-          if CurrentRisk = 0 then
+          if RiskArg = 0 then
             Line1 := 'רמשמ תניפס לכ ריחמ'
           else
           begin
@@ -2094,13 +2029,8 @@ var
         CurrentWaypoint := CountryNameToIndex(TravelStart);
         DestinationIndex := CountryNameToIndex(TravelDestination);
         NextWaypoint := MapWaypoints[CurrentWaypoint, DestinationIndex];
-        AnimateTravel(
-          MapCoordinates[CurrentWaypoint].X,
-          MapCoordinates[CurrentWaypoint].Y,
-          MapCoordinates[NextWaypoint].X,
-          MapCoordinates[NextWaypoint].Y,
-          9
-        );
+        AnimateTravel(MapCoordinates[CurrentWaypoint].X, MapCoordinates[CurrentWaypoint].Y,
+          MapCoordinates[NextWaypoint].X, MapCoordinates[NextWaypoint].Y, 9);
         TravelEndTime := TimeOfDay + HalfTravelTime;
         CurrentWaypoint := NextWaypoint;
         DoTravelEvent(ShipDamage, GetTotalCargoWeight, TravelDuration, Risk);
@@ -2113,24 +2043,14 @@ var
         end;
         while NextWaypoint > 0 do
         begin
-          AnimateTravel(
-            MapCoordinates[CurrentWaypoint].X,
-            MapCoordinates[CurrentWaypoint].Y,
-            MapCoordinates[NextWaypoint].X,
-            MapCoordinates[NextWaypoint].Y,
-            9
-          );
+          AnimateTravel(MapCoordinates[CurrentWaypoint].X, MapCoordinates[CurrentWaypoint].Y,
+              MapCoordinates[NextWaypoint].X, MapCoordinates[NextWaypoint].Y, 9);
           TravelEndTime := TimeOfDay + HalfTravelTime;
           CurrentWaypoint := NextWaypoint;
           NextWaypoint := MapWaypoints[CurrentWaypoint, DestinationIndex];
         end;
-        AnimateTravel(
-          MapCoordinates[CurrentWaypoint].X,
-          MapCoordinates[CurrentWaypoint].Y,
-          MapCoordinates[DestinationIndex].X,
-          MapCoordinates[DestinationIndex].Y,
-          9
-        );
+        AnimateTravel(MapCoordinates[CurrentWaypoint].X, MapCoordinates[CurrentWaypoint].Y,
+            MapCoordinates[DestinationIndex].X, MapCoordinates[DestinationIndex].Y, 9);
         if DidArriveSafely then
           ShowMessage('N', '', '! !  ם ו ל ש ב   ת ע ג ה', '');
       end;
@@ -2193,15 +2113,16 @@ var
           begin
             TravelEndTime := TimeOfDay + TravelDuration;
             Risk := 2;
-            if (CurrentStormCountryName = CurrentCountryName) or
-                (CurrentStormCountryName = TravelDestination) then
+            if (StormCountryNameArg = CurrentCountryName) or
+                (StormCountryNameArg = TravelDestination) then
               Risk := 4;
             DoTravel;
           end;
         end
         else
         begin
-          if (CurrentStormCountryName = CurrentCountryName) or (CurrentStormCountryName = TravelDestination) then
+          if (StormCountryNameArg = CurrentCountryName) or
+              (StormCountryNameArg = TravelDestination) then
             Risk := 3;
           TravelEndTime := TimeOfDay + TravelDuration;
           DoTravel;
@@ -2370,7 +2291,7 @@ begin
         Stay: begin
           PutPic(StayWindow^, 0, 142);
           if Day = 7 then
-            ShowMessage('N', ',םיתסה רחסמה עובש', 'קחשמה םויסל  ───┘  שקה', '');
+            ShowMessage('N', ',םיתסה רחסמה עובש', 'קחשמה םויסל  '#17'───┘  שקה', '');
           repeat
             LastPressedKey := GetPressedKey;
           until LastPressedKey in [Escape, Enter];
