@@ -2,11 +2,7 @@
 
 ![A screenshot of the game Socher Hayam, where the player encountered a derelict ship. Instead of the original loot, the player found 3554 lines of Pascal](.media/pascal.png)
 
-The good news is that we have a matching decompilation of the game סוחר הים - source code that compiles to the exact same binary as the original.
-
-The bad news is that this decompilation was done in an automated fashion, so all functions, procedures, variables and types have silly names such as `Func31`, `Func35_var_86` and `arr_record_13866380471399314824_11`.
-
-The goal of this project is to rename all of this nonsense into descriptive names and to document/annotate the source code as necessary, while preserving the resulting binary.
+This repository contains a matching decompilation of the game סוחר הים - source code that compiles to the exact same binary as the original.
 
 ## Why?
 
@@ -18,11 +14,7 @@ Reconstructing the source will allow a better understanding of it and the creati
 
 ![A screenshot of the game Socher Hayam, with a person looking confused at a map. Instead of the original message about a navigation error, the message asks "What the hell is Func31_var_173?".](.media/winds.png)
 
-Please feel free to make pull requests for renaming variables or functions, simplifying expressions, adding documentation, etc.
-
-My personal recommendation is not to use AI, since that's not very fun, but do whatever you enjoy, as long as the results are high quality.
-
-When renaming identifiers, please drop the snake_case and use PascalCase instead.
+While all variables and functions are already renamed to represent their role, PRs for adding documentation, improving the names or formatting etc. are more than welcome, as long as they don't change the compiled executable.
 
 ## Requirements
 
