@@ -153,7 +153,8 @@ begin
   end
   else
   begin
-    ToStrWithCommas := ToStrWithCommas(Int(Number / 1000)) + ',' + ZeroPad3(1000 * Frac(Number / 1000));
+    ToStrWithCommas := ToStrWithCommas(Int(Number / 1000)) + ',' +
+        ZeroPad3(1000 * Frac(Number / 1000));
   end;
 end;
 
