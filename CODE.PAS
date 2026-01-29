@@ -1031,16 +1031,13 @@ var
               ShouldSkipDay := True;
               ShowMessage(87, '...תרחמל', '.שדח תווצ םע דבוע התא', '');
             end
+            else if OfferFlow(Cargo[Copper], Cargo[Olives], Cargo[Wheat], Money) then
+              ShowMessage(87, '.ךתעצה תא לביק תווצה', '', '')
             else
             begin
-              if OfferFlow(Cargo[Copper], Cargo[Olives], Cargo[Wheat], Money) then
-                ShowMessage(87, '.ךתעצה תא לביק תווצה', '', '')
-              else
-              begin
-                ShowMessage(87, '.העצהל ברס תווצה', 'אצומ התאו םיימוי ורבע', 'שדח תווצ');
-                Day := Day + 1;
-                ShouldSkipDay := True;
-              end;
+              ShowMessage(87, '.העצהל ברס תווצה', 'אצומ התאו םיימוי ורבע', 'שדח תווצ');
+              Day := Day + 1;
+              ShouldSkipDay := True;
             end;
           end
           else
@@ -1709,29 +1706,26 @@ var
                   WareName[Ware] + 'ןוט ' + LostAmountString);
               ApplyConfrontDamage(2);
             end
+            else if Money > 500 then
+            begin
+              LostAmount := 10 * Trunc(Random(Trunc(0.015 * Money)) + Money / 200);
+              if CurrentGuardShipCount < 3 then
+                LostAmount := LostAmount + (3 - CurrentGuardShipCount) * Trunc(Money / 10);
+              LostAmount := Trunc(LostAmount);
+              Money := Money - LostAmount;
+              Str(LostAmount:1:0, LostAmountString);
+              ShowMessage(87, 'םילקש ' + LostAmountString + ' ךממ ובנג םה', '', '');
+              ApplyConfrontDamage(2);
+            end
             else
             begin
-              if Money > 500 then
-              begin
-                LostAmount := 10 * Trunc(Random(Trunc(0.015 * Money)) + Money / 200);
-                if CurrentGuardShipCount < 3 then
-                  LostAmount := LostAmount + (3 - CurrentGuardShipCount) * Trunc(Money / 10);
-                LostAmount := Trunc(LostAmount);
-                Money := Money - LostAmount;
-                Str(LostAmount:1:0, LostAmountString);
-                ShowMessage(87, 'םילקש ' + LostAmountString + ' ךממ ובנג םה', '', '');
-                ApplyConfrontDamage(2);
-              end
-              else
-              begin
-                LostAmount := Int((Random(15) + 35 - 10 * CurrentGuardShipCount) / 1000 *
-                    (GetTotalCargoValue + Money + BankBalance)) * 10;
-                if LostAmount < 100 then
-                  LostAmount := 100;
-                Str(LostAmount:1:0, StringBuffer);
-                ShipDamage := ShipDamage + LostAmount;
-                ShowMessage(87, 'ךתניפס ,ךלזמ עורל', '.ברקה ידכ ךות העגפנ', 'ח"ש ' + StringBuffer + ' קזנה יווש');
-              end;
+              LostAmount := Int((Random(15) + 35 - 10 * CurrentGuardShipCount) / 1000 *
+                  (GetTotalCargoValue + Money + BankBalance)) * 10;
+              if LostAmount < 100 then
+                LostAmount := 100;
+              Str(LostAmount:1:0, StringBuffer);
+              ShipDamage := ShipDamage + LostAmount;
+              ShowMessage(87, 'ךתניפס ,ךלזמ עורל', '.ברקה ידכ ךות העגפנ', 'ח"ש ' + StringBuffer + ' קזנה יווש');
             end;
           end;
           ShowHUD;
