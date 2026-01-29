@@ -1,4 +1,4 @@
-program Prog;
+program Socher;
 const
   Copper = 1;
   Olives = 2;
@@ -30,7 +30,7 @@ type
   TRectArray = array[1..10] of TRect;
   TNumberString = string[7];
 var
-  BasePath: string[20];
+  ExtraFilesPath: string[20];
   Iter: integer;
   CountryIter: integer;
   Unused: array[1..8] of byte;
@@ -93,7 +93,7 @@ var
   OverweightWindow: PWinBuffer;
   GuardsWindow: PWinBuffer;
   DesertedWindow: PWinBuffer;
-  Unused5: array[1..4] of byte;
+  Unused5: ^integer;
   NewDayScreen: PScrBuffer;
   SocherScreen: PScrBuffer;
   ExpandScreen: PScrBuffer;
@@ -105,7 +105,7 @@ var
   OlivesDownScreen: PScrBuffer;
   CopperUpScreen: PScrBuffer;
   CopperDownScreen: PScrBuffer;
-  Unused6: array[1..4] of byte;
+  Unused6: ^integer;
   MainScreen: PScrBuffer;
   HelpScreen: PScrBuffer;
   RepairOptionPic: ^TRepairOptionBuffer;

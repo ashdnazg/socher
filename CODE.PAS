@@ -10,7 +10,7 @@ begin
 end;
 
 procedure ShowMessage(
-  WaitForKeyFlag: byte;
+  WaitForKeyFlag: char;
   Line1: TMessageLine;
   Line2: TMessageLine;
   Line3: TMessageLine
@@ -24,7 +24,7 @@ begin
   Write(Line2);
   GotoXY(29 - Length(Line3), 17);
   Write(Line3);
-  if (WaitForKeyFlag = 87) or (WaitForKeyFlag = 82) then
+  if (WaitForKeyFlag = 'W') or (WaitForKeyFlag = 'R') then
   begin
     WaitForKey;
     PutPic(PreMessageBackground, 10, 138);
@@ -56,7 +56,7 @@ var
   Contents: PWinBuffer;
   NumBlocks: integer;
 begin
-  Assign(WinFile, (FileName + '.win'));
+  Assign(WinFile, FileName + '.win');
   {$I-} Reset(WinFile); {$I+}
   if IOResult <> 0 then
     Writeln('םיק וניא ', FileName, '.win ץבק')
@@ -78,13 +78,13 @@ var
   NumBlocks: integer;
 begin
   if FileName <> 'day7' then
-    Assign(SgnFile, BasePath + FileName + '.sgn')
+    Assign(SgnFile, ExtraFilesPath + FileName + '.sgn')
   else
     Assign(SgnFile, 'day7.sgn');
 
   {$I-} Reset(SgnFile); {$I+}
   if IOResult <> 0 then
-    Writeln('םיק וניא ', BasePath, FileName, '.sgn ץבק')
+    Writeln('םיק וניא ', ExtraFilesPath, FileName, '.sgn ץבק')
   else
   begin
     New(Contents);
@@ -100,10 +100,10 @@ var
   ScrFile: file;
   Contents: PScrBuffer;
 begin
-  Assign(ScrFile, BasePath + FileName + '.scr');
+  Assign(ScrFile, ExtraFilesPath + FileName + '.scr');
   {$I-} Reset(ScrFile); {$I+}
   if IOResult <> 0 then
-    Writeln('םיק וניא ', BasePath, FileName, '.scr ץבק')
+    Writeln('םיק וניא ', ExtraFilesPath, FileName, '.scr ץבק')
   else
   begin
     New(Contents);
@@ -121,7 +121,7 @@ var
 begin
   Total := 0;
   for Ware := Copper to Wheat do
-    Total := Total + (1.0 * Cargo[Ware] * BaseWarePrice[Ware]);
+    Total := Total + 1.0 * Cargo[Ware] * BaseWarePrice[Ware];
   GetTotalCargoValue := Total;
 end;
 
@@ -186,11 +186,11 @@ end;
 procedure ShowStormScreen;
 begin
   if StormCountryName = ' ' then
-    ShowScrFile((BasePath + 'goodwthr.scr'))
+    ShowScrFile(ExtraFilesPath + 'goodwthr.scr')
   else
   begin
     GotoXY(28, 20);
-    ShowScrFile((BasePath + 'badwthr.scr'));
+    ShowScrFile(ExtraFilesPath + 'badwthr.scr');
     Write(StormCountryName:6);
   end;
   WaitForKey;
@@ -270,7 +270,7 @@ end;
 
 function ShowOptions(
   OptionRects: TRectArray;
-  { Option count of 100 + N means flags that the option's unselected doesn't need to be restored
+  { Option count of 100 + N means that the option's unselected pic doesn't need to be restored
     when Enter is pressed, e.g., when the screen is exited afterwards }
   OptionCount: integer
 ): integer;
@@ -350,7 +350,8 @@ begin
     begin
       PressedKey := GetPressedKey;
       case PressedKey of
-        #68: ShowHelpScreen;
+        { is also F10 }
+        'D': ShowHelpScreen;
         '0': begin
           if DigitCount < MaxDigits then
           begin
@@ -402,7 +403,7 @@ begin
       GotoXY(2, 10);
       Str(MinNumber, MinNumberString);
       Str(MaxNumber, MaxNumberString);
-      ShowMessage(87, '', MaxNumberString + ' -ל ' + MinNumberString + ' ןיב רפסמ סנכה אנ', #7);
+      ShowMessage('W', '', MaxNumberString + ' -ל ' + MinNumberString + ' ןיב רפסמ סנכה אנ', #7);
       GotoXY(CurrentX, CurrentY);
       ShouldReturn := False;
     end;
@@ -503,9 +504,9 @@ var
     GotoXY(32, 17);
     Write(' ':8);
     GotoXY(34, 17);
-    if (Money >= 10000.0) then
+    if Money >= 10000.0 then
       GotoXY(33, 17);
-    if (Money >= 100000.0) then
+    if Money >= 100000.0 then
       GotoXY(32, 17);
     Write(ToStrWithCommas(Money):5);
     GotoXY(32, 9);
@@ -536,19 +537,20 @@ var
     Write(WheatPriceEgypt:4);
   end;
 
-  function UnusedFunction(Input: byte): boolean;
+  { Unused }
+  function IsSub(C: char): boolean;
   begin
-    if Input = 26 then
-      UnusedFunction := True
+    if C = #26 then
+      IsSub := True
     else
-      UnusedFunction := False;
+      IsSub := False;
   end;
 
   function CannotAfford(LostAmount: real): boolean;
   begin
     if LostAmount > Money then
     begin
-      ShowMessage(87, '', '!ףסכ קיפסמ ךתושרב ןיא', #7);
+      ShowMessage('W', '', '!ףסכ קיפסמ ךתושרב ןיא', #7);
       CannotAfford := True;
     end
     else
@@ -578,7 +580,7 @@ var
         CanAffordMoney := True
       else
       begin
-        ShowMessage(87, '', '!הז םוכס ךתושרב ןיא', #7);
+        ShowMessage('W', '', '!הז םוכס ךתושרב ןיא', #7);
         CanAffordMoney := False;
       end;
     end;
@@ -592,7 +594,7 @@ var
         CanAffordWare := True
       else
       begin
-        ShowMessage(87, '', '!הז םוכס ךתושרב ןיא', #7);
+        ShowMessage('W', '', '!הז םוכס ךתושרב ןיא', #7);
         CanAffordWare := False;
       end;
     end;
@@ -606,7 +608,7 @@ var
     begin
       repeat
       begin
-        ShowMessage(78,'?תתל ןכומ התא' + WareName[Copper] + 'ןוט המכ', '', '');
+        ShowMessage('N','?תתל ןכומ התא' + WareName[Copper] + 'ןוט המכ', '', '');
         GotoXY(20, 16);
         repeat
           OfferedCopper := Trunc(InputReal(0, 0, 8));
@@ -618,7 +620,7 @@ var
     begin
       repeat
       begin
-        ShowMessage(78,'?תתל ןכומ התא' + WareName[Olives] + 'ןוט המכ', '', '');
+        ShowMessage('N','?תתל ןכומ התא' + WareName[Olives] + 'ןוט המכ', '', '');
         GotoXY(20, 16);
         repeat
           OfferedOlives := Trunc(InputReal(0, 0, 8));
@@ -630,7 +632,7 @@ var
     begin
       repeat
       begin
-        ShowMessage(78, (('?תתל ןכומ התא' + WareName[Wheat]) + 'ןוט המכ'), '', '');
+        ShowMessage('N', '?תתל ןכומ התא' + WareName[Wheat] + 'ןוט המכ', '', '');
         GotoXY(20, 16);
         repeat
           OfferedWheat := Trunc(InputReal(0, 0, 8));
@@ -638,11 +640,11 @@ var
       end
       until CanAffordWare(OfferedWheat, InOutWheat);
     end;
-    if InOutMoney > (GetTotalCargoValue / 10) then
+    if InOutMoney > GetTotalCargoValue / 10 then
     begin
       repeat
       begin
-        ShowMessage(78, '?תתל ןכומ התא ףסכ המכ', '', '');
+        ShowMessage('N', '?תתל ןכומ התא ףסכ המכ', '', '');
         GotoXY(20, 16);
         repeat
           OfferedAmount := Trunc(InputReal(0, 0, 8));
@@ -796,6 +798,7 @@ var
     ExpandMoneyCost: integer;
     ExpandBankBalanceCost: integer;
 
+    { Values for UpDownFlag }
     const
       PriceUp = 1;
       PriceDown = 2;
@@ -853,12 +856,17 @@ var
       WaitForKey;
     end;
 
+  { Options in crew menu }
+  const
+    NewCrew = 1;
+    Offer = 2;
+
   begin
     repeat
     begin
       DidEventHappen := True;
       repeat
-        RandomEvent := (Random(30) + 1);
+        RandomEvent := Random(30) + 1;
       until (RandomEvent <> LastNightEvent) and (not ((RandomEvent in [1..2]) and (LastNightEvent in [1..2])))
           and (not ((RandomEvent in [3..4]) and (LastNightEvent in [3..4])))
           and (not ((RandomEvent in [5..6]) and (LastNightEvent in [5..6])))
@@ -942,7 +950,7 @@ var
               GetMostValuableCargo(1, Ware, MostValuableCargoValue);
               if MostValuableCargoValue >= ExpandPrice then
               begin
-                ExpandWareCost := Round((1.0 * ExpandPrice / BaseWarePrice[Ware]));
+                ExpandWareCost := Round(1.0 * ExpandPrice / BaseWarePrice[Ware]);
                 ExpandWareCosts[Ware] := ExpandWareCost;
                 Str(ExpandWareCost, StringBuffer);
               end
@@ -985,7 +993,7 @@ var
               Money := Money - ExpandMoneyCost;
               BankBalance := BankBalance - ExpandBankBalanceCost;
               for Iter := Copper to Wheat do
-                Cargo[Iter] := (Cargo[Iter] - ExpandWareCosts[Iter]);
+                Cargo[Iter] := Cargo[Iter] - ExpandWareCosts[Iter];
               PutPic(MessageSign^, 90, 194);
               GotoXY(18, 23);
               Write('.העצוב  הבחרהה');
@@ -994,9 +1002,9 @@ var
               if ExpandBankBalanceCost > 0 then
               begin
                 if ExpandMoneyCost > 0 then
-                  ShowMessage(87, 'ךנובשחמ וחקלנ לקש ' + StringBuffer, '.קנבב', '')
+                  ShowMessage('W', 'ךנובשחמ וחקלנ לקש ' + StringBuffer, '.קנבב', '')
                 else
-                  ShowMessage(87, '.קנבב ךנובשחמ חקלנ ףסכה', '', '');
+                  ShowMessage('W', '.קנבב ךנובשחמ חקלנ ףסכה', '', '');
               end;
             end;
           end
@@ -1015,27 +1023,27 @@ var
             Write(Cargo[Wheat]:5);
             GotoXY(7, 6);
             Write(Money:5:0);
-            CrewOptionRects[1].X1 := 54;
-            CrewOptionRects[1].Y1 := 177;
-            CrewOptionRects[1].X2 := 198;
-            CrewOptionRects[1].Y2 := 183;
-            CrewOptionRects[2].X1 := 78;
-            CrewOptionRects[2].Y1 := 186;
-            CrewOptionRects[2].X2 := 198;
-            CrewOptionRects[2].Y2 := 192;
+            CrewOptionRects[NewCrew].X1 := 54;
+            CrewOptionRects[NewCrew].Y1 := 177;
+            CrewOptionRects[NewCrew].X2 := 198;
+            CrewOptionRects[NewCrew].Y2 := 183;
+            CrewOptionRects[Offer].X1 := 78;
+            CrewOptionRects[Offer].Y1 := 186;
+            CrewOptionRects[Offer].X2 := 198;
+            CrewOptionRects[Offer].Y2 := 192;
             repeat
               ChosenCrewOption := ShowOptions(CrewOptionRects, 2);
             until ChosenCrewOption > 0;
-            if ChosenCrewOption = 1 then
+            if ChosenCrewOption = NewCrew then
             begin
               ShouldSkipDay := True;
-              ShowMessage(87, '...תרחמל', '.שדח תווצ םע דבוע התא', '');
+              ShowMessage('W', '...תרחמל', '.שדח תווצ םע דבוע התא', '');
             end
             else if OfferFlow(Cargo[Copper], Cargo[Olives], Cargo[Wheat], Money) then
-              ShowMessage(87, '.ךתעצה תא לביק תווצה', '', '')
+              ShowMessage('W', '.ךתעצה תא לביק תווצה', '', '')
             else
             begin
-              ShowMessage(87, '.העצהל ברס תווצה', 'אצומ התאו םיימוי ורבע', 'שדח תווצ');
+              ShowMessage('W', '.העצהל ברס תווצה', 'אצומ התאו םיימוי ורבע', 'שדח תווצ');
               Day := Day + 1;
               ShouldSkipDay := True;
             end;
@@ -1191,7 +1199,7 @@ var
           FishingBoatDamage := 10 * Trunc((GetTotalCargoValue + Money) / (Random(80) + 150));
           if FishingBoatDamage > 0 then
           begin
-            ShowScrFile(BasePath + 'fishing.scr');
+            ShowScrFile(ExtraFilesPath + 'fishing.scr');
             ShipDamage := ShipDamage + FishingBoatDamage;
             GotoXY(20, 3);
             Write(FishingBoatDamage:4);
@@ -1213,13 +1221,13 @@ var
   begin
     Str(Day, DayString);
     DaySignBuffer := LoadSgnFile('day' + DayString);
-    ShowScrFile(BasePath + 'newday.scr');
+    ShowScrFile(ExtraFilesPath + 'newday.scr');
     PutPic(DaySignBuffer^, 165, 89);
     Dispose(DaySignBuffer);
     WaitForKey;
   end;
 
-  procedure ShowBuyScreen(
+  procedure ShowBuyWindow(
     CopperPrice: integer;
     OlivesPrice: integer;
     WheatPrice: integer
@@ -1234,55 +1242,55 @@ var
   begin
     AmountToBuy := 0;
     if Money < WheatPrice then
-      ShowMessage(87, 'ךל רשפאמ וניא ךפסכ', 'תורוחס תינק', '')
+      ShowMessage('W', 'ךל רשפאמ וניא ךפסכ', 'תורוחס תינק', '')
     else
     begin
       case CountryNameToIndex(CurrentCountryName) of
-        Turkey:   begin
-            PutPic(BuyTurkeyWindow^, 1, 142);
-            BuyOptionRects[Copper].X1 := 177;
-            BuyOptionRects[Copper].Y1 := 2;
-            BuyOptionRects[Copper].X2 := 236;
-            BuyOptionRects[Copper].Y2 := 18;
-            BuyOptionRects[Olives].X1 := 72;
-            BuyOptionRects[Olives].Y1 := 2;
-            BuyOptionRects[Olives].X2 := 131;
-            BuyOptionRects[Olives].Y2 := 18;
-            BuyOptionRects[Wheat].X1 := 180;
-            BuyOptionRects[Wheat].Y1 := 65;
-            BuyOptionRects[Wheat].X2 := 237;
-            BuyOptionRects[Wheat].Y2 := 80;
-          end;
-        Israel:   begin
-            PutPic(BuyIsraelWindow^, 1, 142);
-            BuyOptionRects[Copper].X1 := 177;
-            BuyOptionRects[Copper].Y1 := 2;
-            BuyOptionRects[Copper].X2 := 236;
-            BuyOptionRects[Copper].Y2 := 18;
-            BuyOptionRects[Olives].X1 := 8;
-            BuyOptionRects[Olives].Y1 := 2;
-            BuyOptionRects[Olives].X2 := 67;
-            BuyOptionRects[Olives].Y2 := 18;
-            BuyOptionRects[Wheat].X1 := 179;
-            BuyOptionRects[Wheat].Y1 := 86;
-            BuyOptionRects[Wheat].X2 := 236;
-            BuyOptionRects[Wheat].Y2 := 101;
-          end;
-        Egypt:   begin
-            PutPic(BuyEgyptWindow^, 1, 142);
-            BuyOptionRects[Copper].X1 := 177;
-            BuyOptionRects[Copper].Y1 := 2;
-            BuyOptionRects[Copper].X2 := 236;
-            BuyOptionRects[Copper].Y2 := 18;
-            BuyOptionRects[Olives].X1 := 177;
-            BuyOptionRects[Olives].Y1 := 33;
-            BuyOptionRects[Olives].X2 := 236;
-            BuyOptionRects[Olives].Y2 := 49;
-            BuyOptionRects[Wheat].X1 := 179;
-            BuyOptionRects[Wheat].Y1 := 86;
-            BuyOptionRects[Wheat].X2 := 236;
-            BuyOptionRects[Wheat].Y2 := 101;
-          end;
+        Turkey: begin
+          PutPic(BuyTurkeyWindow^, 1, 142);
+          BuyOptionRects[Copper].X1 := 177;
+          BuyOptionRects[Copper].Y1 := 2;
+          BuyOptionRects[Copper].X2 := 236;
+          BuyOptionRects[Copper].Y2 := 18;
+          BuyOptionRects[Olives].X1 := 72;
+          BuyOptionRects[Olives].Y1 := 2;
+          BuyOptionRects[Olives].X2 := 131;
+          BuyOptionRects[Olives].Y2 := 18;
+          BuyOptionRects[Wheat].X1 := 180;
+          BuyOptionRects[Wheat].Y1 := 65;
+          BuyOptionRects[Wheat].X2 := 237;
+          BuyOptionRects[Wheat].Y2 := 80;
+        end;
+        Israel: begin
+          PutPic(BuyIsraelWindow^, 1, 142);
+          BuyOptionRects[Copper].X1 := 177;
+          BuyOptionRects[Copper].Y1 := 2;
+          BuyOptionRects[Copper].X2 := 236;
+          BuyOptionRects[Copper].Y2 := 18;
+          BuyOptionRects[Olives].X1 := 8;
+          BuyOptionRects[Olives].Y1 := 2;
+          BuyOptionRects[Olives].X2 := 67;
+          BuyOptionRects[Olives].Y2 := 18;
+          BuyOptionRects[Wheat].X1 := 179;
+          BuyOptionRects[Wheat].Y1 := 86;
+          BuyOptionRects[Wheat].X2 := 236;
+          BuyOptionRects[Wheat].Y2 := 101;
+        end;
+        Egypt: begin
+          PutPic(BuyEgyptWindow^, 1, 142);
+          BuyOptionRects[Copper].X1 := 177;
+          BuyOptionRects[Copper].Y1 := 2;
+          BuyOptionRects[Copper].X2 := 236;
+          BuyOptionRects[Copper].Y2 := 18;
+          BuyOptionRects[Olives].X1 := 177;
+          BuyOptionRects[Olives].Y1 := 33;
+          BuyOptionRects[Olives].X2 := 236;
+          BuyOptionRects[Olives].Y2 := 49;
+          BuyOptionRects[Wheat].X1 := 179;
+          BuyOptionRects[Wheat].Y1 := 86;
+          BuyOptionRects[Wheat].X2 := 236;
+          BuyOptionRects[Wheat].Y2 := 101;
+        end;
       end;
       ChosenWare := ShowOptions(BuyOptionRects, 103);
       if ChosenWare > 0 then
@@ -1293,7 +1301,7 @@ var
           Wheat: ChosenWarePrice := WheatPrice;
         end;
         if Money < ChosenWarePrice then
-          ShowMessage(87, 'ךל רשפאמ וניא ךפסכ', WareName[ChosenWare] + 'תונקל', '')
+          ShowMessage('W', 'ךל רשפאמ וניא ךפסכ', WareName[ChosenWare] + 'תונקל', '')
         else
         begin
           repeat
@@ -1316,7 +1324,7 @@ var
     end;
   end;
 
-  procedure Func35(
+  procedure ShowSellWindow(
     CopperPrice: integer;
     OlivesPrice: integer;
     WheatPrice: integer
@@ -1332,7 +1340,7 @@ var
     begin
       if Amount > Cargo[Ware] then
       begin
-        ShowMessage(87, 'הברה ךכ-לכ ךל ןיא', 'רוכמל' + WareName[Ware], #7);
+        ShowMessage('W', 'הברה ךכ-לכ ךל ןיא', 'רוכמל' + WareName[Ware], #7);
         HasInsufficientCargo := True;
       end
       else
@@ -1341,7 +1349,7 @@ var
 
   begin
     if (Cargo[Copper] = 0) and (Cargo[Olives] = 0) and (Cargo[Wheat] = 0) then
-      ShowMessage(87, ' ', 'רוכמל  הרוחס  ךל  ןיא', ' ')
+      ShowMessage('W', ' ', 'רוכמל  הרוחס  ךל  ןיא', ' ')
     else
     begin
       case CountryNameToIndex(CurrentCountryName) of
@@ -1388,7 +1396,7 @@ var
         end
         else
         begin
-          ShowMessage(87, 'רוכמל' + WareName[ChosenWare] + 'ךל ןיא', #7, '');
+          ShowMessage('W', 'רוכמל' + WareName[ChosenWare] + 'ךל ןיא', #7, '');
           AmountToSell := 0;
         end;
         if AmountToSell = -1 then
@@ -1412,6 +1420,7 @@ var
     BankOptionRects: TRectArray;
     Amount: real;
 
+  { Options in bank menu }
   const
     Deposit = 1;
     Withdraw = 2;
@@ -1431,7 +1440,7 @@ var
     case ChosenOption of
       Deposit: begin
         if Money <= 0 then
-          ShowMessage(87, ' ', '! דיקפהל ףסכ ךל ןיא' + '', ' ')
+          ShowMessage('W', ' ', '! דיקפהל ףסכ ךל ןיא' + '', ' ')
         else
         begin
           repeat
@@ -1445,11 +1454,11 @@ var
             begin
               BankBalance := BankBalance + Amount;
               Money := Money - Amount;
-              ShowMessage(87, ' ', 'ףסכה תא לביק קנבה דיקפ', ' ');
+              ShowMessage('W', ' ', 'ףסכה תא לביק קנבה דיקפ', ' ');
               DidFinishFlag := 1;
             end
             else
-              ShowMessage(87, ' ', '! ףסכ הברה ךכ לכ ךל ןיא' + '', ' ');
+              ShowMessage('W', ' ', '! ףסכ הברה ךכ לכ ךל ןיא' + '', ' ');
           end
           until DidFinishFlag = 1;
         end;
@@ -1470,16 +1479,16 @@ var
               BankBalance := BankBalance - Amount;
               Money := Money + Amount;
               if not (Amount = 0) then
-                ShowMessage(87, ' ', 'ףסכה תא תלביק', ' ');
+                ShowMessage('W', ' ', 'ףסכה תא תלביק', ' ');
               DidFinishFlag := 1;
             end
             else
-              ShowMessage(87, ' ', '! קנבב הזכ ףסכ םוכס ךל ןיא' + '', ' ');
+              ShowMessage('W', ' ', '! קנבב הזכ ףסכ םוכס ךל ןיא' + '', ' ');
           end
           until DidFinishFlag = 1;
         end
         else
-          ShowMessage(87, ' ', '! קנבב ףסכ ךל ןיא' + '', ' ');
+          ShowMessage('W', ' ', '! קנבב ףסכ ךל ןיא' + '', ' ');
       end;
     end;
   end;
@@ -1643,9 +1652,9 @@ var
             Str(LostAmount:1:0, StringBuffer);
             ShipDamage := ShipDamage + LostAmount;
             if DamageChance = 2 then
-              ShowMessage(87, 'םרגנ ,ףסונב', 'יוושב קזנ הניפסל', '.םילקש ' + StringBuffer)
+              ShowMessage('W', 'םרגנ ,ףסונב', 'יוושב קזנ הניפסל', '.םילקש ' + StringBuffer)
             else
-              ShowMessage(87, 'ךתניפס ,ךלזמ עורל', '.ברקה ידכ ךות העגפנ', '.ח"ש ' + StringBuffer + ' קזנה יווש');
+              ShowMessage('W', 'ךתניפס ,ךלזמ עורל', '.ברקה ידכ ךות העגפנ', '.ח"ש ' + StringBuffer + ' קזנה יווש');
           end;
         end;
 
@@ -1660,11 +1669,11 @@ var
           if (WinningDifficulty < CurrentGuardShipCount - GuardShipCountAdjustment) or
               ((CurrentGuardShipCount - GuardShipCountAdjustment <= 0) and (Random(6) = 1)) then
           begin
-            ShowMessage(87, '- ךשוממ ברק רחאל', '! םיטריפה תא תסבה', '');
+            ShowMessage('W', '- ךשוממ ברק רחאל', '! םיטריפה תא תסבה', '');
             if Random(3) = 1 then
             begin
               ShipCapacity := ShipCapacity + 50;
-              ShowMessage(87, 'תניפס תא יבשב תחקל', 'הניפסה תלוביקו ,םיה ידדוש', '.ןוט 50-ב הלדג ךלש');
+              ShowMessage('W', 'תניפס תא יבשב תחקל', 'הניפסה תלוביקו ,םיה ידדוש', '.ןוט 50-ב הלדג ךלש');
             end
             else
             begin
@@ -1675,7 +1684,7 @@ var
                 Booty := 100;
               Booty := 5 * Int(Booty / 5);
               Str(Booty:1:0, StringBuffer);
-              ShowMessage(87, ' לש ןומטמ תאצמ', 'םתניפס לע לקש ' + StringBuffer, '');
+              ShowMessage('W', ' לש ןומטמ תאצמ', 'םתניפס לע לקש ' + StringBuffer, '');
               Money := Money + Booty;
             end;
             ApplyConfrontDamage(4);
@@ -1684,11 +1693,11 @@ var
           begin
             Str(CurrentGuardShipCount, StringBuffer);
             if CurrentGuardShipCount = 0 then
-              ShowMessage(87, ',רמשמ תוניפס תנגה אלל', 'םיטריפה ידי לע תסבוה התא', '')
+              ShowMessage('W', ',רמשמ תוניפס תנגה אלל', 'םיטריפה ידי לע תסבוה התא', '')
             else if CurrentGuardShipCount = 1 then
-              ShowMessage(87, 'תניפס לע ורבגתה םיטריפה', 'ךלש רמשמה', '')
+              ShowMessage('W', 'תניפס לע ורבגתה םיטריפה', 'ךלש רמשמה', '')
             else if CurrentGuardShipCount > 1 then
-              ShowMessage(87, 'תא וחצינ םיטריפה', 'ךלש רמשמה תוניפס ' + StringBuffer, '');
+              ShowMessage('W', 'תא וחצינ םיטריפה', 'ךלש רמשמה תוניפס ' + StringBuffer, '');
             CurrentGuardShipCount := CurrentGuardShipCount + GuardShipCountAdjustment;
             if CurrentGuardShipCount > 3 then
               CurrentGuardShipCount := 3;
@@ -1702,7 +1711,7 @@ var
                 LostAmount := 1;
               Cargo[Ware] := Cargo[Ware] - Trunc(LostAmount);
               Str(Trunc(LostAmount):1, LostAmountString);
-              ShowMessage(87, '     השק ברק ירחא', ' םיה ידדוש ךממ ובנג',
+              ShowMessage('W', '     השק ברק ירחא', ' םיה ידדוש ךממ ובנג',
                   WareName[Ware] + 'ןוט ' + LostAmountString);
               ApplyConfrontDamage(2);
             end
@@ -1714,7 +1723,7 @@ var
               LostAmount := Trunc(LostAmount);
               Money := Money - LostAmount;
               Str(LostAmount:1:0, LostAmountString);
-              ShowMessage(87, 'םילקש ' + LostAmountString + ' ךממ ובנג םה', '', '');
+              ShowMessage('W', 'םילקש ' + LostAmountString + ' ךממ ובנג םה', '', '');
               ApplyConfrontDamage(2);
             end
             else
@@ -1725,12 +1734,13 @@ var
                 LostAmount := 100;
               Str(LostAmount:1:0, StringBuffer);
               ShipDamage := ShipDamage + LostAmount;
-              ShowMessage(87, 'ךתניפס ,ךלזמ עורל', '.ברקה ידכ ךות העגפנ', 'ח"ש ' + StringBuffer + ' קזנה יווש');
+              ShowMessage('W', 'ךתניפס ,ךלזמ עורל', '.ברקה ידכ ךות העגפנ', 'ח"ש ' + StringBuffer + ' קזנה יווש');
             end;
           end;
           ShowHUD;
         end;
 
+      { Options in pirates menu }
       const
         Confront = 1;
         RunAway = 2;
@@ -1780,27 +1790,27 @@ var
             if RunAwayControl = 0 then
             begin
               if CurrentCargoWeight2 > 0.5 * ShipCapacity then
-                ShowMessage(87, 'אלו ,ידמ הדבכ ךתניפס', 'חורבל החילצה', '')
+                ShowMessage('W', 'אלו ,ידמ הדבכ ךתניפס', 'חורבל החילצה', '')
               else if ShipDamage > 0 then
-                ShowMessage(87, 'בקע חורבל תחלצה אל', 'ךתניפסבש קזנה', '')
+                ShowMessage('W', 'בקע חורבל תחלצה אל', 'ךתניפסבש קזנה', '')
               else
-                ShowMessage(87, 'החילצה הריהמה םיטריפה תניפס', 'ךתניפס תא גישהל', '');
+                ShowMessage('W', 'החילצה הריהמה םיטריפה תניפס', 'ךתניפס תא גישהל', '');
               ConfrontPirates;
             end
             else
-              ShowMessage(87, '', '! !  םהמ  טלמהל  תחלצה', '');
+              ShowMessage('W', '', '! !  םהמ  טלמהל  תחלצה', '');
           end;
           Offer: begin
             GuardShipCountAdjustment := 1;
             PutPic(OfferWindow^, 0, 142);
             if OfferFlow(Cargo[Copper], Cargo[Olives], Cargo[Wheat], Money) then
             begin
-              ShowMessage(87, 'לבקל וטילחה םיה ידדוש', 'ךתעצה תא', '');
+              ShowMessage('W', 'לבקל וטילחה םיה ידדוש', 'ךתעצה תא', '');
               ShowHUD;
             end
             else
             begin
-              ShowMessage(87, 'תא םיחוד םיה ידדוש', '! ךתוא םיפקותו ךתעצה', '');
+              ShowMessage('W', 'תא םיחוד םיה ידדוש', '! ךתוא םיפקותו ךתעצה', '');
               ConfrontPirates;
             end;
           end;
@@ -1843,7 +1853,7 @@ var
         else
           TravelDestination := IsraelName;
         Delay(1500);
-        ShowMessage(87, 'תוקזח תוחורמ האצותכ', 'תעגה ,טוונב תועטו', OriginalDestination + 'ל םוקמב ' + TravelDestination + 'ל');
+        ShowMessage('W', 'תוקזח תוחורמ האצותכ', 'תעגה ,טוונב תועטו', OriginalDestination + 'ל םוקמב ' + TravelDestination + 'ל');
         if (TravelStart = EgyptName) and (TravelDestination = TurkeyName) then
           TravelEndTime := TravelEndTime + 4;
       end;
@@ -1863,7 +1873,7 @@ var
           screen, at least on DOSBox }
         if IsShipDamaged or IsHighRiskEventForced then
         begin
-          ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
+          ShowMessage('W', '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
           if (StormCountryName = CurrentCountryName) or (StormCountryName = TravelDestination) then
           begin
             PutPic(StormWindow^, 0, 142);
@@ -1871,13 +1881,13 @@ var
             if GetTotalCargoValue > 10000 then
             begin
               ApplyBadOutcome(LoseCargo, Ware, LostAmountString);
-              ShowMessage(87, 'ךתניפסמ ופטש םיהובגה םילגה', '.' + WareName[Ware] + ' ןוט ' + LostAmountString, '');
+              ShowMessage('W', 'ךתניפסמ ופטש םיהובגה םילגה', '.' + WareName[Ware] + ' ןוט ' + LostAmountString, '');
               ShowHUD;
             end
             else
             begin
               ApplyBadOutcome(AddDamage, Ware, LostAmountString);
-              ShowMessage(87, 'ךתניפסל םרגנ הרעסה בקע', '.ח"ש ' + LostAmountString + ' יוושב קזנ', '');
+              ShowMessage('W', 'ךתניפסל םרגנ הרעסה בקע', '.ח"ש ' + LostAmountString + ' יוושב קזנ', '');
             end;
           end
           else
@@ -1886,16 +1896,16 @@ var
             if TimeOfDay > 16 then
             begin
               PutPic(ShoalWindow^, 0, 142);
-              ShowMessage(87, 'םיעורגה תוארה יאנת בקע', '.ןוטרש לע תילע - הלילב', '');
-              ShowMessage(87, 'קזנ ךתניפסל םרגנ', '.ח"ש ' + LostAmountString + ' יוושב', '');
+              ShowMessage('W', 'םיעורגה תוארה יאנת בקע', '.ןוטרש לע תילע - הלילב', '');
+              ShowMessage('W', 'קזנ ךתניפסל םרגנ', '.ח"ש ' + LostAmountString + ' יוושב', '');
             end
             else
             begin
               PutPic(DamagedWindow^, 0, 142);
               if IsShipDamaged then
-                ShowMessage(87, 'הקוזינה ךתניפסב העיסנה', LostAmountString + '-ב קזנה תא הרימחה', '.םיפסונ לקש')
+                ShowMessage('W', 'הקוזינה ךתניפסב העיסנה', LostAmountString + '-ב קזנה תא הרימחה', '.םיפסונ לקש')
               else
-                ShowMessage(87, 'קזנ ךתניפסל םרגנ', '.ח"ש ' + LostAmountString + ' יוושב', '');
+                ShowMessage('W', 'קזנ ךתניפסל םרגנ', '.ח"ש ' + LostAmountString + ' יוושב', '');
             end;
           end;
         end
@@ -1907,16 +1917,16 @@ var
       begin
         if IsShipSinking(CurrentCargoWeight) then
         begin
-          ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
+          ShowMessage('W', '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
           PutPic(SinkingWindow^, 0, 142);
           WaitForKey;
           ApplyBadOutcome(SinkingShip, Ware, LostAmountString);
-          ShowMessage(87, 'םיל ךילשהל תצלאנ', WareName[Ware] + 'ןוט ' + LostAmountString, '');
+          ShowMessage('W', 'םיל ךילשהל תצלאנ', WareName[Ware] + 'ןוט ' + LostAmountString, '');
           ShowHUD;
           HadTravelEvent := True;
         end;
       end;
-      if (not HadTravelEvent) and (((TimeOfDay + CurrentTravelDuration) + (CurrentTravelDuration div 2)) <= 20) then
+      if (not HadTravelEvent) and (TimeOfDay + CurrentTravelDuration + CurrentTravelDuration div 2 <= 20) then
       begin
         if Random(12) = 0 then
         begin
@@ -1931,16 +1941,16 @@ var
             9
           );
           if Random(2) = 1 then
-            ShowMessage(87, 'תינמז רוגס ' + TravelDestination + ' למנ', 'דבכ לפרע בקע', '')
+            ShowMessage('W', 'תינמז רוגס ' + TravelDestination + ' למנ', 'דבכ לפרע בקע', '')
           else
           begin
             PutPic(StrikeWindow^, 0, 142);
             WaitForKey;
-            ShowMessage(87, 'םישובישו התיבש לשב', TravelDestination + ' למנ ,הדובעב', 'רוגס ');
+            ShowMessage('W', 'םישובישו התיבש לשב', TravelDestination + ' למנ ,הדובעב', 'רוגס ');
           end;
-          ShowMessage(87, '', (TravelStart + 'ל רוזחל ךילע'), '');
+          ShowMessage('W', '', (TravelStart + 'ל רוזחל ךילע'), '');
           TravelDestination := TravelStart;
-          TravelEndTime := (TimeOfDay + (CurrentTravelDuration div 2));
+          TravelEndTime := TimeOfDay + CurrentTravelDuration div 2;
           AnimateTravel(
             MapCoordinates[OriginalTravelDestination].X,
             MapCoordinates[OriginalTravelDestination].Y,
@@ -1948,7 +1958,7 @@ var
             CurrentShipY,
             9
           );
-          TravelEndTime := (TimeOfDay + (CurrentTravelDuration div 2));
+          TravelEndTime := TimeOfDay + CurrentTravelDuration div 2;
           HadTravelEvent := True;
         end;
       end;
@@ -1960,13 +1970,13 @@ var
       begin
         case RandomEvent of
           1..6: begin
-            ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
+            ShowMessage('W', '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
             HadTravelEvent := True;
             PiratesFlow(GuardShipCount, CurrentCargoWeight);
           end;
           7: ChangeTravelDestination;
           9, 10: begin
-            ShowMessage(87, '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
+            ShowMessage('W', '', 'ה ר צ ע נ   ה נ י פ ס ה', '');
             PutPic(DesertedWindow^, 0, 142);
             Ware := 0;
             repeat
@@ -2035,7 +2045,7 @@ var
             else
               Line2 := 'רבגומה ןוכיסה לשב ' + Line2;
           end;
-          ShowMessage(78, Line1, Line2, Line3);
+          ShowMessage('N', Line1, Line2, Line3);
           repeat
           begin
             GotoXY(4, 17);
@@ -2047,7 +2057,7 @@ var
         end
         else
         begin
-          ShowMessage(78, 'םלשל ףסכ ךל ןיא', 'רמשמ תוניפסל', '');
+          ShowMessage('N', 'םלשל ףסכ ךל ןיא', 'רמשמ תוניפסל', '');
           GuardShipCount := 0;
           repeat
             LastPressedKey := GetPressedKey;
@@ -2108,7 +2118,7 @@ var
           9
         );
         if DidArriveSafely then
-          ShowMessage(78, '', '! !  ם ו ל ש ב   ת ע ג ה', '');
+          ShowMessage('N', '', '! !  ם ו ל ש ב   ת ע ג ה', '');
       end;
     end;
 
@@ -2153,7 +2163,7 @@ var
         TravelDuration := 8;
       if (not ShouldAbortTravel) and (TimeOfDay + TravelDuration > 20) then
       begin
-        ShowMessage(87, 'תרחואמ העשה', 'עיגהל לכות אלו', 'םויה םשל');
+        ShowMessage('W', 'תרחואמ העשה', 'עיגהל לכות אלו', 'םויה םשל');
         TravelDestination := TravelStart;
         ShouldAbortTravel := True;
       end;
@@ -2196,7 +2206,7 @@ var
     end;
   end;
 
-  procedure Func51(var OutShipDamage: real);
+  procedure ShowRepairWindow(var OutShipDamage: real);
   var
     DamageToRepair: integer;
     RemainingDamageString: string[10];
@@ -2207,7 +2217,7 @@ var
       begin
         if LostAmount > Money then
         begin
-          ShowMessage(87, '', 'ףסכ הברה ךכ-לכ ךל ןיא', #7);
+          ShowMessage('W', '', 'ףסכ הברה ךכ-לכ ךל ןיא', #7);
           CannotAfford := True;
         end
         else
@@ -2234,17 +2244,18 @@ var
 
       Str(OutShipDamage:1:0, RemainingDamageString);
       if OutShipDamage = 0 then
-        ShowMessage(87, '', 'ןיטולחל הניקת תעכ הניפסה', '')
+        ShowMessage('W', '', 'ןיטולחל הניקת תעכ הניפסה', '')
       else
-        ShowMessage(87, '', 'ח"ש ' + RemainingDamageString + ' ךסב קזנ ראשנ', '');
+        ShowMessage('W', '', 'ח"ש ' + RemainingDamageString + ' ךסב קזנ ראשנ', '');
     end;
   end;
 
-  function Func53: boolean;
+  function IsUnableToRepair: boolean;
   begin
-    Func53 := ShipDamage > (Money + BankBalance + GetTotalCargoValue);
+    IsUnableToRepair := ShipDamage > Money + BankBalance + GetTotalCargoValue;
   end;
 
+{ Options in main menu }
 const
   Buy = 1;
   Sell = 2;
@@ -2260,8 +2271,8 @@ begin
   ShowNewDayScreen;
   if Day = 7 then
   begin
-    ShowMessage(87, '.ןורחאה רחסמה םוי והז', 'םויה ףוסב רוכמל רוכז', ',ךתרוחס לכ תא');
-    ShowMessage(87, 'רובצתש תודוקנהש ןויכמ', 'םוכס יפ לע הנעבקת', '! ךדיב רתוויש ףסכה');
+    ShowMessage('W', '.ןורחאה רחסמה םוי והז', 'םויה ףוסב רוכמל רוכז', ',ךתרוחס לכ תא');
+    ShowMessage('W', 'רובצתש תודוקנהש ןויכמ', 'םוכס יפ לע הנעבקת', '! ךדיב רתוויש ףסכה');
   end;
   UpdateStorm(StormCountryName);
   ShowStormScreen;
@@ -2313,55 +2324,55 @@ begin
       case ChosenMainMenuOption of
         Buy: begin
           if CurrentCountryName = IsraelName then
-            ShowBuyScreen(CopperPriceIsrael, OlivesPriceIsrael, WheatPriceIsrael)
+            ShowBuyWindow(CopperPriceIsrael, OlivesPriceIsrael, WheatPriceIsrael)
           else if CurrentCountryName = TurkeyName then
-            ShowBuyScreen(CopperPriceTurkey, OlivesPriceTurkey, WheatPriceTurkey)
+            ShowBuyWindow(CopperPriceTurkey, OlivesPriceTurkey, WheatPriceTurkey)
           else
-            ShowBuyScreen(CopperPriceEgypt, OlivesPriceEgypt, WheatPriceEgypt);
+            ShowBuyWindow(CopperPriceEgypt, OlivesPriceEgypt, WheatPriceEgypt);
         end;
         Sell: begin
           if CurrentCountryName = IsraelName then
-            Func35(CopperPriceIsrael, OlivesPriceIsrael, WheatPriceIsrael);
+            ShowSellWindow(CopperPriceIsrael, OlivesPriceIsrael, WheatPriceIsrael);
           if CurrentCountryName = TurkeyName then
-            Func35(CopperPriceTurkey, OlivesPriceTurkey, WheatPriceTurkey);
+            ShowSellWindow(CopperPriceTurkey, OlivesPriceTurkey, WheatPriceTurkey);
           if CurrentCountryName = EgyptName then
-            Func35(CopperPriceEgypt, OlivesPriceEgypt, WheatPriceEgypt);
+            ShowSellWindow(CopperPriceEgypt, OlivesPriceEgypt, WheatPriceEgypt);
         end;
         Travel: begin
           if TimeOfDay > 16 then
-            ShowMessage(87, 'עוסנל ןתינ אל', 'תרחואמ הכ העשב', '')
+            ShowMessage('W', 'עוסנל ןתינ אל', 'תרחואמ הכ העשב', '')
           else if ShipDamage > 1000 then
-            ShowMessage(87, 'וניא ךתניפסל םרגנש קזנה', '.גילפהל ךל רשפאמ', '' )
+            ShowMessage('W', 'וניא ךתניפסל םרגנש קזנה', '.גילפהל ךל רשפאמ', '' )
           else if not AskOverweight(GetTotalCargoWeight) then
             TravelFlow(StormCountryName);
         end;
         Bank: begin
           if ClosedBankDay = Day then
-            ShowMessage(87, '', 'םויה  רוגס  קנבה ', '')
+            ShowMessage('W', '', 'םויה  רוגס  קנבה ', '')
           else
             ShowBankWindow;
         end;
         Stay: begin
           PutPic(StayWindow^, 0, 142);
           if Day = 7 then
-            ShowMessage(78, ',םיתסה רחסמה עובש', 'קחשמה םויסל  ───┘  שקה', '');
+            ShowMessage('N', ',םיתסה רחסמה עובש', 'קחשמה םויסל  ───┘  שקה', '');
           repeat
             LastPressedKey := GetPressedKey;
           until LastPressedKey in [#27, #13];
         end;
         Repair: begin
           if ClosedRepairDay <> Day then
-            Func51(ShipDamage)
+            ShowRepairWindow(ShipDamage)
           else
-            ShowMessage(87, 'רוגס למנב םינוקיתה ףיצר', 'ןיתמהל ץלאת - םויה', 'רחמ דע');
+            ShowMessage('W', 'רוגס למנב םינוקיתה ףיצר', 'ןיתמהל ץלאת - םויה', 'רחמ דע');
         end;
       end;
     end
     until (ChosenMainMenuOption = 5) and (LastPressedKey <> #27);
-    if (Day < 7) and Func53 then
+    if (Day < 7) and IsUnableToRepair then
     begin
       Day := 7;
-      ShowMessage(87, 'תא ןקתל ךתורשפאב ןיא', '-ךתניפסל םרגנש קזנה', '! !  ם י ת ס ה   ק ח ש מ ה');
+      ShowMessage('W', 'תא ןקתל ךתורשפאב ןיא', '-ךתניפסל םרגנש קזנה', '! !  ם י ת ס ה   ק ח ש מ ה');
     end;
   end;
 end;
@@ -2378,17 +2389,17 @@ begin
   Palette(0);
   GraphBackground(1);
   GetDir(0, CurrentDir);
-  if (CurrentDir = 'A:\') then
+  if CurrentDir = 'A:\' then
   begin
-    BasePath := 'B:\';
+    ExtraFilesPath := 'B:\';
   end
   else
   begin
-    BasePath := '\kika\socher_b\';
+    ExtraFilesPath := '\kika\socher_b\';
   end;
-  ShowScrFile((BasePath + 'mifne.scr'));
+  ShowScrFile(ExtraFilesPath + 'mifne.scr');
   WaitForKey;
-  ShowScrFile((BasePath + 'credits.scr'));
+  ShowScrFile(ExtraFilesPath + 'credits.scr');
   BaseWarePrice[Copper] := 3000;
   BaseWarePrice[Olives] := 500;
   BaseWarePrice[Wheat] := 50;
@@ -2452,12 +2463,12 @@ begin
   BlockRead(Line6File, RepairOptionPic^, 3);
   Close(Line6File);
   Randomize;
-  MapCoordinates[1].X := 191;
-  MapCoordinates[1].Y := 23;
-  MapCoordinates[2].X := 198;
-  MapCoordinates[2].Y := 86;
-  MapCoordinates[3].X := 123;
-  MapCoordinates[3].Y := 113;
+  MapCoordinates[Turkey].X := 191;
+  MapCoordinates[Turkey].Y := 23;
+  MapCoordinates[Israel].X := 198;
+  MapCoordinates[Israel].Y := 86;
+  MapCoordinates[Egypt].X := 123;
+  MapCoordinates[Egypt].Y := 113;
   MapCoordinates[4].X := 198;
   MapCoordinates[4].Y := 50;
   MapCoordinates[5].X := 161;
@@ -2471,12 +2482,12 @@ begin
   for I := 1 to 8 do
     for J := 1 to 8 do
       MapWaypoints[I, J] := 0;
-  MapWaypoints[1, 2] := 4;
-  MapWaypoints[2, 1] := 4;
-  MapWaypoints[3, 2] := 5;
-  MapWaypoints[2, 3] := 5;
-  MapWaypoints[1, 3] := 6;
-  MapWaypoints[3, 1] := 6;
+  MapWaypoints[Turkey, Israel] := 4;
+  MapWaypoints[Israel, Turkey] := 4;
+  MapWaypoints[Egypt, Israel] := 5;
+  MapWaypoints[Israel, Egypt] := 5;
+  MapWaypoints[Turkey, Egypt] := 6;
+  MapWaypoints[Egypt, Turkey] := 6;
   MapWaypoints[6, 2] := 7;
   MapWaypoints[5, 1] := 8;
   WaitForKey;
@@ -2484,7 +2495,7 @@ end;
 
 procedure StartWeek;
 begin
-  ShowScrFile((BasePath + 'intro.scr'));
+  ShowScrFile(ExtraFilesPath + 'intro.scr');
   MapWindow := LoadWinFile('map');
   Unused3 := 1;
   BankBalance := 0;
@@ -2492,8 +2503,8 @@ begin
   CurrentCountryName := IsraelName;
   StormCountryName := ' ';
   ShipDamage := 0;
-  ClosedRepairDay := (Random(7) + 1);
-  ClosedBankDay := (Random(7) + 1);
+  ClosedRepairDay := Random(7) + 1;
+  ClosedBankDay := Random(7) + 1;
   Cargo[Copper] := 0;
   Cargo[Olives] := 0;
   Cargo[Wheat] := 0;
@@ -2547,7 +2558,7 @@ var
       begin
         Write('  ', #8);
         CurrentString := Copy(CurrentString, 2, InputLength);
-        InputLength := (InputLength - 1);
+        InputLength := InputLength - 1;
       end
       else if (PressedKey = #13) and (InputLength > 0) then
         IsFinished := True;
@@ -2576,7 +2587,7 @@ begin
       if (NewHighScoreIndex = 0) and (HighScores[HighScoreCount].Score < FinalScore) then
       begin
         NewHighScoreIndex := HighScoreCount;
-        HighScoreCount := (HighScoreCount + 1);
+        HighScoreCount := HighScoreCount + 1;
         HighScores[HighScoreCount] := HighScores[(HighScoreCount - 1)];
         HighScores[NewHighScoreIndex].Score := FinalScore;
       end;
@@ -2595,7 +2606,7 @@ begin
     HighScoreCount := 11;
   if NewHighScoreIndex <> 0 then
   begin
-    ShowScrFile(BasePath + 'in_10.scr');
+    ShowScrFile(ExtraFilesPath + 'in_10.scr');
     GotoXY(28, 20);
     InputString(HighScores[NewHighScoreIndex].PlayerName, 16);
     Rewrite(WinnersFile);
@@ -2603,7 +2614,7 @@ begin
       Write(WinnersFile, HighScores[I]);
     Close(WinnersFile);
   end;
-  ShowScrFile(BasePath + 'first_10.scr');
+  ShowScrFile(ExtraFilesPath + 'first_10.scr');
   for I := 1 to HighScoreCount - 1 do
   begin
     GotoXY(11, 3 + 2 * I);
@@ -2639,7 +2650,7 @@ begin
     HighScoreFlow(Money + BankBalance);
     GraphColorMode;
     GraphBackground(1);
-    ShowMessage(78, 'ןינועמ התא םאה', '(ל/כ) ? ףסונ קחשמב', '');
+    ShowMessage('N', 'ןינועמ התא םאה', '(ל/כ) ? ףסונ קחשמב', '');
     GotoXY(7, 16);
   end
   until not InputYesNo;
