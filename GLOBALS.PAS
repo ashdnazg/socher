@@ -10,7 +10,6 @@ const
   IsraelName = 'לארשי';
   EgyptName = 'םירצמ';
 type
-  str_20 = string[20];
   TCountryName = string[10];
   TWinBuffer = array[1..8832] of byte;
   PWinBuffer = ^TWinBuffer;
@@ -29,18 +28,12 @@ type
     Y2: integer;
   end;
   TRectArray = array[1..10] of TRect;
-  str_7 = string[7];
-  record_13866380471399314824 = record
-    field_0: str_20;
-    field_21: real;
-  end;
-  arr_record_13866380471399314824_11 = array[1..11] of record_13866380471399314824;
-  file_record_13866380471399314824 = file of record_13866380471399314824;
+  TNumberString = string[7];
 var
-  BasePath: str_20;
+  BasePath: string[20];
   Iter: integer;
-  global_var_23: integer;
-  global_unused_25: array[1..8] of byte;
+  CountryIter: integer;
+  Unused: array[1..8] of byte;
   CurrentCountryName: TCountryName;
   TravelStart: TCountryName;
   TravelDestination: TCountryName;
@@ -48,7 +41,7 @@ var
   ShipCapacity: integer;
   Day: integer;
   TimeOfDay: byte;
-  global_unused_82: byte;
+  Unused2: byte;
   ShipDamage: real;
   Money: real;
   BankBalance: real;
@@ -57,10 +50,10 @@ var
   Risk: integer;
   LastNightEvent: integer;
   LastPressedKey: char;
-  Unused1: byte;
+  Unused3: byte;
   HadTravelEvent: boolean;
   ClosedRepairDay: integer;
-  global_unused_112: array[1..4] of byte;
+  Unused4: array[1..4] of byte;
   BaseWarePrice: array[Copper..Wheat] of integer;
   WareName: array[Copper..Wheat] of string[9];
   Cargo: array[Copper..Wheat] of integer;
@@ -74,7 +67,7 @@ var
     Y: integer;
   end;
   PreMessageBackground: array[1..1764] of byte;
-  global_var_2060: PWinBuffer;
+  MainMenuPic: PWinBuffer;
   MapWindow: PWinBuffer;
   StayWindow: PWinBuffer;
   ShoalWindow: PWinBuffer;
@@ -100,7 +93,7 @@ var
   OverweightWindow: PWinBuffer;
   GuardsWindow: PWinBuffer;
   DesertedWindow: PWinBuffer;
-  global_unused_2164: array[1..4] of byte;
+  Unused5: array[1..4] of byte;
   NewDayScreen: PScrBuffer;
   SocherScreen: PScrBuffer;
   ExpandScreen: PScrBuffer;
@@ -112,7 +105,7 @@ var
   OlivesDownScreen: PScrBuffer;
   CopperUpScreen: PScrBuffer;
   CopperDownScreen: PScrBuffer;
-  global_unused_2212: array[1..4] of byte;
+  Unused6: array[1..4] of byte;
   MainScreen: PScrBuffer;
   HelpScreen: PScrBuffer;
   RepairOptionPic: ^TRepairOptionBuffer;
@@ -121,5 +114,5 @@ var
   WithdrawSign: PSgnBuffer;
   DepositSign: PSgnBuffer;
   PiratesSign: PSgnBuffer;
-  global_var_2248: PSgnBuffer;
+  ScoreSign: PSgnBuffer;
   MessageSign: PSgnBuffer;

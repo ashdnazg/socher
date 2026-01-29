@@ -342,9 +342,7 @@ begin
   begin
     CurrentNumber := 0;
     for DigitCount := 1 to DigitCount do
-    begin
       Write(' ');
-    end;
     ShouldReturn := False;
     DigitCount := 0;
     GotoXY(CurrentX, CurrentY);
@@ -538,12 +536,12 @@ var
     Write(WheatPriceEgypt:4);
   end;
 
-  function Func23(Func23_arg_0: byte): boolean;
+  function UnusedFunction(Input: byte): boolean;
   begin
-    if Func23_arg_0 = 26 then
-      Func23 := True
+    if Input = 26 then
+      UnusedFunction := True
     else
-      Func23 := False;
+      UnusedFunction := False;
   end;
 
   function CannotAfford(LostAmount: real): boolean;
@@ -677,7 +675,7 @@ var
   procedure ApplyBadOutcome(
     OutcomeType: char;
     var OutWare: integer;
-    var OutAmountString: str_7
+    var OutAmountString: TNumberString
   );
   var
     IsOutWareSet: boolean;
@@ -786,9 +784,9 @@ var
     FishingBoatDamage: integer;
     ChosenCrewOption: integer;
     ExpandWareCost: integer;
-    LostAmountString: str_7;
-    MerchantPriceString: str_7;
-    StringBuffer: str_7;
+    LostAmountString: TNumberString;
+    MerchantPriceString: TNumberString;
+    StringBuffer: TNumberString;
     ExpandWareCostString: TMessageLine;
     CrewOptionRects: TRectArray;
     DidEventHappen: boolean;
@@ -810,7 +808,7 @@ var
     );
     var
       UpDownString: string[6];
-      NewPriceString: str_7;
+      NewPriceString: TNumberString;
     begin
       if UpDownFlag = PriceUp then
         UpDownString := '-ל ץפק'
@@ -921,9 +919,7 @@ var
           ExpandBankBalanceCost := 0;
           Ware := 0;
           for Iter := Copper to Wheat do
-          begin
             ExpandWareCosts[Iter] := 0;
-          end;
           ExpandAmount := 50 * (Random(2) + 1);
           ExpandPrice := 10 * (Random(ExpandAmount) + 2 * ExpandAmount);
           if ExpandPrice <= Money + BankBalance + GetTotalCargoValue then
@@ -989,9 +985,7 @@ var
               Money := Money - ExpandMoneyCost;
               BankBalance := BankBalance - ExpandBankBalanceCost;
               for Iter := Copper to Wheat do
-              begin
                 Cargo[Iter] := (Cargo[Iter] - ExpandWareCosts[Iter]);
-              end;
               PutPic(MessageSign^, 90, 194);
               GotoXY(18, 23);
               Write('.העצוב  הבחרהה');
@@ -1235,13 +1229,13 @@ var
   );
   var
     Unused: integer;
-    Func34_var_94: integer;
-    Func34_var_92: integer;
-    Func34_var_86: real;
-    Func34_var_80: real;
-    Func34_var_0: TRectArray;
+    ChosenWarePrice: integer;
+    ChosenWare: integer;
+    TotalCost: real;
+    AmountToBuy: real;
+    BuyOptionRects: TRectArray;
   begin
-    Func34_var_80 := 0;
+    AmountToBuy := 0;
     if Money < WheatPrice then
       ShowMessage(87, 'ךל רשפאמ וניא ךפסכ', 'תורוחס תינק', '')
     else
@@ -1249,103 +1243,103 @@ var
       case CountryNameToIndex(CurrentCountryName) of
         Turkey:   begin
             PutPic(BuyTurkeyWindow^, 1, 142);
-            Func34_var_0[1].X1 := 177;
-            Func34_var_0[1].Y1 := 2;
-            Func34_var_0[1].X2 := 236;
-            Func34_var_0[1].Y2 := 18;
-            Func34_var_0[2].X1 := 72;
-            Func34_var_0[2].Y1 := 2;
-            Func34_var_0[2].X2 := 131;
-            Func34_var_0[2].Y2 := 18;
-            Func34_var_0[3].X1 := 180;
-            Func34_var_0[3].Y1 := 65;
-            Func34_var_0[3].X2 := 237;
-            Func34_var_0[3].Y2 := 80;
+            BuyOptionRects[Copper].X1 := 177;
+            BuyOptionRects[Copper].Y1 := 2;
+            BuyOptionRects[Copper].X2 := 236;
+            BuyOptionRects[Copper].Y2 := 18;
+            BuyOptionRects[Olives].X1 := 72;
+            BuyOptionRects[Olives].Y1 := 2;
+            BuyOptionRects[Olives].X2 := 131;
+            BuyOptionRects[Olives].Y2 := 18;
+            BuyOptionRects[Wheat].X1 := 180;
+            BuyOptionRects[Wheat].Y1 := 65;
+            BuyOptionRects[Wheat].X2 := 237;
+            BuyOptionRects[Wheat].Y2 := 80;
           end;
         Israel:   begin
             PutPic(BuyIsraelWindow^, 1, 142);
-            Func34_var_0[1].X1 := 177;
-            Func34_var_0[1].Y1 := 2;
-            Func34_var_0[1].X2 := 236;
-            Func34_var_0[1].Y2 := 18;
-            Func34_var_0[2].X1 := 8;
-            Func34_var_0[2].Y1 := 2;
-            Func34_var_0[2].X2 := 67;
-            Func34_var_0[2].Y2 := 18;
-            Func34_var_0[3].X1 := 179;
-            Func34_var_0[3].Y1 := 86;
-            Func34_var_0[3].X2 := 236;
-            Func34_var_0[3].Y2 := 101;
+            BuyOptionRects[Copper].X1 := 177;
+            BuyOptionRects[Copper].Y1 := 2;
+            BuyOptionRects[Copper].X2 := 236;
+            BuyOptionRects[Copper].Y2 := 18;
+            BuyOptionRects[Olives].X1 := 8;
+            BuyOptionRects[Olives].Y1 := 2;
+            BuyOptionRects[Olives].X2 := 67;
+            BuyOptionRects[Olives].Y2 := 18;
+            BuyOptionRects[Wheat].X1 := 179;
+            BuyOptionRects[Wheat].Y1 := 86;
+            BuyOptionRects[Wheat].X2 := 236;
+            BuyOptionRects[Wheat].Y2 := 101;
           end;
         Egypt:   begin
             PutPic(BuyEgyptWindow^, 1, 142);
-            Func34_var_0[1].X1 := 177;
-            Func34_var_0[1].Y1 := 2;
-            Func34_var_0[1].X2 := 236;
-            Func34_var_0[1].Y2 := 18;
-            Func34_var_0[2].X1 := 177;
-            Func34_var_0[2].Y1 := 33;
-            Func34_var_0[2].X2 := 236;
-            Func34_var_0[2].Y2 := 49;
-            Func34_var_0[3].X1 := 179;
-            Func34_var_0[3].Y1 := 86;
-            Func34_var_0[3].X2 := 236;
-            Func34_var_0[3].Y2 := 101;
+            BuyOptionRects[Copper].X1 := 177;
+            BuyOptionRects[Copper].Y1 := 2;
+            BuyOptionRects[Copper].X2 := 236;
+            BuyOptionRects[Copper].Y2 := 18;
+            BuyOptionRects[Olives].X1 := 177;
+            BuyOptionRects[Olives].Y1 := 33;
+            BuyOptionRects[Olives].X2 := 236;
+            BuyOptionRects[Olives].Y2 := 49;
+            BuyOptionRects[Wheat].X1 := 179;
+            BuyOptionRects[Wheat].Y1 := 86;
+            BuyOptionRects[Wheat].X2 := 236;
+            BuyOptionRects[Wheat].Y2 := 101;
           end;
       end;
-      Func34_var_92 := ShowOptions(Func34_var_0, 103);
-      if Func34_var_92 > 0 then
+      ChosenWare := ShowOptions(BuyOptionRects, 103);
+      if ChosenWare > 0 then
       begin
-        case Func34_var_92 of
-          Copper: Func34_var_94 := CopperPrice;
-          Olives: Func34_var_94 := OlivesPrice;
-          Wheat: Func34_var_94 := WheatPrice;
+        case ChosenWare of
+          Copper: ChosenWarePrice := CopperPrice;
+          Olives: ChosenWarePrice := OlivesPrice;
+          Wheat: ChosenWarePrice := WheatPrice;
         end;
-        if Money < Func34_var_94 then
-          ShowMessage(87, 'ךל רשפאמ וניא ךפסכ', WareName[Func34_var_92] + 'תונקל', '')
+        if Money < ChosenWarePrice then
+          ShowMessage(87, 'ךל רשפאמ וניא ךפסכ', WareName[ChosenWare] + 'תונקל', '')
         else
         begin
           repeat
           begin
             PutPic(BuySign^, 22, 138);
             GotoXY(6, 15);
-            Write(Trunc(Money / Func34_var_94));
+            Write(Trunc(Money / ChosenWarePrice));
             GotoXY(6, 17);
-            Func34_var_80 := InputReal(0, 0, 8);
-            Func34_var_86 := 1.0 * Func34_var_80 * Func34_var_94;
+            AmountToBuy := InputReal(0, 0, 8);
+            TotalCost := 1.0 * AmountToBuy * ChosenWarePrice;
           end
-          until not CannotAfford(Func34_var_86);
+          until not CannotAfford(TotalCost);
         end;
-        if Func34_var_80 > 0 then
+        if AmountToBuy > 0 then
         begin
-          Money := Money - Func34_var_86;
-          Cargo[Func34_var_92] := Cargo[Func34_var_92] + Trunc(Func34_var_80);
+          Money := Money - TotalCost;
+          Cargo[ChosenWare] := Cargo[ChosenWare] + Trunc(AmountToBuy);
         end;
       end;
     end;
   end;
 
   procedure Func35(
-    Func35_arg_4: integer;
-    Func35_arg_2: integer;
-    Func35_arg_0: integer
+    CopperPrice: integer;
+    OlivesPrice: integer;
+    WheatPrice: integer
   );
   var
     Unused: integer;
-    Func35_var_92: integer;
-    Func35_var_86: real;
-    Func35_var_80: real;
-    Func35_var_0: TRectArray;
+    ChosenWare: integer;
+    Revenue: real;
+    AmountToSell: real;
+    SellOptionRects: TRectArray;
 
-    function Func36(Func36_arg_2: real; Func36_arg_0: integer): boolean;
+    function HasInsufficientCargo(Amount: real; Ware: integer): boolean;
     begin
-      if Func36_arg_2 > Cargo[Func36_arg_0] then
+      if Amount > Cargo[Ware] then
       begin
-        ShowMessage(87, 'הברה ךכ-לכ ךל ןיא', 'רוכמל' + WareName[Func36_arg_0], #7);
-        Func36 := True;
+        ShowMessage(87, 'הברה ךכ-לכ ךל ןיא', 'רוכמל' + WareName[Ware], #7);
+        HasInsufficientCargo := True;
       end
       else
-        Func36 := False;
+        HasInsufficientCargo := False;
     end;
 
   begin
@@ -1358,83 +1352,88 @@ var
         Israel: PutPic(SellIsraelWindow^, 0, 142);
         Egypt: PutPic(SellEgyptWindow^, 0, 142);
       end;
-      Func35_var_0[1].X1 := 19;
-      Func35_var_0[1].Y1 := 26;
-      Func35_var_0[2].X1 := 19;
-      Func35_var_0[2].Y1 := 42;
-      Func35_var_0[3].X1 := 19;
-      Func35_var_0[3].Y1 := 58;
+      SellOptionRects[Copper].X1 := 19;
+      SellOptionRects[Copper].Y1 := 26;
+      SellOptionRects[Olives].X1 := 19;
+      SellOptionRects[Olives].Y1 := 42;
+      SellOptionRects[Wheat].X1 := 19;
+      SellOptionRects[Wheat].Y1 := 58;
       if CurrentCountryName = EgyptName then
       begin
-        Func35_var_0[1].X2 := 58;
-        Func35_var_0[1].Y2 := 34;
-        Func35_var_0[2].X2 := 57;
-        Func35_var_0[2].Y2 := 50;
-        Func35_var_0[3].X2 := 57;
-        Func35_var_0[3].Y2 := 66;
+        SellOptionRects[Copper].X2 := 58;
+        SellOptionRects[Copper].Y2 := 34;
+        SellOptionRects[Olives].X2 := 57;
+        SellOptionRects[Olives].Y2 := 50;
+        SellOptionRects[Wheat].X2 := 57;
+        SellOptionRects[Wheat].Y2 := 66;
       end
       else
       begin
-        Func35_var_0[1].X2 := 59;
-        Func35_var_0[1].Y2 := 35;
-        Func35_var_0[2].X2 := 59;
-        Func35_var_0[2].Y2 := 51;
-        Func35_var_0[3].X2 := 59;
-        Func35_var_0[3].Y2 := 67;
+        SellOptionRects[Copper].X2 := 59;
+        SellOptionRects[Copper].Y2 := 35;
+        SellOptionRects[Olives].X2 := 59;
+        SellOptionRects[Olives].Y2 := 51;
+        SellOptionRects[Wheat].X2 := 59;
+        SellOptionRects[Wheat].Y2 := 67;
       end;
-      Func35_var_92 := ShowOptions(Func35_var_0, 103);
-      if Func35_var_92 > 0 then
+      ChosenWare := ShowOptions(SellOptionRects, 103);
+      if ChosenWare > 0 then
       begin
-        if Cargo[Func35_var_92] > 0 then
+        if Cargo[ChosenWare] > 0 then
         begin
           repeat
           begin
             PutPic(SellSign^, 120, 60);
             GotoXY(21, 7);
-            Func35_var_80 := InputReal(0, 0, 8);
+            AmountToSell := InputReal(0, 0, 8);
           end
-          until not Func36(Func35_var_80, Func35_var_92);
+          until not HasInsufficientCargo(AmountToSell, ChosenWare);
         end
         else
         begin
-          ShowMessage(87, 'רוכמל' + WareName[Func35_var_92] + 'ךל ןיא', #7, '');
-          Func35_var_80 := 0;
+          ShowMessage(87, 'רוכמל' + WareName[ChosenWare] + 'ךל ןיא', #7, '');
+          AmountToSell := 0;
         end;
-        if Func35_var_80 = -1 then
-          Func35_var_80 := 0;
+        if AmountToSell = -1 then
+          AmountToSell := 0;
 
-        case Func35_var_92 of
-          Copper: Func35_var_86 := 1.0 * Func35_var_80 * Func35_arg_4;
-          Olives: Func35_var_86 := 1.0 * Func35_var_80 * Func35_arg_2;
-          Wheat: Func35_var_86 := 1.0 * Func35_var_80 * Func35_arg_0;
+        case ChosenWare of
+          Copper: Revenue := 1.0 * AmountToSell * CopperPrice;
+          Olives: Revenue := 1.0 * AmountToSell * OlivesPrice;
+          Wheat: Revenue := 1.0 * AmountToSell * WheatPrice;
         end;
-        Money := Money + Func35_var_86;
-        Cargo[Func35_var_92] := Cargo[Func35_var_92] - Trunc(Func35_var_80);
+        Money := Money + Revenue;
+        Cargo[ChosenWare] := Cargo[ChosenWare] - Trunc(AmountToSell);
       end;
     end;
   end;
 
-  procedure Func37;
+  procedure ShowBankWindow;
   var
-    Func37_var_87: integer;
-    Func37_var_86: byte;
-    Func37_var_6: TRectArray;
-    Func37_var_0: real;
+    ChosenOption: integer;
+    DidFinishFlag: byte;
+    BankOptionRects: TRectArray;
+    Amount: real;
+
+  const
+    Deposit = 1;
+    Withdraw = 2;
+
   begin
-    Func37_var_86 := 0;
+    DidFinishFlag := 0;
     PutPic(BankWindow^, 0, 142);
-    Func37_var_6[1].X1 := 97;
-    Func37_var_6[1].Y1 := 7;
-    Func37_var_6[1].X2 := 149;
-    Func37_var_6[1].Y2 := 16;
-    Func37_var_6[2].X1 := 16;
-    Func37_var_6[2].Y1 := 7;
-    Func37_var_6[2].X2 := 64;
-    Func37_var_6[2].Y2 := 16;
-    Func37_var_87 := ShowOptions(Func37_var_6, 102);
-    case Func37_var_87 of
-      1: begin
-        if (Money <= 0) then
+    BankOptionRects[Deposit].X1 := 97;
+    BankOptionRects[Deposit].Y1 := 7;
+    BankOptionRects[Deposit].X2 := 149;
+    BankOptionRects[Deposit].Y2 := 16;
+    BankOptionRects[Withdraw].X1 := 16;
+    BankOptionRects[Withdraw].Y1 := 7;
+    BankOptionRects[Withdraw].X2 := 64;
+    BankOptionRects[Withdraw].Y2 := 16;
+    ChosenOption := ShowOptions(BankOptionRects, 102);
+    case ChosenOption of
+      Deposit: begin
+        if Money <= 0 then
           ShowMessage(87, ' ', '! דיקפהל ףסכ ךל ןיא' + '', ' ')
         else
         begin
@@ -1442,51 +1441,45 @@ var
           begin
             PutPic(DepositSign^, 11, 139);
             GotoXY(5, 17);
-            Func37_var_0 := InputReal(0, 0, 8);
-            if Func37_var_0 <= 0 then
-              Func37_var_86 := 1
-            else
+            Amount := InputReal(0, 0, 8);
+            if Amount <= 0 then
+              DidFinishFlag := 1
+            else if Amount <= Money then
             begin
-              if Func37_var_0 <= Money then
-              begin
-                BankBalance := (BankBalance + Func37_var_0);
-                Money := (Money - Func37_var_0);
-                ShowMessage(87, ' ', 'ףסכה תא לביק קנבה דיקפ', ' ');
-                Func37_var_86 := 1;
-              end
-              else
-                ShowMessage(87, ' ', '! ףסכ הברה ךכ לכ ךל ןיא' + '', ' ');
-            end;
+              BankBalance := BankBalance + Amount;
+              Money := Money - Amount;
+              ShowMessage(87, ' ', 'ףסכה תא לביק קנבה דיקפ', ' ');
+              DidFinishFlag := 1;
+            end
+            else
+              ShowMessage(87, ' ', '! ףסכ הברה ךכ לכ ךל ןיא' + '', ' ');
           end
-          until Func37_var_86 = 1;
+          until DidFinishFlag = 1;
         end;
       end;
-      2: begin
+      Withdraw: begin
         if BankBalance > 0 then
         begin
           repeat
           begin
             PutPic(WithdrawSign^, 11, 139);
             GotoXY(5, 17);
-            Func37_var_0 := InputReal(0, 0, 8);
-            if Func37_var_0 < 0 then
-              Func37_var_86 := 1
-            else
+            Amount := InputReal(0, 0, 8);
+            if Amount < 0 then
+              DidFinishFlag := 1
+            else if Amount <= BankBalance then
             begin
-              if Func37_var_0 <= BankBalance then
-              begin
-                GotoXY(1, 1);
-                BankBalance := BankBalance - Func37_var_0;
-                Money := Money + Func37_var_0;
-                if not (Func37_var_0 = 0) then
-                  ShowMessage(87, ' ', 'ףסכה תא תלביק', ' ');
-                Func37_var_86 := 1;
-              end
-              else
-                ShowMessage(87, ' ', '! קנבב הזכ ףסכ םוכס ךל ןיא' + '', ' ');
-            end;
+              GotoXY(1, 1);
+              BankBalance := BankBalance - Amount;
+              Money := Money + Amount;
+              if not (Amount = 0) then
+                ShowMessage(87, ' ', 'ףסכה תא תלביק', ' ');
+              DidFinishFlag := 1;
+            end
+            else
+              ShowMessage(87, ' ', '! קנבב הזכ ףסכ םוכס ךל ןיא' + '', ' ');
           end
-          until Func37_var_86 = 1;
+          until DidFinishFlag = 1;
         end
         else
           ShowMessage(87, ' ', '! קנבב ףסכ ךל ןיא' + '', ' ');
@@ -1494,21 +1487,21 @@ var
     end;
   end;
 
-  function Func38(Func38_arg_0: integer): boolean;
+  function AskOverweight(TotalCargoWeight: integer): boolean;
   var
-    Func38_unused_0: array[1..3] of byte;
+    Unused: array[1..3] of byte;
   begin
-    if Func38_arg_0 > ShipCapacity then
+    if TotalCargoWeight > ShipCapacity then
     begin
       PutPic(OverweightWindow^, 0, 142);
       GotoXY(53, 16);
       if InputYesNo then
-        Func38 := False
+        AskOverweight := False
       else
-        Func38 := True;
+        AskOverweight := True;
     end
     else
-      Func38 := False;
+      AskOverweight := False;
   end;
 
   procedure ToggleCountryHighlight(CountryName: TCountryName);
@@ -1622,7 +1615,7 @@ var
       Ware: integer;
       RandomEvent: integer;
       FoundAmount: integer;
-      LostAmountString: string[7];
+      LostAmountString: TNumberString;
       OriginalDestination: TCountryName;
       OriginalTravelDestination: byte;
       CurrentShipX: integer;
@@ -1820,20 +1813,20 @@ var
         end;
       end;
 
-      function IsShipSinking(Func46_arg_0: integer): boolean;
+      function IsShipSinking(CurrentCargoWeight2: integer): boolean;
       var
         SinkingChance: integer;
       begin
         SinkingChance := 30000;
-        if Func46_arg_0 > ShipCapacity + 70 then
+        if CurrentCargoWeight2 > ShipCapacity + 70 then
           SinkingChance := 1
-        else if Func46_arg_0 > ShipCapacity + 60 then
+        else if CurrentCargoWeight2 > ShipCapacity + 60 then
           SinkingChance := 2
-        else if Func46_arg_0 > ShipCapacity + 40 then
+        else if CurrentCargoWeight2 > ShipCapacity + 40 then
           SinkingChance := 3
-        else if Func46_arg_0 > ShipCapacity + 20 then
+        else if CurrentCargoWeight2 > ShipCapacity + 20 then
           SinkingChance := 4
-        else if Func46_arg_0 > ShipCapacity then
+        else if CurrentCargoWeight2 > ShipCapacity then
           SinkingChance := 6;
         if Random(SinkingChance) = 0 then
           IsShipSinking := True
@@ -2023,7 +2016,7 @@ var
         Line1: TMessageLine;
         Line2: TMessageLine;
         Line3: TMessageLine;
-        PriceString: string[7];
+        PriceString: TNumberString;
       begin
         PutPic(GuardsWindow^, 0, 142);
         GuardShipPrice := 5 * Trunc((GetTotalCargoValue + Money) / (200 + Random(100)));
@@ -2144,11 +2137,11 @@ var
     FullTravelOptionRects[Egypt].X2 := 111;
     FullTravelOptionRects[Egypt].Y2 := 141;
     Iter := Turkey;
-    for global_var_23 := Turkey to Egypt do
+    for CountryIter := Turkey to Egypt do
     begin
-      if global_var_23 <> CountryNameToIndex(TravelStart) then
+      if CountryIter <> CountryNameToIndex(TravelStart) then
       begin
-        TravelOptionRects[Iter] := FullTravelOptionRects[global_var_23];
+        TravelOptionRects[Iter] := FullTravelOptionRects[CountryIter];
         Iter := Iter + 1;
       end;
     end;
@@ -2284,11 +2277,11 @@ begin
   if not ((Day > 7) or ShouldSkipDay) then
   begin
     PutPic(MainScreen^, 0, 199);
-    GetPic(global_var_2060^, 0, 0, 240, 142);
+    GetPic(MainMenuPic^, 0, 0, 240, 142);
     ToggleCountryHighlight(CurrentCountryName);
     repeat
     begin
-      PutPic(global_var_2060^, 0, 142);
+      PutPic(MainMenuPic^, 0, 142);
       ShowHUD;
       TextColor(3);
       MainMenuOptionRects[Buy].X1 := 131;
@@ -2343,16 +2336,16 @@ begin
         Travel: begin
           if TimeOfDay > 16 then
             ShowMessage(87, 'עוסנל ןתינ אל', 'תרחואמ הכ העשב', '')
-          else if (ShipDamage > 1000) then
+          else if ShipDamage > 1000 then
             ShowMessage(87, 'וניא ךתניפסל םרגנש קזנה', '.גילפהל ךל רשפאמ', '' )
-          else if not Func38(GetTotalCargoWeight) then
+          else if not AskOverweight(GetTotalCargoWeight) then
             TravelFlow(StormCountryName);
         end;
         Bank: begin
-          if (ClosedBankDay = Day) then
+          if ClosedBankDay = Day then
             ShowMessage(87, '', 'םויה  רוגס  קנבה ', '')
           else
-            Func37;
+            ShowBankWindow;
         end;
         Stay: begin
           PutPic(StayWindow^, 0, 142);
@@ -2378,6 +2371,7 @@ begin
     end;
   end;
 end;
+
 procedure Init;
 var
   I: byte;
@@ -2427,7 +2421,7 @@ begin
   OlivesDownScreen := LoadScrFile('olivesdn');
   CopperUpScreen := LoadScrFile('copperup');
   CopperDownScreen := LoadScrFile('copperdn');
-  New(global_var_2060);
+  New(MainMenuPic);
   StayWindow := LoadWinFile('stay');
   RepairWindow := LoadWinFile('repair');
   DesertedWindow := LoadWinFile('deserted');
@@ -2481,12 +2475,8 @@ begin
   MapCoordinates[8].X := 196;
   MapCoordinates[8].Y := 45;
   for I := 1 to 8 do
-  begin
     for J := 1 to 8 do
-    begin
       MapWaypoints[I, J] := 0;
-    end;
-  end;
   MapWaypoints[1, 2] := 4;
   MapWaypoints[2, 1] := 4;
   MapWaypoints[3, 2] := 5;
@@ -2497,11 +2487,12 @@ begin
   MapWaypoints[5, 1] := 8;
   WaitForKey;
 end;
+
 procedure StartWeek;
 begin
   ShowScrFile((BasePath + 'intro.scr'));
   MapWindow := LoadWinFile('map');
-  Unused1 := 1;
+  Unused3 := 1;
   BankBalance := 0;
   ShipCapacity := 100;
   CurrentCountryName := IsraelName;
@@ -2517,131 +2508,125 @@ begin
   LastNightEvent := 0;
   WaitForKey;
 end;
-procedure Func56(Func56_arg_0: real);
+
+procedure HighScoreFlow(FinalScore: real);
+type
+  TPlayerName = string[20];
+  THighScoreEntry = record
+    PlayerName: TPlayerName;
+    Score: real;
+  end;
 var
-  Func56_var_312: file_record_13866380471399314824;
-  Func56_var_15: arr_record_13866380471399314824_11;
-  Func56_var_13: integer;
-  Func56_var_11: integer;
-  Func56_var_9: integer;
-  Func56_var_8: byte;
-  Func56_unused_0: array[1..8] of byte;
-procedure Func57(var Func57_arg_2: str_20; Func57_arg_0: integer);
-var
-  Func57_var_26: char;
-  Func57_var_24: integer;
-  Func57_var_22: integer;
-  Func57_var_21: boolean;
-  Func57_var_0: str_20;
-const
-  Func57_const_50650: string[27] = 'tcdsvuzjyhlfkonibxg;p.mera,';
-  Func57_const_50678: string[27] = 'TCDSVUZJYHLFKONIBXG:P>MERA<';
-  Func57_const_50706: string[38] = 'אבגדהוזחטיךכלםמןנסעףפץצקרשת1234567890 ';
-begin
-  Func57_var_21 := False;
-  Func57_var_0 := '';
-  Func57_var_24 := 0;
-  repeat
+  WinnersFile: file of THighScoreEntry;
+  HighScores: array[1..11] of THighScoreEntry;
+  HighScoreCount: integer;
+  NewHighScoreIndex: integer;
+  I: integer;
+  Unused: byte;
+  Unused2: array[1..8] of byte;
+  procedure InputString(var OutString: TPlayerName; MaxLength: integer);
+  var
+    PressedKey: char;
+    InputLength: integer;
+    HebrewIndex: integer;
+    IsFinished: boolean;
+    CurrentString: TPlayerName;
+  const
+    LowerCaseLatin: string[27] = 'tcdsvuzjyhlfkonibxg;p.mera,';
+    UpperCaseLatin: string[27] = 'TCDSVUZJYHLFKONIBXG:P>MERA<';
+    Hebrew: string[38] = 'אבגדהוזחטיךכלםמןנסעףפץצקרשת1234567890 ';
   begin
-    Func57_var_26 := GetPressedKey;
-    Func57_var_22 := ((Pos(Func57_var_26, Func57_const_50650) + Pos(Func57_var_26, Func57_const_50678)) + Pos(Func57_var_26,
- Func57_const_50706));
-    if (Func57_var_22 > 0) then
+    IsFinished := False;
+    CurrentString := '';
+    InputLength := 0;
+    repeat
     begin
-      Write(Func57_const_50706[Func57_var_22], #8, #8);
-      Func57_var_24 := (Func57_var_24 + 1);
-      Func57_var_0 := (Func57_const_50706[Func57_var_22] + Func57_var_0);
-    end
-    else
-    begin
-      if ((Func57_var_26 = #8) and (Func57_var_24 > 0)) then
+      PressedKey := GetPressedKey;
+      HebrewIndex := Pos(PressedKey, LowerCaseLatin) + Pos(PressedKey, UpperCaseLatin) + Pos(PressedKey, Hebrew);
+      if HebrewIndex > 0 then
+      begin
+        Write(Hebrew[HebrewIndex], #8, #8);
+        InputLength := InputLength + 1;
+        CurrentString := Hebrew[HebrewIndex] + CurrentString;
+      end
+      else if (PressedKey = #8) and (InputLength > 0) then
       begin
         Write('  ', #8);
-        Func57_var_0 := Copy(Func57_var_0, 2, Func57_var_24);
-        Func57_var_24 := (Func57_var_24 - 1);
+        CurrentString := Copy(CurrentString, 2, InputLength);
+        InputLength := (InputLength - 1);
       end
-      else
-      begin
-        if ((Func57_var_26 = #13) and (Func57_var_24 > 0)) then
-        begin
-          Func57_var_21 := True;
-        end;
-      end;
-    end;
-    if (Func57_var_24 = Func57_arg_0) then
-    begin
-      Func57_var_21 := True;
-    end;
-  end
-  until Func57_var_21;
-  Func57_arg_2 := Func57_var_0;
-end;
+      else if (PressedKey = #13) and (InputLength > 0) then
+        IsFinished := True;
+      if InputLength = MaxLength then
+        IsFinished := True;
+    end
+    until IsFinished;
+    OutString := CurrentString;
+  end;
 begin
-  Func56_var_8 := 0;
-  Func56_var_13 := 1;
-  Func56_var_11 := 0;
-  Assign(Func56_var_312, 'winners.win');
-  {$I-} Reset(Func56_var_312); {$I+}
+  Unused := 0;
+  HighScoreCount := 1;
+  NewHighScoreIndex := 0;
+  Assign(WinnersFile, 'winners.win');
+  {$I-} Reset(WinnersFile); {$I+}
   if IOResult <> 0 then
   begin
-    Rewrite(Func56_var_312);
-    Close(Func56_var_312);
+    Rewrite(WinnersFile);
+    Close(WinnersFile);
   end
   else
   begin
-    while (not EOF(Func56_var_312)) do
+    while (not EOF(WinnersFile)) do
     begin
-      Read(Func56_var_312, Func56_var_15[Func56_var_13]);
-      if (Func56_var_11 = 0) and (Func56_var_15[Func56_var_13].field_21 < Func56_arg_0) then
+      Read(WinnersFile, HighScores[HighScoreCount]);
+      if (NewHighScoreIndex = 0) and (HighScores[HighScoreCount].Score < FinalScore) then
       begin
-        Func56_var_11 := Func56_var_13;
-        Func56_var_13 := (Func56_var_13 + 1);
-        Func56_var_15[Func56_var_13] := Func56_var_15[(Func56_var_13 - 1)];
-        Func56_var_15[Func56_var_11].field_21 := Func56_arg_0;
+        NewHighScoreIndex := HighScoreCount;
+        HighScoreCount := (HighScoreCount + 1);
+        HighScores[HighScoreCount] := HighScores[(HighScoreCount - 1)];
+        HighScores[NewHighScoreIndex].Score := FinalScore;
       end;
-      Func56_var_13 := (Func56_var_13 + 1);
+      HighScoreCount := HighScoreCount + 1;
     end;
   end;
-  Close(Func56_var_312);
-  if ((Func56_var_13 <= 10) and (Func56_var_11 = 0)) then
+  Close(WinnersFile);
+  if (HighScoreCount <= 10) and (NewHighScoreIndex = 0) then
   begin
-    Func56_var_11 := Func56_var_13;
-    Func56_var_13 := (Func56_var_13 + 1);
-    Func56_var_15[Func56_var_13] := Func56_var_15[(Func56_var_13 - 1)];
-    Func56_var_15[Func56_var_11].field_21 := Func56_arg_0;
+    NewHighScoreIndex := HighScoreCount;
+    HighScoreCount := HighScoreCount + 1;
+    HighScores[HighScoreCount] := HighScores[HighScoreCount - 1];
+    HighScores[NewHighScoreIndex].Score := FinalScore;
   end;
-  if (Func56_var_13 > 11) then
-    Func56_var_13 := 11;
-  if (Func56_var_11 <> 0) then
+  if HighScoreCount > 11 then
+    HighScoreCount := 11;
+  if NewHighScoreIndex <> 0 then
   begin
-    ShowScrFile((BasePath + 'in_10.scr'));
+    ShowScrFile(BasePath + 'in_10.scr');
     GotoXY(28, 20);
-    Func57(Func56_var_15[Func56_var_11].field_0, 16);
-    Rewrite(Func56_var_312);
-    for Func56_var_9 := 1 to (Func56_var_13 - 1) do
-    begin
-      Write(Func56_var_312, Func56_var_15[Func56_var_9]);
-    end;
-    Close(Func56_var_312);
+    InputString(HighScores[NewHighScoreIndex].PlayerName, 16);
+    Rewrite(WinnersFile);
+    for I := 1 to HighScoreCount - 1 do
+      Write(WinnersFile, HighScores[I]);
+    Close(WinnersFile);
   end;
-  ShowScrFile((BasePath + 'first_10.scr'));
-  for Func56_var_9 := 1 to (Func56_var_13 - 1) do
+  ShowScrFile(BasePath + 'first_10.scr');
+  for I := 1 to HighScoreCount - 1 do
   begin
-    GotoXY(11, 3 + 2 * Func56_var_9);
-    Write(Func56_var_15[Func56_var_9].field_21:6:0);
-    GotoXY(20, 3 + 2 * Func56_var_9);
-    Write(Func56_var_15[Func56_var_9].field_0:16);
+    GotoXY(11, 3 + 2 * I);
+    Write(HighScores[I].Score:6:0);
+    GotoXY(20, 3 + 2 * I);
+    Write(HighScores[I].PlayerName:16);
   end;
-  if Func56_var_11 = 0 then
+  if NewHighScoreIndex = 0 then
   begin
-    global_var_2248 := LoadSgnFile('score');
-    PutPic(global_var_2248^, 7, 130);
+    ScoreSign := LoadSgnFile('score');
+    PutPic(ScoreSign^, 7, 130);
     GotoXY(3, 10);
-    if Func56_arg_0 > 999 then
-      Write(ToStrWithCommas(Func56_arg_0):6)
+    if FinalScore > 999 then
+      Write(ToStrWithCommas(FinalScore):6)
     else
-      Write(ToStrWithCommas(Func56_arg_0):4);
-    Dispose(global_var_2248);
+      Write(ToStrWithCommas(FinalScore):4);
+    Dispose(ScoreSign);
   end;
   WaitForKey;
 end;
@@ -2657,7 +2642,7 @@ begin
       Day := Succ(Day);
     end
     until Day > 7;
-    Func56(Money + BankBalance);
+    HighScoreFlow(Money + BankBalance);
     GraphColorMode;
     GraphBackground(1);
     ShowMessage(78, 'ןינועמ התא םאה', '(ל/כ) ? ףסונ קחשמב', '');
