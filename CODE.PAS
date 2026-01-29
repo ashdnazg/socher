@@ -766,7 +766,7 @@ var
     DidEventHappen: boolean;
     MerchantSupplyBaseValue: real;
     MostValuableCargoValue: real;
-    ExpandWareCosts: array[1..3] of integer;
+    ExpandWareCosts: array[Copper..Wheat] of integer;
     ExpandMoneyCost: integer;
     ExpandBankBalanceCost: integer;
 
