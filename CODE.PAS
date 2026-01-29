@@ -5,7 +5,7 @@ var
   PressedKey: char;
 begin
   repeat
-  PressedKey := GetPressedKey;
+    PressedKey := GetPressedKey;
   until ((PressedKey = #13) or (PressedKey = #27)) and not KeyPressed;
 end;
 
