@@ -542,7 +542,7 @@ var
     OfferedCopper: integer;
     OfferedOlives: integer;
     OfferedWheat: integer;
-    OfferedAmount: real;
+    OfferedMoney: real;
     TotalOfferValue: real;
     AcceptThreshold: real;
     Unused: real;
@@ -578,7 +578,7 @@ var
     OfferedCopper := 0;
     OfferedOlives := 0;
     OfferedWheat := 0;
-    OfferedAmount := 0;
+    OfferedMoney := 0;
     if InOutCopper > 0 then
     begin
       repeat
@@ -622,17 +622,17 @@ var
         ShowMessage('N', '?תתל ןכומ התא ףסכ המכ', '', '');
         GotoXY(20, 16);
         repeat
-          OfferedAmount := Trunc(InputReal(0, 0, 8));
-        until OfferedAmount >= 0;
+          OfferedMoney := Trunc(InputReal(0, 0, 8));
+        until OfferedMoney >= 0;
       end
-      until CanAffordMoney(OfferedAmount, InOutMoney);
+      until CanAffordMoney(OfferedMoney, InOutMoney);
     end;
     TotalOfferValue := OfferedCopper * BaseWarePrice[Copper] +
-        OfferedOlives * BaseWarePrice[Olives] + OfferedWheat * BaseWarePrice[Wheat] + OfferedAmount;
+        OfferedOlives * BaseWarePrice[Olives] + OfferedWheat * BaseWarePrice[Wheat] + OfferedMoney;
     AcceptThreshold := (GetTotalCargoValue + InOutMoney) / (Random(6) + 4);
     if TotalOfferValue > AcceptThreshold then
     begin
-      InOutMoney := InOutMoney - OfferedAmount;
+      InOutMoney := InOutMoney - OfferedMoney;
       InOutCopper := InOutCopper - OfferedCopper;
       InOutOlives := InOutOlives - OfferedOlives;
       InOutWheat := InOutWheat - OfferedWheat;
@@ -835,19 +835,19 @@ var
       DidEventHappen := True;
       repeat
         RandomEvent := Random(30) + 1;
-      until (RandomEvent <> LastNightEvent) and
-          (not ((RandomEvent in [1..2]) and (LastNightEvent in [1..2]))) and
-          (not ((RandomEvent in [3..4]) and (LastNightEvent in [3..4]))) and
-          (not ((RandomEvent in [5..6]) and (LastNightEvent in [5..6]))) and
-          (not ((RandomEvent in [7..8]) and (LastNightEvent in [7..8]))) and
-          (not ((RandomEvent in [9..10]) and (LastNightEvent in [9..10]))) and
-          (not ((RandomEvent in [11..12]) and (LastNightEvent in [11..12]))) and
-          (not ((RandomEvent in [13..18]) and (LastNightEvent in [13..18]))) and
-          (not ((RandomEvent in [19..20]) and (LastNightEvent in [19..20]))) and
-          (not ((RandomEvent in [21..22]) and (LastNightEvent in [21..22]))) and
-          (not ((RandomEvent in [23..26]) and (LastNightEvent in [23..26]))) and
-          (not ((RandomEvent in [27..28]) and (LastNightEvent in [27..28]))) and
-          (not ((RandomEvent in [29..30]) and (LastNightEvent in [29..30])));
+      until (RandomEvent <> LastDayStartEvent) and
+          (not ((RandomEvent in [1..2]) and (LastDayStartEvent in [1..2]))) and
+          (not ((RandomEvent in [3..4]) and (LastDayStartEvent in [3..4]))) and
+          (not ((RandomEvent in [5..6]) and (LastDayStartEvent in [5..6]))) and
+          (not ((RandomEvent in [7..8]) and (LastDayStartEvent in [7..8]))) and
+          (not ((RandomEvent in [9..10]) and (LastDayStartEvent in [9..10]))) and
+          (not ((RandomEvent in [11..12]) and (LastDayStartEvent in [11..12]))) and
+          (not ((RandomEvent in [13..18]) and (LastDayStartEvent in [13..18]))) and
+          (not ((RandomEvent in [19..20]) and (LastDayStartEvent in [19..20]))) and
+          (not ((RandomEvent in [21..22]) and (LastDayStartEvent in [21..22]))) and
+          (not ((RandomEvent in [23..26]) and (LastDayStartEvent in [23..26]))) and
+          (not ((RandomEvent in [27..28]) and (LastDayStartEvent in [27..28]))) and
+          (not ((RandomEvent in [29..30]) and (LastDayStartEvent in [29..30])));
       if (Money > 20000.0) and (Random(6) = 1) then
         RandomEvent := 15;
 
@@ -1180,7 +1180,7 @@ var
       end;
     end
     until DidEventHappen;
-    LastNightEvent := RandomEvent;
+    LastDayStartEvent := RandomEvent;
   end;
 
   procedure ShowNewDayScreen;
@@ -2447,7 +2447,7 @@ begin
   Cargo[Wheat] := 0;
   ClosedBankDay := 0;
   Money := 5000;
-  LastNightEvent := 0;
+  LastDayStartEvent := 0;
   WaitForKey;
 end;
 

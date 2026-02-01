@@ -57,7 +57,7 @@ var
   ClosedBankDay: integer;
   { 0 - Normal, 2 - Night, 3 - Storm, 4 - Night & Storm }
   Risk: integer;
-  LastNightEvent: integer;
+  LastDayStartEvent: integer;
   LastPressedKey: char;
   Unused3: byte;
   HadTravelEvent: boolean;
